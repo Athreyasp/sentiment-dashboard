@@ -72,22 +72,23 @@ export function Preloader() {
       {/* Grid pattern overlay */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
 
-      <div className="text-center space-y-8 relative z-10">
-        {/* Modern logo with enhanced animation */}
-        <div className="flex items-center justify-center mb-12 animate-fade-in">
+      {/* Main content container with proper spacing */}
+      <div className="text-center relative z-10 max-w-md mx-auto px-6">
+        {/* Logo section */}
+        <div className="mb-12 animate-fade-in">
           <ModernSentinelLogo 
-            size="xl" 
+            size="lg" 
             variant="hero" 
             showText={true}
             className="transform hover:scale-105 transition-transform duration-500"
           />
         </div>
 
-        {/* Enhanced loading animation */}
-        <div className="space-y-6">
-          {/* Main loading spinner with glow effect */}
-          <div className="flex justify-center">
-            <div className="w-20 h-20 relative">
+        {/* Loading animation section */}
+        <div className="space-y-8">
+          {/* Main loading spinner */}
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 relative">
               {/* Outer glow ring */}
               <div className="absolute inset-0 border-4 border-slate-700/30 rounded-full"></div>
               {/* Animated progress ring */}
@@ -95,44 +96,46 @@ export function Preloader() {
               {/* Inner pulse */}
               <div className="absolute inset-2 bg-gradient-to-br from-cyan-400/20 to-purple-500/20 rounded-full animate-pulse"></div>
               {/* Center dot */}
-              <div className="absolute inset-6 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-pulse"></div>
+              <div className="absolute inset-5 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-pulse"></div>
             </div>
           </div>
 
-          {/* Enhanced progress bar */}
-          <div className="w-80 bg-slate-800/50 rounded-full h-3 overflow-hidden backdrop-blur-sm border border-white/10">
-            <div 
-              className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 transition-all duration-300 ease-out relative overflow-hidden"
-              style={{ width: `${Math.min(progress, 100)}%` }}
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+          {/* Progress bar */}
+          <div className="w-full max-w-sm mx-auto">
+            <div className="bg-slate-800/50 rounded-full h-2 overflow-hidden backdrop-blur-sm border border-white/10">
+              <div 
+                className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 transition-all duration-300 ease-out relative overflow-hidden"
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              >
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+              </div>
             </div>
           </div>
 
           {/* Progress percentage */}
-          <div className="text-cyan-400 text-lg font-semibold">
+          <div className="text-cyan-400 text-xl font-bold mb-4">
             {Math.round(Math.min(progress, 100))}%
           </div>
 
-          {/* Dynamic loading text with typewriter effect */}
-          <div className="text-slate-300 animate-pulse min-h-[24px]">
+          {/* Loading text */}
+          <div className="text-slate-300 animate-pulse mb-8 min-h-[28px]">
             <span className="font-medium text-lg">{loadingText}</span>
           </div>
 
           {/* Status indicators */}
-          <div className="flex items-center justify-center space-x-6 mt-8">
+          <div className="flex items-center justify-center space-x-8">
             <div className="flex items-center space-x-2 text-sm text-slate-400">
               <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-              <span>AI Engine</span>
+              <span className="font-medium">AI Engine</span>
             </div>
             <div className="flex items-center space-x-2 text-sm text-slate-400">
               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }}></div>
-              <span>Data Streams</span>
+              <span className="font-medium">Data Streams</span>
             </div>
             <div className="flex items-center space-x-2 text-sm text-slate-400">
               <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
-              <span>Analytics</span>
+              <span className="font-medium">Analytics</span>
             </div>
           </div>
         </div>
