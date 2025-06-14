@@ -10,6 +10,7 @@ import {
   Menu,
   X
 } from 'lucide-react'
+import { SentinelLogo } from './SentinelLogo'
 
 interface SidebarProps {
   collapsed: boolean
@@ -33,16 +34,14 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Logo and Toggle */}
       <div className="h-16 flex items-center justify-between px-4 border-b">
         {!collapsed && (
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <BarChart3 className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-lg">Sentinel 2.0</span>
-          </div>
+          <SentinelLogo size="md" showText={true} />
+        )}
+        {collapsed && (
+          <SentinelLogo size="sm" showText={false} />
         )}
         <button
           onClick={onToggle}
-          className="p-2 rounded-lg hover:bg-accent transition-colors"
+          className="p-2 rounded-lg hover:bg-accent transition-colors ml-auto"
         >
           {collapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
         </button>
