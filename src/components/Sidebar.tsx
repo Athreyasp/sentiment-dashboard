@@ -46,7 +46,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Header with Logo and Toggle */}
       <div className={cn(
         "flex items-center justify-center border-b border-slate-700/30 bg-gradient-to-r from-slate-900/50 to-slate-800/50 backdrop-blur-sm relative z-10",
-        collapsed ? "h-20 px-2" : "h-24 px-6"
+        collapsed ? "h-20 px-2 flex-col py-3" : "h-24 px-6"
       )}>
         {!collapsed ? (
           <div className="flex items-center justify-between w-full">
@@ -61,11 +61,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center space-y-3 w-full">
             <SentinelLogo size="sm" showText={false} variant="icon-only" />
             <button
               onClick={onToggle}
-              className="p-2.5 rounded-xl hover:bg-slate-700/40 transition-all duration-300 text-slate-400 hover:text-white group border border-slate-600/20 hover:border-slate-500/40 bg-slate-800/30 backdrop-blur-sm"
+              className="p-2 rounded-xl hover:bg-slate-700/40 transition-all duration-300 text-slate-400 hover:text-white group border border-slate-600/20 hover:border-slate-500/40 bg-slate-800/30 backdrop-blur-sm"
             >
               <Menu className="w-4 h-4 group-hover:scale-110 transition-all duration-300" />
             </button>
@@ -74,8 +74,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       {/* Enhanced Navigation */}
-      <nav className="flex-1 p-4 relative z-10">
-        <div className="space-y-3">
+      <nav className={cn(
+        "flex-1 relative z-10",
+        collapsed ? "p-2" : "p-4"
+      )}>
+        <div className={cn(
+          collapsed ? "space-y-2" : "space-y-3"
+        )}>
           {navigation.map((item, index) => (
             <NavLink
               key={item.name}
@@ -83,7 +88,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               className={({ isActive }) =>
                 cn(
                   "group flex items-center rounded-2xl transition-all duration-300 hover:bg-slate-800/40 hover:backdrop-blur-sm border border-transparent hover:border-slate-600/30 relative overflow-hidden",
-                  collapsed ? "px-3 py-4 justify-center" : "px-5 py-4",
+                  collapsed ? "p-3 justify-center flex-col aspect-square" : "px-5 py-4",
                   isActive 
                     ? "bg-gradient-to-r from-slate-800/60 to-slate-700/40 text-white border-slate-600/40 shadow-xl backdrop-blur-sm" 
                     : "text-slate-300 hover:text-white"
@@ -104,7 +109,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               {/* Enhanced icon container with gradient backgrounds */}
               <div className={cn(
                 "flex items-center justify-center rounded-xl transition-all duration-300 relative overflow-hidden",
-                collapsed ? "w-10 h-10" : "w-12 h-12 mr-4",
+                collapsed ? "w-8 h-8" : "w-12 h-12 mr-4",
                 window.location.pathname === item.href 
                   ? `bg-gradient-to-r ${item.gradient} shadow-lg` 
                   : "bg-slate-700/40 group-hover:bg-slate-600/50 border border-slate-600/20 group-hover:border-slate-500/30"
@@ -116,7 +121,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 
                 <item.icon className={cn(
                   "transition-all duration-300 relative z-10",
-                  collapsed ? "w-5 h-5" : "w-6 h-6",
+                  collapsed ? "w-4 h-4" : "w-6 h-6",
                   window.location.pathname === item.href 
                     ? "text-white scale-110" 
                     : "text-slate-400 group-hover:text-white group-hover:scale-105"
@@ -209,7 +214,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </div>
         </div>
       ) : (
-        <div className="p-3 border-t border-slate-700/30 flex justify-center relative z-10">
+        <div className="p-2 border-t border-slate-700/30 flex justify-center relative z-10">
           <div className="relative group">
             <div className="w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg"></div>
             <div className="absolute left-full ml-4 px-4 py-3 bg-slate-800/95 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap border border-slate-600/50 shadow-2xl backdrop-blur-sm z-50">
