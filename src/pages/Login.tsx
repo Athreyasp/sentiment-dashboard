@@ -43,22 +43,6 @@ export default function Login() {
               Access your <span className="text-blue-400 font-semibold">Sentinel 2.0</span> dashboard
             </p>
           </div>
-          
-          {/* Stats or features */}
-          <div className="flex justify-center space-x-6 mb-8">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-400">10K+</div>
-              <div className="text-xs text-slate-400">Active Users</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400">99.9%</div>
-              <div className="text-xs text-slate-400">Uptime</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-pink-400">24/7</div>
-              <div className="text-xs text-slate-400">Support</div>
-            </div>
-          </div>
         </div>
 
         {/* Login form container */}
