@@ -3,9 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
+/* Enhanced design system with modern fonts and improved visual hierarchy */
 
 @layer base {
   :root {
@@ -37,9 +37,9 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221 83% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Custom FinTech Colors */
+    /* Enhanced FinTech Colors with better contrast */
     --positive: 142 76% 36%;
     --negative: 0 84% 60%;
     --neutral: 43 74% 66%;
@@ -76,7 +76,7 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 180 100% 40%;
 
-    /* Custom FinTech Dark Colors */
+    /* Enhanced FinTech Dark Colors */
     --positive: 142 71% 45%;
     --negative: 0 85% 65%;
     --neutral: 43 74% 70%;
@@ -91,7 +91,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter;
+    @apply bg-background text-foreground;
+    font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   }
 }
 
@@ -131,4 +136,44 @@
   .border-neutral {
     border-color: hsl(var(--neutral));
   }
+
+  /* Grid pattern for backgrounds */
+  .bg-grid-pattern {
+    background-image: radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Enhanced animations */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
 }

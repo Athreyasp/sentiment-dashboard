@@ -9,9 +9,10 @@ interface SentimentCardProps {
   change: string
   sentiment: 'positive' | 'negative' | 'neutral'
   subtitle?: string
+  emoji?: string
 }
 
-export function SentimentCard({ title, value, change, sentiment, subtitle }: SentimentCardProps) {
+export function SentimentCard({ title, value, change, sentiment, subtitle, emoji }: SentimentCardProps) {
   const getSentimentColor = () => {
     switch (sentiment) {
       case 'positive':
@@ -47,7 +48,7 @@ export function SentimentCard({ title, value, change, sentiment, subtitle }: Sen
 
   return (
     <Card className={cn(
-      "hover:shadow-lg transition-all duration-300 hover:scale-105 bg-gradient-to-br border-2 relative overflow-hidden group",
+      "hover:shadow-lg transition-all duration-300 hover:scale-105 bg-gradient-to-br border-2 relative overflow-hidden group cursor-pointer",
       getSentimentGradient()
     )}>
       {/* Subtle background pattern */}
@@ -69,11 +70,14 @@ export function SentimentCard({ title, value, change, sentiment, subtitle }: Sen
           "flex items-center space-x-1 p-2 rounded-lg bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm",
           getSentimentColor()
         )}>
+          {emoji && <span className="text-lg">{emoji}</span>}
           {getSentimentIcon()}
         </div>
       </CardHeader>
       <CardContent className="relative z-10">
-        <div className="text-3xl font-bold text-slate-800 dark:text-white mb-2">{value}</div>
+        <div className="text-3xl font-bold text-slate-800 dark:text-white mb-2 flex items-center">
+          {value}
+        </div>
         <div className={cn("text-sm flex items-center space-x-2", getSentimentColor())}>
           <span className="font-semibold">{change}</span>
           {subtitle && <span className="text-slate-500 dark:text-slate-400">• {subtitle}</span>}
