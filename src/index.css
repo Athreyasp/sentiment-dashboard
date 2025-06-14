@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap');
 
 /* Enhanced design system with modern fonts and improved visual hierarchy */
 
@@ -39,10 +39,10 @@
 
     --radius: 0.75rem;
 
-    /* Enhanced FinTech Colors with better contrast */
-    --positive: 142 76% 36%;
-    --negative: 0 84% 60%;
-    --neutral: 43 74% 66%;
+    /* Custom FinTech Colors */
+    --positive: 142 76% 36%; /* #00C49F */
+    --negative: 0 84% 60%; /* #FF4C4C */
+    --neutral: 43 74% 66%; /* #FBC02D */
     --chart-grid: 214.3 31.8% 91.4%;
     --sidebar-bg: 0 0% 98%;
   }
@@ -92,49 +92,61 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', 'Space Grotesk', system-ui, sans-serif;
+    font-family: 'Inter', 'Space Grotesk', 'Sora', system-ui, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    font-family: 'Space Grotesk', 'Inter', 'Sora', system-ui, sans-serif;
   }
 }
 
 @layer utilities {
+  .font-inter {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  .font-space-grotesk {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+  
+  .font-sora {
+    font-family: 'Sora', system-ui, sans-serif;
+  }
+
   .text-positive {
-    color: hsl(var(--positive));
+    color: #00C49F;
   }
   
   .text-negative {
-    color: hsl(var(--negative));
+    color: #FF4C4C;
   }
   
   .text-neutral {
-    color: hsl(var(--neutral));
+    color: #FBC02D;
   }
   
   .bg-positive {
-    background-color: hsl(var(--positive));
+    background-color: #00C49F;
   }
   
   .bg-negative {
-    background-color: hsl(var(--negative));
+    background-color: #FF4C4C;
   }
   
   .bg-neutral {
-    background-color: hsl(var(--neutral));
+    background-color: #FBC02D;
   }
   
   .border-positive {
-    border-color: hsl(var(--positive));
+    border-color: #00C49F;
   }
   
   .border-negative {
-    border-color: hsl(var(--negative));
+    border-color: #FF4C4C;
   }
   
   .border-neutral {
-    border-color: hsl(var(--neutral));
+    border-color: #FBC02D;
   }
 
   /* Grid pattern for backgrounds */
