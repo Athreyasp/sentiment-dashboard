@@ -2,6 +2,7 @@
 import { Bell, Search, Settings, Sun, Moon, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { UserButton } from '@clerk/clerk-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,6 +62,14 @@ export function Header({ onMenuClick }: HeaderProps) {
         <Button variant="ghost" size="icon">
           <Settings className="w-4 h-4" />
         </Button>
+
+        <UserButton 
+          appearance={{
+            elements: {
+              avatarBox: "w-8 h-8"
+            }
+          }}
+        />
       </div>
     </header>
   )
