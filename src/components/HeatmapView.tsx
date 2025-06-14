@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { TrendingUp, BarChart3 } from 'lucide-react'
+import { BarChart3 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
 const sectorData = [
@@ -49,7 +49,6 @@ export function HeatmapView() {
               key={sector.name}
               className="group relative p-4 rounded-xl border-2 border-white/50 dark:border-slate-600/50 bg-white/70 dark:bg-slate-700/50 hover:bg-white/90 dark:hover:bg-slate-700/70 transition-all duration-200 cursor-pointer hover:scale-105"
             >
-              {/* Sentiment indicator */}
               <div className={`absolute top-2 right-2 w-3 h-3 rounded-full ${getSentimentColor(sector.sentiment)}`}></div>
               
               <div className="space-y-2">
@@ -81,7 +80,7 @@ export function HeatmapView() {
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <span>Negative (<50)</span>
+            <span>Negative (&lt;50)</span>
           </div>
         </div>
       </CardContent>
