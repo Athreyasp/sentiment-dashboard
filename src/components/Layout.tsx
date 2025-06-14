@@ -8,36 +8,42 @@ export function Layout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   return (
-    <div className="min-h-screen bg-background flex w-full">
-      {/* Left Sidebar with Z-layout structure */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex w-full">
+      {/* Enhanced Sidebar */}
       <Sidebar 
         collapsed={sidebarCollapsed} 
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
       />
       
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Header Bar */}
+      {/* Main content area with improved spacing */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Enhanced Header */}
         <Header onMenuClick={() => setSidebarCollapsed(!sidebarCollapsed)} />
         
-        {/* Center-aligned main dashboard */}
-        <main className="flex-1 p-6 overflow-auto bg-gradient-to-br from-background via-background to-accent/5">
-          <div className="max-w-7xl mx-auto">
+        {/* Main dashboard with better container */}
+        <main className="flex-1 overflow-auto">
+          <div className="max-w-7xl mx-auto p-6 space-y-6">
             <Outlet />
           </div>
         </main>
         
-        {/* Trust footer */}
-        <footer className="border-t bg-card/50 backdrop-blur-sm px-6 py-3">
-          <div className="flex items-center justify-center space-x-6 text-xs text-muted-foreground">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-positive rounded-full animate-pulse"></div>
-              <span>🔒 Secure & Encrypted</span>
+        {/* Enhanced trust footer */}
+        <footer className="border-t border-slate-200/50 dark:border-slate-700/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-6 py-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center justify-center space-x-8 text-xs text-slate-600 dark:text-slate-400">
+              <div className="flex items-center space-x-2 group hover:text-green-600 dark:hover:text-green-400 transition-colors">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="font-medium">🔒 Bank-level Security</span>
+              </div>
+              <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+              <div className="flex items-center space-x-2 group hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <span className="font-medium">🤖 AI-Powered Analytics</span>
+              </div>
+              <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
+              <div className="flex items-center space-x-2 group hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                <span className="font-medium">⚡ Real-time Data Feed</span>
+              </div>
             </div>
-            <span>•</span>
-            <span>🤖 AI-backed insights</span>
-            <span>•</span>
-            <span>Real-time market data</span>
           </div>
         </footer>
       </div>
