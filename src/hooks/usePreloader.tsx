@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react'
 
-export function usePreloader(minLoadTime: number = 10000) {
+export function usePreloader(minLoadTime: number = 5000) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
