@@ -18,6 +18,7 @@ import Portfolio from "./pages/Portfolio";
 import Alerts from "./pages/Alerts";
 import Explainer from "./pages/Explainer";
 import News from "./pages/News";
+import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
@@ -62,6 +63,7 @@ const AppContent = () => {
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="alerts" element={<Alerts />} />
           <Route path="explainer" element={<Explainer />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
         
         <Route path="*" element={<NotFound />} />
