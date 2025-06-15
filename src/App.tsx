@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,7 @@ import { Preloader } from "@/components/Preloader";
 import { Layout } from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AuthLayout } from "@/components/AuthLayout";
+import Homepage from "./pages/Homepage";
 import Dashboard from "./pages/Dashboard";
 import TickerInsights from "./pages/TickerInsights";
 import Portfolio from "./pages/Portfolio";
@@ -35,6 +37,7 @@ const AppContent = () => {
     <BrowserRouter>
       <Routes>
         {/* Public routes */}
+        <Route path="/" element={<Homepage />} />
         <Route path="/login" element={
           <AuthLayout>
             <Login />
@@ -47,13 +50,12 @@ const AppContent = () => {
         } />
         
         {/* Protected routes */}
-        <Route path="/" element={
+        <Route path="/dashboard" element={
           <ProtectedRoute>
             <Layout />
           </ProtectedRoute>
         }>
           <Route index element={<Dashboard />} />
-          <Route path="dashboard" element={<Dashboard />} />
           <Route path="ticker" element={<TickerInsights />} />
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="alerts" element={<Alerts />} />
