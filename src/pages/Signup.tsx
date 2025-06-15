@@ -76,6 +76,7 @@ export default function Signup() {
         <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-1 shadow-2xl">
           <div className="bg-gradient-to-b from-white/5 to-white/10 rounded-xl p-6">
             <SignUp 
+              fallbackRedirectUrl="/dashboard"
               appearance={{
                 elements: {
                   rootBox: "mx-auto",
@@ -96,7 +97,6 @@ export default function Signup() {
                   formHeaderSubtitle: "text-slate-600"
                 }
               }}
-              redirectUrl="/dashboard"
             />
           </div>
         </div>

@@ -48,6 +48,7 @@ export default function Login() {
             
             <div className="relative z-10">
               <SignIn 
+                fallbackRedirectUrl="/dashboard"
                 appearance={{
                   elements: {
                     rootBox: "mx-auto",
@@ -68,7 +69,6 @@ export default function Login() {
                     formHeaderSubtitle: "text-slate-600 text-sm md:text-base"
                   }
                 }}
-                redirectUrl="/dashboard"
               />
             </div>
           </div>
