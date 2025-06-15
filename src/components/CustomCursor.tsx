@@ -5,10 +5,20 @@ export function CustomCursor() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovering, setIsHovering] = useState(false)
   const [isClicking, setIsClicking] = useState(false)
+  const [trail, setTrail] = useState<Array<{ x: number; y: number; id: number }>>([])
 
   useEffect(() => {
+    let trailId = 0
+
     const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
+      const newPos = { x: e.clientX, y: e.clientY }
+      setMousePosition(newPos)
+      
+      // Add trail effect
+      setTrail(prev => {
+        const newTrail = [...prev, { ...newPos, id: trailId++ }].slice(-8)
+        return newTrail
+      })
     }
 
     const handleMouseDown = () => setIsClicking(true)
@@ -16,14 +26,14 @@ export function CustomCursor() {
 
     const handleMouseEnter = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      if (target.matches('button, a, [role="button"], input, textarea, select')) {
+      if (target.matches('button, a, [role="button"], input, textarea, select, .hover-target')) {
         setIsHovering(true)
       }
     }
 
     const handleMouseLeave = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      if (target.matches('button, a, [role="button"], input, textarea, select')) {
+      if (target.matches('button, a, [role="button"], input, textarea, select, .hover-target')) {
         setIsHovering(false)
       }
     }
@@ -54,79 +64,157 @@ export function CustomCursor() {
   }, [])
 
   return (
-    <div
-      className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-200 ease-out ${
-        isClicking ? 'scale-90' : isHovering ? 'scale-125' : 'scale-100'
-      }`}
-      style={{
-        transform: `translate(${mousePosition.x - 6}px, ${mousePosition.y - 6}px)`,
-      }}
-    >
-      {/* Custom SVG Arrow Cursor */}
-      <svg
-        width="32"
-        height="32"
-        viewBox="0 0 32 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className={`transition-all duration-300 ${
-          isHovering ? 'drop-shadow-lg' : 'drop-shadow-sm'
+    <>
+      {/* Trail particles */}
+      {trail.map((point, index) => (
+        <div
+          key={point.id}
+          className="fixed top-0 left-0 pointer-events-none z-[9998] transition-all duration-1000 ease-out"
+          style={{
+            transform: `translate(${point.x - 2}px, ${point.y - 2}px)`,
+            opacity: (index + 1) / trail.length * 0.6,
+          }}
+        >
+          <div 
+            className="w-1 h-1 rounded-full bg-[#00C49F] animate-pulse"
+            style={{
+              animationDelay: `${index * 50}ms`,
+              transform: `scale(${(index + 1) / trail.length})`,
+            }}
+          />
+        </div>
+      ))}
+
+      {/* Main cursor */}
+      <div
+        className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-150 ease-out ${
+          isClicking ? 'scale-75' : isHovering ? 'scale-150' : 'scale-100'
         }`}
+        style={{
+          transform: `translate(${mousePosition.x - 16}px, ${mousePosition.y - 16}px)`,
+        }}
       >
-        {/* Outer glow effect */}
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <feMerge> 
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        
-        {/* Main arrow shape */}
-        <path
-          d="M4 4 L4 20 L10 14 L14 18 L18 14 L10 10 L16 4 Z"
-          fill="#00C49F"
-          stroke="#ffffff"
-          strokeWidth="1"
-          filter="url(#glow)"
-          className="transition-all duration-200"
-        />
-        
-        {/* Inner highlight for futuristic effect */}
-        <path
-          d="M6 6 L6 16 L9 13 L12 16 L15 13 L9 9 L14 6 Z"
-          fill="rgba(255, 255, 255, 0.2)"
-          className={`transition-opacity duration-200 ${
-            isHovering ? 'opacity-40' : 'opacity-20'
+        {/* Outer glow ring */}
+        <div 
+          className={`absolute inset-0 rounded-full transition-all duration-300 ${
+            isHovering 
+              ? 'bg-[#00C49F]/20 scale-150 animate-pulse' 
+              : 'bg-[#00C49F]/10 scale-100'
           }`}
+          style={{
+            width: '32px',
+            height: '32px',
+            filter: 'blur(8px)',
+          }}
         />
-      </svg>
-      
-      {/* Animated trailing dots */}
-      <div
-        className={`absolute top-1/2 left-1/2 w-2 h-2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${
-          isHovering 
-            ? 'bg-[#00C49F]/40 scale-150 animate-pulse' 
-            : 'bg-[#00C49F]/20 scale-100'
-        }`}
-        style={{
-          animationDelay: '0ms'
-        }}
-      />
-      
-      <div
-        className={`absolute top-1/2 left-1/2 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-700 ${
-          isHovering 
-            ? 'bg-[#00C49F]/30 scale-125' 
-            : 'bg-[#00C49F]/15 scale-75'
-        }`}
-        style={{
-          transform: `translate(calc(-50% - 8px), calc(-50% - 8px)) scale(${isHovering ? 1.25 : 0.75})`,
-          animationDelay: '100ms'
-        }}
-      />
-    </div>
+
+        {/* Custom SVG Arrow Cursor */}
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={`relative z-10 transition-all duration-200 ${
+            isHovering ? 'drop-shadow-2xl' : 'drop-shadow-lg'
+          }`}
+        >
+          {/* Enhanced glow effect */}
+          <defs>
+            <filter id="enhanced-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feColorMatrix
+                in="coloredBlur"
+                type="matrix"
+                values="0 0 0 0 0
+                        0 0 0 0 0.769
+                        0 0 0 0 0.624
+                        0 0 0 1 0"
+              />
+              <feMerge> 
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            
+            <linearGradient id="arrow-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#00E5B8" />
+              <stop offset="50%" stopColor="#00C49F" />
+              <stop offset="100%" stopColor="#00A085" />
+            </linearGradient>
+          </defs>
+          
+          {/* Main arrow shape with gradient */}
+          <path
+            d="M6 6 L6 22 L12 16 L16 20 L20 16 L12 12 L18 6 Z"
+            fill="url(#arrow-gradient)"
+            stroke="#ffffff"
+            strokeWidth="1.5"
+            filter="url(#enhanced-glow)"
+            className={`transition-all duration-200 ${
+              isClicking ? 'scale-90' : 'scale-100'
+            }`}
+          />
+          
+          {/* Inner highlight with animation */}
+          <path
+            d="M8 8 L8 18 L11 15 L14 18 L17 15 L11 11 L16 8 Z"
+            fill="rgba(255, 255, 255, 0.3)"
+            className={`transition-all duration-300 ${
+              isHovering ? 'opacity-60 animate-pulse' : 'opacity-30'
+            }`}
+          />
+
+          {/* Dynamic accent dots */}
+          <circle
+            cx="10"
+            cy="10"
+            r="1"
+            fill="#ffffff"
+            className={`transition-all duration-500 ${
+              isHovering ? 'opacity-80 animate-ping' : 'opacity-40'
+            }`}
+          />
+          
+          <circle
+            cx="14"
+            cy="14"
+            r="0.8"
+            fill="#00E5B8"
+            className={`transition-all duration-700 ${
+              isHovering ? 'opacity-70 animate-pulse' : 'opacity-30'
+            }`}
+            style={{ animationDelay: '200ms' }}
+          />
+        </svg>
+
+        {/* Orbiting particles */}
+        {isHovering && (
+          <>
+            <div 
+              className="absolute w-1 h-1 bg-[#00C49F] rounded-full animate-spin"
+              style={{
+                top: '50%',
+                left: '50%',
+                transformOrigin: '0 0',
+                transform: 'translate(-50%, -50%) rotate(0deg) translateX(20px)',
+                animationDuration: '2s',
+              }}
+            />
+            <div 
+              className="absolute w-0.5 h-0.5 bg-[#00E5B8] rounded-full animate-spin"
+              style={{
+                top: '50%',
+                left: '50%',
+                transformOrigin: '0 0',
+                transform: 'translate(-50%, -50%) rotate(120deg) translateX(16px)',
+                animationDuration: '3s',
+                animationDirection: 'reverse',
+              }}
+            />
+          </>
+        )}
+      </div>
+    </>
   )
 }
