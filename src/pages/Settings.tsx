@@ -1,5 +1,6 @@
 
 import { useState } from 'react'
+import { useUser } from '@clerk/clerk-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react'
 
 export default function Settings() {
+  const { user } = useUser()
   const { theme, setTheme } = useTheme()
   const [showApiKey, setShowApiKey] = useState(false)
   const [notifications, setNotifications] = useState({
@@ -36,6 +38,20 @@ export default function Settings() {
     alerts: true,
     newsletter: false
   })
+
+  // Get user initials for avatar fallback
+  const getUserInitials = () => {
+    if (user?.firstName && user?.lastName) {
+      return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+    }
+    if (user?.firstName) {
+      return user.firstName.charAt(0)
+    }
+    if (user?.emailAddresses?.[0]?.emailAddress) {
+      return user.emailAddresses[0].emailAddress.charAt(0).toUpperCase()
+    }
+    return 'U'
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -88,9 +104,9 @@ export default function Settings() {
             <CardContent className="space-y-6">
               <div className="flex items-center gap-6">
                 <Avatar className="w-20 h-20">
-                  <AvatarImage src="/placeholder.svg" />
+                  <AvatarImage src={user?.imageUrl} />
                   <AvatarFallback className="text-lg font-semibold bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
-                    JD
+                    {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
@@ -106,27 +122,27 @@ export default function Settings() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" defaultValue="John" />
+                  <Input id="firstName" defaultValue={user?.firstName || ''} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" defaultValue="Doe" />
+                  <Input id="lastName" defaultValue={user?.lastName || ''} />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" defaultValue="john.doe@example.com" />
+                <Input id="email" type="email" defaultValue={user?.emailAddresses?.[0]?.emailAddress || ''} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" type="tel" defaultValue="+1 (555) 123-4567" />
+                <Input id="phone" type="tel" defaultValue={user?.phoneNumbers?.[0]?.phoneNumber || ''} />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="company">Company</Label>
-                <Input id="company" defaultValue="Acme Corp" />
+                <Label htmlFor="username">Username</Label>
+                <Input id="username" defaultValue={user?.username || ''} />
               </div>
 
               <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700">
