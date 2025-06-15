@@ -1,3 +1,4 @@
+
 import React from 'react'
 import {
   BrowserRouter as Router,
@@ -7,18 +8,18 @@ import {
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
 import { useUser } from '@clerk/clerk-react'
 import { useAuth } from '@clerk/clerk-react'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
 import { usePreloader } from './hooks/usePreloader'
 
-import { Login } from './pages/Login'
-import { Signup } from './pages/Signup'
-import { Dashboard } from './pages/Dashboard'
-import { TickerInsights } from './pages/TickerInsights'
-import { Portfolio } from './pages/Portfolio'
-import { Alerts } from './pages/Alerts'
-import { Explainer } from './pages/Explainer'
-import { NotFound } from './pages/NotFound'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import Dashboard from './pages/Dashboard'
+import TickerInsights from './pages/TickerInsights'
+import Portfolio from './pages/Portfolio'
+import Alerts from './pages/Alerts'
+import Explainer from './pages/Explainer'
+import NotFound from './pages/NotFound'
 import { Preloader } from './components/Preloader'
 import { ModernLayout } from './components/ModernLayout'
 import { ThemeProvider } from './hooks/useTheme'
@@ -30,9 +31,9 @@ if (!clerkPubKey) {
 }
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isSignedIn, isLoading } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
 
-  if (isLoading) {
+  if (!isLoaded) {
     return <div>Loading...</div>;
   }
 
@@ -48,7 +49,7 @@ const queryClient = new QueryClient()
 const publishableKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY!;
 
 function App() {
-  const { isLoading } = usePreloader()
+  const isLoading = usePreloader()
 
   if (isLoading) {
     return <Preloader />
