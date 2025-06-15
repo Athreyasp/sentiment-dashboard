@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,7 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from '@clerk/clerk-react';
 import { ThemeProvider } from "@/hooks/useTheme";
 import { usePreloader } from "@/hooks/usePreloader";
+import { useCursor } from "@/hooks/useCursor";
 import { Preloader } from "@/components/Preloader";
+import { CustomCursor } from "@/components/CustomCursor";
 import { Layout } from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AuthLayout } from "@/components/AuthLayout";
@@ -30,45 +31,49 @@ const CLERK_PUBLISHABLE_KEY = "pk_test_aW5jbHVkZWQtdXJjaGluLTE0LmNsZXJrLmFjY291b
 
 const AppContent = () => {
   const { isLoading } = usePreloader({ minLoadTime: 5000 });
+  const { showCustomCursor } = useCursor();
 
   if (isLoading) {
     return <Preloader />;
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Homepage />} />
-        <Route path="/login" element={
-          <AuthLayout>
-            <Login />
-          </AuthLayout>
-        } />
-        <Route path="/signup" element={
-          <AuthLayout>
-            <Signup />
-          </AuthLayout>
-        } />
-        
-        {/* Protected routes */}
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }>
-          <Route index element={<Dashboard />} />
-          <Route path="ticker" element={<TickerInsights />} />
-          <Route path="news" element={<News />} />
-          <Route path="portfolio" element={<Portfolio />} />
-          <Route path="alerts" element={<Alerts />} />
-          <Route path="explainer" element={<Explainer />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-        
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      {showCustomCursor && <CustomCursor />}
+      <BrowserRouter>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={
+            <AuthLayout>
+              <Login />
+            </AuthLayout>
+          } />
+          <Route path="/signup" element={
+            <AuthLayout>
+              <Signup />
+            </AuthLayout>
+          } />
+          
+          {/* Protected routes */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Dashboard />} />
+            <Route path="ticker" element={<TickerInsights />} />
+            <Route path="news" element={<News />} />
+            <Route path="portfolio" element={<Portfolio />} />
+            <Route path="alerts" element={<Alerts />} />
+            <Route path="explainer" element={<Explainer />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+          
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 };
 
