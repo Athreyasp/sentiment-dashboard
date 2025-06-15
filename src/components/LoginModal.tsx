@@ -17,9 +17,9 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl w-full h-[90vh] p-0 border-0 bg-transparent overflow-hidden">
-        <div className="flex h-full">
+        <div className="flex flex-col md:flex-row h-full">
           {/* Left Panel - Branding */}
-          <div className="flex-1 bg-gradient-to-br from-[#00C49F] via-[#00B090] to-[#009980] dark:from-[#00C49F] dark:via-[#00A085] dark:to-[#008775] relative overflow-hidden flex flex-col justify-center items-center p-12 text-white">
+          <div className="flex-1 bg-gradient-to-br from-[#00C49F] via-[#00B090] to-[#009980] dark:from-[#00C49F] dark:via-[#00A085] dark:to-[#008775] relative overflow-hidden flex flex-col justify-center items-center p-12 text-white min-h-[40vh] md:min-h-full">
             {/* Animated background elements */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl animate-pulse"></div>
@@ -62,7 +62,7 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
           </div>
 
           {/* Right Panel - Login Form */}
-          <div className="flex-1 bg-white dark:bg-slate-900 relative flex flex-col justify-center items-center p-12">
+          <div className="flex-1 bg-white dark:bg-slate-900 relative flex flex-col justify-center items-center p-12 min-h-[60vh] md:min-h-full">
             {/* Close button */}
             <button
               onClick={() => onOpenChange(false)}
@@ -137,21 +137,6 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
             </div>
           </div>
         </div>
-
-        {/* Mobile responsive - stack vertically */}
-        <style jsx>{`
-          @media (max-width: 768px) {
-            .flex {
-              flex-direction: column;
-            }
-            .flex-1:first-child {
-              min-height: 40vh;
-            }
-            .flex-1:last-child {
-              min-height: 60vh;
-            }
-          }
-        `}</style>
       </DialogContent>
     </Dialog>
   )
