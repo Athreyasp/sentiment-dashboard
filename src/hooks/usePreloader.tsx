@@ -12,5 +12,5 @@ export function usePreloader(minLoadTime: number = 5000) {
     return () => clearTimeout(timer)
   }, [minLoadTime])
 
-  return { isLoading }
+  return isLoading
 }
