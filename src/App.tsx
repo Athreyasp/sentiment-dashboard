@@ -21,8 +21,9 @@ import NotFound from '@/pages/NotFound'
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
+// If no key is provided, show a development message
 if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key")
+  console.warn("Missing Clerk Publishable Key. Authentication features will be limited.")
 }
 
 const queryClient = new QueryClient()
@@ -32,6 +33,24 @@ function App() {
 
   if (isLoading) {
     return <Preloader />
+  }
+
+  // If no Clerk key, show app without authentication
+  if (!PUBLISHABLE_KEY) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
+            <div className="text-center text-white p-8">
+              <h1 className="text-4xl font-bold mb-4">Sentinel Dashboard</h1>
+              <p className="text-xl mb-6">Please configure your Clerk publishable key to enable authentication.</p>
+              <p className="text-slate-300">Add VITE_CLERK_PUBLISHABLE_KEY to your environment variables.</p>
+            </div>
+          </div>
+          <Toaster />
+        </ThemeProvider>
+      </QueryClientProvider>
+    )
   }
 
   return (
