@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { SentinelLogo } from '@/components/SentinelLogo'
 import { LoginModal } from '@/components/LoginModal'
+import { Preloader } from '@/components/Preloader'
+import { usePreloader } from '@/hooks/usePreloader'
 import { useTheme } from '@/hooks/useTheme'
 import { 
   Sun, 
@@ -31,6 +33,21 @@ export default function Homepage() {
   const { theme, setTheme } = useTheme()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [pageLoaded, setPageLoaded] = useState(false)
+  
+  const { isLoading, isExiting } = usePreloader({
+    minLoadTime: 5000,
+    onComplete: () => setPageLoaded(true)
+  })
+
+  // Show preloader during initial load
+  if (isLoading) {
+    return (
+      <div className={`transition-all duration-800 ease-in-out ${isExiting ? 'opacity-0 scale-105' : 'opacity-100 scale-100'}`}>
+        <Preloader />
+      </div>
+    )
+  }
 
   const features = [
     {
@@ -94,7 +111,7 @@ export default function Homepage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-emerald-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20 overflow-x-hidden">
+      <div className={`min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-emerald-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20 overflow-x-hidden transition-all duration-1000 ease-out ${pageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
         {/* Animated background elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
@@ -102,7 +119,7 @@ export default function Homepage() {
         </div>
 
         {/* Header */}
-        <header className="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-slate-900/5">
+        <header className={`sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-slate-900/5 transition-all duration-800 ${pageLoaded ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-18">
               {/* Logo */}
@@ -207,8 +224,8 @@ export default function Homepage() {
           </div>
         </header>
 
-        {/* Hero Section */}
-        <section className="py-20 lg:py-32 relative">
+        {/* Hero Section with enhanced entrance animations */}
+        <section className={`py-20 lg:py-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-in">
@@ -313,7 +330,7 @@ export default function Homepage() {
         </section>
 
         {/* How Sentinel Works */}
-        <section id="how-it-works" className="py-20 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm">
+        <section id="how-it-works" className={`py-20 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm transition-all duration-1000 delay-500 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-20">
               <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800 mb-6">
@@ -362,7 +379,7 @@ export default function Homepage() {
         </section>
 
         {/* Features Grid */}
-        <section id="features" className="py-20">
+        <section id="features" className={`py-20 transition-all duration-1000 delay-700 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-20">
               <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-4 py-2 rounded-full border border-purple-200 dark:border-purple-800 mb-6">
@@ -407,7 +424,7 @@ export default function Homepage() {
         </section>
 
         {/* Call to Action */}
-        <section className="py-20 bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 relative overflow-hidden">
+        <section className={`py-20 bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 relative overflow-hidden transition-all duration-1000 delay-900 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           {/* Animated background elements */}
           <div className="absolute inset-0">
             <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
@@ -440,7 +457,7 @@ export default function Homepage() {
         </section>
 
         {/* Footer */}
-        <footer id="contact" className="bg-slate-900 dark:bg-slate-950 text-white py-20 relative overflow-hidden">
+        <footer id="contact" className={`bg-slate-900 dark:bg-slate-950 text-white py-20 relative overflow-hidden transition-all duration-1000 delay-1000 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           {/* Background pattern */}
           <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
           
