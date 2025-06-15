@@ -4,16 +4,16 @@ import { ModernSentinelLogo } from './ModernSentinelLogo'
 
 export function Preloader() {
   const [progress, setProgress] = useState(0)
-  const [loadingText, setLoadingText] = useState('Initializing AI systems...')
+  const [loadingText, setLoadingText] = useState('Initializing...')
   const [showSkip, setShowSkip] = useState(false)
 
   const loadingMessages = [
-    'Initializing AI systems...',
-    'Loading market data...',
-    'Analyzing sentiment patterns...',
-    'Connecting to neural networks...',
+    'Initializing...',
+    'Loading AI systems...',
+    'Connecting to markets...',
+    'Analyzing data streams...',
     'Preparing dashboard...',
-    'Welcome to Sentinel!'
+    'Welcome to Sentinel'
   ]
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export function Preloader() {
 
     const timer = setInterval(() => {
       setProgress((prev) => {
-        const newProgress = prev + Math.random() * 12 + 8
+        const newProgress = prev + Math.random() * 8 + 4
         
         // Update loading text based on progress
         const messageIndex = Math.min(
@@ -33,12 +33,12 @@ export function Preloader() {
         
         if (newProgress >= 100) {
           clearInterval(timer)
-          setLoadingText('Welcome to Sentinel!')
+          setLoadingText('Welcome to Sentinel')
           return 100
         }
         return newProgress
       })
-    }, 150)
+    }, 120)
 
     return () => {
       clearInterval(timer)
@@ -48,170 +48,149 @@ export function Preloader() {
 
   return (
     <>
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-blue-950/80 to-purple-950/60 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20 flex items-center justify-center z-50 overflow-hidden">
-        {/* Animated particle field background */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          {/* Large floating orbs */}
-          <div className="absolute top-10 left-10 w-64 h-64 bg-gradient-to-r from-cyan-400/10 via-blue-500/15 to-purple-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }}></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-emerald-400/10 via-cyan-500/15 to-blue-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s', animationDuration: '6s' }}></div>
-          <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-gradient-to-r from-purple-400/8 to-pink-500/12 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s', animationDuration: '5s' }}></div>
+      <div className="fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center z-50 overflow-hidden">
+        {/* Background grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.05)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        
+        {/* Floating geometric shapes */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-20 w-32 h-32 border border-cyan-500/20 rounded-full animate-pulse" style={{ animationDuration: '4s' }}></div>
+          <div className="absolute bottom-20 right-20 w-24 h-24 border border-blue-500/20 rounded-lg rotate-45 animate-pulse" style={{ animationDelay: '1s', animationDuration: '3s' }}></div>
+          <div className="absolute top-1/3 right-1/4 w-16 h-16 border border-emerald-500/20 rounded-full animate-pulse" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
           
-          {/* Floating particles */}
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full animate-pulse opacity-60"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 4}s`
-              }}
-            />
-          ))}
-          
-          {/* Grid pattern overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.1),transparent_70%)]"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_80%,rgba(139,69,219,0.08),transparent_60%)]"></div>
+          {/* Gradient orbs */}
+          <div className="absolute top-1/4 left-1/3 w-48 h-48 bg-gradient-to-r from-cyan-400/10 to-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s' }}></div>
+          <div className="absolute bottom-1/3 right-1/3 w-64 h-64 bg-gradient-to-r from-emerald-400/8 to-cyan-500/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '3s', animationDuration: '8s' }}></div>
         </div>
 
         {/* Skip button */}
         {showSkip && (
           <button 
-            className="absolute top-8 right-8 text-slate-400 hover:text-white text-sm font-medium transition-all duration-300 hover:scale-105 z-10"
+            className="absolute top-8 right-8 text-slate-400 hover:text-cyan-400 text-sm font-medium transition-all duration-300 hover:scale-105 z-10 px-4 py-2 rounded-lg border border-slate-700/50 hover:border-cyan-500/50 bg-slate-900/50 backdrop-blur-sm"
             onClick={() => window.location.reload()}
           >
             Skip →
           </button>
         )}
 
-        {/* Main content container */}
-        <div className="text-center relative z-10 max-w-lg mx-auto px-6">
-          {/* Logo section with enhanced 3D animation */}
-          <div className="mb-16 relative">
-            {/* Outer glow rings for 3D depth */}
+        {/* Main content */}
+        <div className="text-center relative z-10 max-w-md mx-auto px-6">
+          {/* Logo section */}
+          <div className="mb-12 relative">
+            {/* Outer rotating ring */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-40 h-40 rounded-full border-2 border-cyan-400/20 animate-ping" style={{ animationDuration: '3s' }}></div>
-              <div className="absolute w-32 h-32 rounded-full border border-blue-400/30 animate-ping" style={{ animationDelay: '1s', animationDuration: '3s' }}></div>
-              <div className="absolute w-24 h-24 rounded-full border border-purple-400/20 animate-ping" style={{ animationDelay: '2s', animationDuration: '3s' }}></div>
+              <div className="w-32 h-32 border-2 border-transparent bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 rounded-full p-[2px] animate-spin" style={{ animationDuration: '3s' }}>
+                <div className="w-full h-full bg-slate-950 rounded-full"></div>
+              </div>
             </div>
             
-            {/* Main logo with 3D rotation and glow */}
-            <div className="relative animate-pulse">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/30 via-blue-500/40 to-purple-600/30 rounded-full blur-xl animate-pulse"></div>
-              <div 
-                className="relative transform transition-all duration-1000 hover:scale-110 logo-rotate"
-                style={{
-                  filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))'
-                }}
-              >
+            {/* Inner pulsing ring */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-24 h-24 border border-cyan-400/30 rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
+            </div>
+            
+            {/* Logo with glow */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-blue-500/20 to-emerald-500/20 rounded-full blur-xl animate-pulse"></div>
+              <div className="relative transform hover:scale-110 transition-transform duration-1000">
                 <ModernSentinelLogo 
                   size="xl" 
                   variant="hero" 
                   showText={false}
-                  className="relative z-10"
+                  className="drop-shadow-[0_0_20px_rgba(6,182,212,0.3)]"
                 />
               </div>
             </div>
           </div>
 
-          {/* Enhanced loading animation section */}
-          <div className="space-y-10">
-            {/* Main loading spinner with 3D depth */}
-            <div className="flex justify-center mb-8">
-              <div className="w-20 h-20 relative">
-                {/* Multiple depth rings */}
-                <div className="absolute inset-0 border-2 border-slate-700/30 rounded-full"></div>
-                <div className="absolute inset-1 border-2 border-slate-600/20 rounded-full"></div>
-                
-                {/* Animated gradient ring */}
-                <div className="absolute inset-0 border-4 border-transparent rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-spin" style={{ 
-                  mask: 'conic-gradient(transparent 0deg, black 90deg)',
-                  WebkitMask: 'conic-gradient(transparent 0deg, black 90deg)'
-                }}></div>
-                
-                {/* Inner pulsing core */}
-                <div className="absolute inset-3 bg-gradient-to-br from-cyan-400/30 via-blue-500/40 to-purple-600/30 rounded-full animate-pulse blur-sm"></div>
-                <div className="absolute inset-6 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-full animate-pulse"></div>
-                
-                {/* Center dot with glow */}
-                <div className="absolute inset-8 bg-white rounded-full animate-pulse shadow-lg shadow-cyan-500/50"></div>
+          {/* Progress section */}
+          <div className="space-y-8">
+            {/* Loading spinner */}
+            <div className="flex justify-center mb-6">
+              <div className="w-16 h-16 relative">
+                <div className="absolute inset-0 border-2 border-slate-800 rounded-full"></div>
+                <div 
+                  className="absolute inset-0 border-2 border-transparent bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full animate-spin"
+                  style={{ 
+                    maskImage: 'conic-gradient(transparent 0deg, black 90deg)',
+                    WebkitMaskImage: 'conic-gradient(transparent 0deg, black 90deg)'
+                  }}
+                ></div>
+                <div className="absolute inset-2 bg-gradient-to-br from-cyan-400/20 to-blue-500/20 rounded-full animate-pulse blur-sm"></div>
+                <div className="absolute inset-4 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full animate-pulse"></div>
+                <div className="absolute inset-6 bg-white rounded-full shadow-lg shadow-cyan-500/30"></div>
               </div>
             </div>
 
-            {/* Enhanced progress bar with glow */}
-            <div className="w-full max-w-md mx-auto">
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-full h-3 overflow-hidden border border-slate-600/30 shadow-inner">
+            {/* Progress bar */}
+            <div className="w-full max-w-xs mx-auto">
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-full h-2 overflow-hidden border border-slate-700/30">
                 <div 
-                  className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 via-purple-500 to-emerald-500 transition-all duration-500 ease-out relative overflow-hidden rounded-full"
+                  className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-500 transition-all duration-300 ease-out relative overflow-hidden rounded-full"
                   style={{ 
                     width: `${Math.min(progress, 100)}%`,
-                    boxShadow: '0 0 20px rgba(6, 182, 212, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.2)'
+                    boxShadow: '0 0 10px rgba(6, 182, 212, 0.5)'
                   }}
                 >
-                  {/* Shimmer effect with enhanced glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-300/60 to-transparent animate-ping" style={{ animationDuration: '2s' }}></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
                 </div>
               </div>
             </div>
 
-            {/* Progress percentage with glow effect */}
-            <div className="text-cyan-400 text-2xl font-bold mb-6" style={{ 
-              textShadow: '0 0 20px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.4)' 
+            {/* Progress percentage */}
+            <div className="text-cyan-400 text-xl font-semibold mb-4" style={{ 
+              textShadow: '0 0 10px rgba(6, 182, 212, 0.5)' 
             }}>
               {Math.round(Math.min(progress, 100))}%
             </div>
 
-            {/* Loading text with typewriter effect */}
-            <div className="text-slate-300 animate-pulse mb-10 min-h-[32px]">
-              <span className="font-medium text-xl bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+            {/* Loading text */}
+            <div className="text-slate-300 mb-8 min-h-[24px]">
+              <span className="font-medium text-lg bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                 {loadingText}
               </span>
             </div>
 
-            {/* Enhanced status indicators with 3D feel */}
-            <div className="flex items-center justify-center space-x-12 flex-wrap gap-3">
-              <div className="flex items-center space-x-3 text-sm text-slate-400 group hover:text-cyan-400 transition-all duration-300">
+            {/* Status indicators */}
+            <div className="flex items-center justify-center space-x-8 flex-wrap gap-2">
+              <div className="flex items-center space-x-2 text-sm text-slate-400">
                 <div className="relative">
-                  <div className="w-3 h-3 bg-gradient-to-r from-emerald-400 to-green-500 rounded-full animate-pulse shadow-lg shadow-emerald-500/60"></div>
-                  <div className="absolute inset-0 w-3 h-3 bg-emerald-400 rounded-full animate-ping opacity-30"></div>
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-500/50"></div>
+                  <div className="absolute inset-0 w-2 h-2 bg-emerald-400 rounded-full animate-ping opacity-20"></div>
                 </div>
-                <span className="font-semibold group-hover:scale-105 transition-transform">AI Engine</span>
+                <span className="font-medium">AI Systems</span>
               </div>
               
-              <div className="flex items-center space-x-3 text-sm text-slate-400 group hover:text-blue-400 transition-all duration-300">
+              <div className="flex items-center space-x-2 text-sm text-slate-400">
                 <div className="relative">
-                  <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full animate-pulse shadow-lg shadow-blue-500/60" style={{ animationDelay: '0.3s' }}></div>
-                  <div className="absolute inset-0 w-3 h-3 bg-blue-400 rounded-full animate-ping opacity-30" style={{ animationDelay: '0.3s' }}></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-500/50" style={{ animationDelay: '0.3s' }}></div>
+                  <div className="absolute inset-0 w-2 h-2 bg-blue-400 rounded-full animate-ping opacity-20" style={{ animationDelay: '0.3s' }}></div>
                 </div>
-                <span className="font-semibold group-hover:scale-105 transition-transform">Data Streams</span>
+                <span className="font-medium">Data Streams</span>
               </div>
               
-              <div className="flex items-center space-x-3 text-sm text-slate-400 group hover:text-purple-400 transition-all duration-300">
+              <div className="flex items-center space-x-2 text-sm text-slate-400">
                 <div className="relative">
-                  <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full animate-pulse shadow-lg shadow-purple-500/60" style={{ animationDelay: '0.6s' }}></div>
-                  <div className="absolute inset-0 w-3 h-3 bg-purple-400 rounded-full animate-ping opacity-30" style={{ animationDelay: '0.6s' }}></div>
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse shadow-lg shadow-cyan-500/50" style={{ animationDelay: '0.6s' }}></div>
+                  <div className="absolute inset-0 w-2 h-2 bg-cyan-400 rounded-full animate-ping opacity-20" style={{ animationDelay: '0.6s' }}></div>
                 </div>
-                <span className="font-semibold group-hover:scale-105 transition-transform">Neural Analytics</span>
+                <span className="font-medium">Analytics</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Custom CSS for animations */}
+      {/* Custom animations */}
       <style dangerouslySetInnerHTML={{
         __html: `
-          @keyframes logoRotate {
-            0%, 100% { transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1); }
-            25% { transform: perspective(1000px) rotateY(15deg) rotateX(5deg) scale(1.05); }
-            50% { transform: perspective(1000px) rotateY(0deg) rotateX(10deg) scale(1.1); }
-            75% { transform: perspective(1000px) rotateY(-15deg) rotateX(5deg) scale(1.05); }
+          @keyframes modernPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
           }
           
-          .logo-rotate {
-            animation: logoRotate 6s ease-in-out infinite;
+          .animate-modern-pulse {
+            animation: modernPulse 2s ease-in-out infinite;
           }
         `
       }} />
