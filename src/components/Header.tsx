@@ -1,15 +1,7 @@
 
-import { Bell, Search, Settings, Sun, Moon, Monitor, User } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { UserButton } from '@clerk/clerk-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { useTheme } from '@/hooks/useTheme'
 import { SentinelLogo } from './SentinelLogo'
 
 interface HeaderProps {
@@ -17,8 +9,6 @@ interface HeaderProps {
 }
 
 export function Header({ onMenuClick }: HeaderProps) {
-  const { theme, setTheme } = useTheme()
-
   return (
     <header className="h-16 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border-b border-slate-700/50 backdrop-blur-sm flex items-center justify-between px-6 shadow-lg animate-fade-in">
       {/* Enhanced Search Bar */}
@@ -40,58 +30,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       </div>
 
       {/* Enhanced User Profile Section */}
-      <div className="flex items-center space-x-4 animate-fade-in animate-stagger-2">
-        {/* Notifications */}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="relative hover:bg-slate-700/50 transition-all duration-300 group hover:scale-105"
-        >
-          <Bell className="w-5 h-5 text-slate-300 group-hover:text-[#00C49F] transition-all duration-300" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-slate-900 animate-pulse"></div>
-        </Button>
-        
-        {/* Theme Switcher */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="hover:bg-slate-700/50 transition-all duration-300 group hover:scale-105"
-            >
-              {theme === 'light' && <Sun className="w-5 h-5 text-slate-300 group-hover:text-amber-400 transition-all duration-300" />}
-              {theme === 'dark' && <Moon className="w-5 h-5 text-slate-300 group-hover:text-indigo-400 transition-all duration-300" />}
-              {theme === 'system' && <Monitor className="w-5 h-5 text-slate-300 group-hover:text-blue-400 transition-all duration-300" />}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-slate-800/95 dark:bg-slate-900/95 backdrop-blur-sm border-slate-600/50 animate-scale-in z-50">
-            <DropdownMenuItem onClick={() => setTheme('light')} className="hover:bg-amber-900/20 transition-all duration-200 text-slate-200">
-              <Sun className="w-4 h-4 mr-2 text-amber-400" />
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme('dark')} className="hover:bg-indigo-900/20 transition-all duration-200 text-slate-200">
-              <Moon className="w-4 h-4 mr-2 text-indigo-400" />
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme('system')} className="hover:bg-blue-900/20 transition-all duration-200 text-slate-200">
-              <Monitor className="w-4 h-4 mr-2 text-blue-400" />
-              System
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Settings */}
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="hover:bg-slate-700/50 transition-all duration-300 group hover:scale-105"
-        >
-          <Settings className="w-5 h-5 text-slate-300 group-hover:text-[#00C49F] group-hover:rotate-90 transition-all duration-300" />
-        </Button>
-
-        {/* Divider */}
-        <div className="h-8 w-px bg-gradient-to-b from-slate-600 to-transparent"></div>
-
+      <div className="flex items-center animate-fade-in">
         {/* Enhanced User Profile */}
         <div className="relative animate-scale-in">
           {/* Online status indicator */}
@@ -102,7 +41,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           <UserButton 
             appearance={{
               elements: {
-                avatarBox: "w-10 h-10 ring-2 ring-[#00C49F]/30 hover:ring-[#00C49F]/60 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#00C49F]/20",
+                avatarBox: "w-12 h-12 ring-2 ring-[#00C49F]/30 hover:ring-[#00C49F]/60 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-[#00C49F]/20",
                 userButtonPopoverCard: "bg-slate-800/95 dark:bg-slate-900/95 backdrop-blur-sm border-slate-600/50 animate-scale-in z-50"
               }
             }}
