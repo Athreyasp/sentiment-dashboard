@@ -1,91 +1,85 @@
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ClerkProvider } from '@clerk/clerk-react';
+import { ThemeProvider } from "@/hooks/useTheme";
+import { usePreloader } from "@/hooks/usePreloader";
+import { Preloader } from "@/components/Preloader";
+import { Layout } from "@/components/Layout";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { AuthLayout } from "@/components/AuthLayout";
+import Dashboard from "./pages/Dashboard";
+import TickerInsights from "./pages/TickerInsights";
+import Portfolio from "./pages/Portfolio";
+import Alerts from "./pages/Alerts";
+import Explainer from "./pages/Explainer";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import NotFound from "./pages/NotFound";
 
+const queryClient = new QueryClient();
 
-import React from 'react'
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-} from 'react-router-dom'
-import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react'
-import { useUser } from '@clerk/clerk-react'
-import { useAuth } from '@clerk/clerk-react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from 'sonner'
-import { usePreloader } from './hooks/usePreloader'
+// Clerk publishable key
+const CLERK_PUBLISHABLE_KEY = "pk_test_aW5jbHVkZWQtdXJjaGluLTE0LmNsZXJrLmFjY291bnRzLmRldiQ";
 
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import Dashboard from './pages/Dashboard'
-import TickerInsights from './pages/TickerInsights'
-import Portfolio from './pages/Portfolio'
-import Alerts from './pages/Alerts'
-import Explainer from './pages/Explainer'
-import NotFound from './pages/NotFound'
-import { Preloader } from './components/Preloader'
-import { ModernLayout } from './components/ModernLayout'
-import { ThemeProvider } from './hooks/useTheme'
-
-const publishableKey = "pk_test_aW5jbHVkZWQtdXJjaGluLTE0LmNsZXJrLmFjY291bnRzLmRldiQ"
-
-if (!publishableKey) {
-  throw new Error("Clerk publishable key is not defined")
-}
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isSignedIn, isLoaded } = useAuth();
-
-  if (!isLoaded) {
-    return <div>Loading...</div>;
-  }
-
-  if (!isSignedIn) {
-    return <RedirectToSignIn />;
-  }
-
-  return <>{children}</>;
-};
-
-const queryClient = new QueryClient()
-
-function App() {
-  const isLoading = usePreloader()
+const AppContent = () => {
+  const isLoading = usePreloader(5000);
 
   if (isLoading) {
-    return <Preloader />
+    return <Preloader />;
   }
 
   return (
-    <ClerkProvider publishableKey={publishableKey} afterSignOutUrl="/">
-      <ThemeProvider defaultTheme="system" storageKey="sentinel-ui-theme">
-        <QueryClientProvider client={queryClient}>
-          <Router>
-            <div className="min-h-screen bg-background">
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route
-                  path="/*"
-                  element={
-                    <ProtectedRoute>
-                      <ModernLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<Dashboard />} />
-                  <Route path="ticker" element={<TickerInsights />} />
-                  <Route path="portfolio" element={<Portfolio />} />
-                  <Route path="alerts" element={<Alerts />} />
-                  <Route path="explainer" element={<Explainer />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </Router>
-          <Toaster />
-        </QueryClientProvider>
-      </ThemeProvider>
-    </ClerkProvider>
-  )
-}
+    <BrowserRouter>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={
+          <AuthLayout>
+            <Login />
+          </AuthLayout>
+        } />
+        <Route path="/signup" element={
+          <AuthLayout>
+            <Signup />
+          </AuthLayout>
+        } />
+        
+        {/* Protected routes */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="ticker" element={<TickerInsights />} />
+          <Route path="portfolio" element={<Portfolio />} />
+          <Route path="alerts" element={<Alerts />} />
+          <Route path="explainer" element={<Explainer />} />
+        </Route>
+        
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
-export default App
+const App = () => {
+  return (
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="system" storageKey="sentinel-ui-theme">
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AppContent />
+          </TooltipProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ClerkProvider>
+  );
+};
+
+export default App;
