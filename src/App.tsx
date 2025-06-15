@@ -1,4 +1,5 @@
 
+
 import React from 'react'
 import {
   BrowserRouter as Router,
@@ -24,10 +25,10 @@ import { Preloader } from './components/Preloader'
 import { ModernLayout } from './components/ModernLayout'
 import { ThemeProvider } from './hooks/useTheme'
 
-const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 if (!clerkPubKey) {
-  throw new Error("REACT_APP_CLERK_PUBLISHABLE_KEY is not defined")
+  throw new Error("VITE_CLERK_PUBLISHABLE_KEY is not defined")
 }
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -46,7 +47,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const queryClient = new QueryClient()
 
-const publishableKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY!;
+const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY!;
 
 function App() {
   const isLoading = usePreloader()
