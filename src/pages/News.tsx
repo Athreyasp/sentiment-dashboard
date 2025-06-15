@@ -3,186 +3,46 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Filter, ChevronDown, Clock, ExternalLink, RefreshCw, Wifi, WifiOff } from 'lucide-react'
+import { Filter, ChevronDown, Clock, ExternalLink, RefreshCw, Wifi, WifiOff, Search } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
-interface NewsItem {
-  id: string
-  headline: string
-  sentiment: 'positive' | 'neutral' | 'negative'
-  source: string
-  time: string
-  ticker?: string
-  excerpt?: string
-  url?: string
-  timestamp: number
-}
-
-const mockNewsData: NewsItem[] = [
-  {
-    id: '1',
-    headline: 'Apple announces breakthrough in AI chip technology, stock surges in after-hours trading',
-    sentiment: 'positive',
-    source: 'Bloomberg',
-    time: '2 hours ago',
-    ticker: 'AAPL',
-    excerpt: 'Revolutionary M4 chip shows 40% performance improvement in AI workloads',
-    timestamp: Date.now() - 2 * 60 * 60 * 1000
-  },
-  {
-    id: '2',
-    headline: 'Federal Reserve signals potential rate cuts amid cooling inflation data',
-    sentiment: 'positive',
-    source: 'Reuters',
-    time: '3 hours ago',
-    excerpt: 'Market sentiment improves as Fed chair hints at monetary policy shift',
-    timestamp: Date.now() - 3 * 60 * 60 * 1000
-  },
-  {
-    id: '3',
-    headline: 'Tesla faces production challenges at Shanghai Gigafactory, deliveries may be impacted',
-    sentiment: 'negative',
-    source: 'CNBC',
-    time: '4 hours ago',
-    ticker: 'TSLA',
-    excerpt: 'Supply chain disruptions could affect Q4 delivery targets',
-    timestamp: Date.now() - 4 * 60 * 60 * 1000
-  },
-  {
-    id: '4',
-    headline: 'Microsoft cloud revenue beats expectations, Azure growth remains strong',
-    sentiment: 'positive',
-    source: 'Wall Street Journal',
-    time: '5 hours ago',
-    ticker: 'MSFT',
-    excerpt: 'Cloud computing segment drives 25% year-over-year growth',
-    timestamp: Date.now() - 5 * 60 * 60 * 1000
-  },
-  {
-    id: '5',
-    headline: 'Oil prices remain stable despite geopolitical tensions in Middle East',
-    sentiment: 'neutral',
-    source: 'MarketWatch',
-    time: '6 hours ago',
-    excerpt: 'Crude oil trading within expected range as markets assess risk factors',
-    timestamp: Date.now() - 6 * 60 * 60 * 1000
-  },
-  {
-    id: '6',
-    headline: 'Netflix subscriber growth slows as streaming competition intensifies',
-    sentiment: 'negative',
-    source: 'TechCrunch',
-    time: '8 hours ago',
-    ticker: 'NFLX',
-    excerpt: 'Quarterly report shows first decline in subscriber additions in two years',
-    timestamp: Date.now() - 8 * 60 * 60 * 1000
-  },
-  {
-    id: '7',
-    headline: 'Gold reaches new highs as investors seek safe haven assets',
-    sentiment: 'positive',
-    source: 'Financial Times',
-    time: '10 hours ago',
-    excerpt: 'Precious metals rally continues amid market uncertainty',
-    timestamp: Date.now() - 10 * 60 * 60 * 1000
-  },
-  {
-    id: '8',
-    headline: 'Cryptocurrency market shows mixed signals following regulatory updates',
-    sentiment: 'neutral',
-    source: 'CoinDesk',
-    time: '12 hours ago',
-    excerpt: 'Bitcoin and Ethereum trade sideways as investors digest new SEC guidelines',
-    timestamp: Date.now() - 12 * 60 * 60 * 1000
-  }
-]
+import { useFinancialNews } from '@/hooks/useFinancialNews'
 
 export default function News() {
   const [sentimentFilter, setSentimentFilter] = useState<string>('All')
   const [tickerFilter, setTickerFilter] = useState<string>('All')
-  const [dateFilter, setDateFilter] = useState<string>('All')
-  const [newsData, setNewsData] = useState<NewsItem[]>(mockNewsData)
+  const [searchQuery, setSearchQuery] = useState('')
   const [isLive, setIsLive] = useState(true)
-  const [hasNewUpdates, setHasNewUpdates] = useState(false)
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [lastUpdateTime, setLastUpdateTime] = useState(Date.now())
+  
+  const { news, loading, error, fetchNews, searchNews } = useFinancialNews()
 
-  // Simulate real-time news updates
+  // Handle search with debounce
   useEffect(() => {
-    if (!isLive) return
-
-    const interval = setInterval(() => {
-      // Simulate getting new news
-      const shouldAddNews = Math.random() > 0.7 // 30% chance of new news
-      
-      if (shouldAddNews) {
-        const newHeadlines = [
-          'Breaking: Major tech company announces quarterly earnings beat',
-          'Market Update: S&P 500 reaches new all-time high',
-          'Economic Data: Unemployment rate drops to historic low',
-          'Corporate News: Merger talks between industry giants confirmed',
-          'Tech Alert: New cybersecurity threat impacts financial sector'
-        ]
-        
-        const newNews: NewsItem = {
-          id: Date.now().toString(),
-          headline: newHeadlines[Math.floor(Math.random() * newHeadlines.length)],
-          sentiment: ['positive', 'neutral', 'negative'][Math.floor(Math.random() * 3)] as 'positive' | 'neutral' | 'negative',
-          source: ['Reuters', 'Bloomberg', 'CNBC', 'WSJ', 'Financial Times'][Math.floor(Math.random() * 5)],
-          time: 'Just now',
-          ticker: ['AAPL', 'TSLA', 'MSFT', 'GOOGL', 'AMZN'][Math.floor(Math.random() * 5)],
-          excerpt: 'Breaking news update with immediate market implications',
-          timestamp: Date.now()
-        }
-        
-        setNewsData(prev => [newNews, ...prev])
-        setHasNewUpdates(true)
-        setLastUpdateTime(Date.now())
-        
-        console.log('New financial news update:', newNews.headline)
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.trim()) {
+        searchNews(searchQuery)
+      } else {
+        searchNews('')
       }
-    }, 60000) // Check for updates every 60 seconds
+    }, 500)
 
-    return () => clearInterval(interval)
-  }, [isLive])
-
-  // Auto-refresh timer
-  useEffect(() => {
-    const refreshInterval = setInterval(() => {
-      if (isLive) {
-        setLastUpdateTime(Date.now())
-      }
-    }, 30000) // Update timestamp every 30 seconds
-
-    return () => clearInterval(refreshInterval)
-  }, [isLive])
+    return () => clearTimeout(timeoutId)
+  }, [searchQuery])
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
-    setHasNewUpdates(false)
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    await fetchNews()
     setIsRefreshing(false)
-    setLastUpdateTime(Date.now())
-    console.log('News feed refreshed')
   }
 
-  const toggleLiveMode = () => {
-    setIsLive(!isLive)
-    if (!isLive) {
-      setLastUpdateTime(Date.now())
-    }
-  }
-
-  const getSentimentBadge = (sentiment: string) => {
+  const getSentimentBadge = (sentiment: string | null) => {
     switch (sentiment) {
       case 'positive':
         return (
@@ -205,7 +65,7 @@ export default function News() {
     }
   }
 
-  const filteredNews = newsData.filter(item => {
+  const filteredNews = news.filter(item => {
     if (sentimentFilter !== 'All' && item.sentiment !== sentimentFilter.toLowerCase()) {
       return false
     }
@@ -215,42 +75,57 @@ export default function News() {
     return true
   })
 
-  const formatTime = (timestamp: number) => {
-    const now = Date.now()
-    const diff = now - timestamp
+  const formatTime = (timestamp: string) => {
+    const now = new Date()
+    const newsTime = new Date(timestamp)
+    const diff = now.getTime() - newsTime.getTime()
     const minutes = Math.floor(diff / (1000 * 60))
     const hours = Math.floor(diff / (1000 * 60 * 60))
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
     
     if (minutes < 1) return 'Just now'
     if (minutes < 60) return `${minutes}m ago`
     if (hours < 24) return `${hours}h ago`
-    return `${Math.floor(hours / 24)}d ago`
+    return `${days}d ago`
+  }
+
+  // Get unique tickers for filter
+  const availableTickers = [...new Set(news.map(item => item.ticker).filter(Boolean))]
+
+  if (error) {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">Error Loading News</h3>
+            <p className="text-red-600 dark:text-red-300">{error}</p>
+            <Button onClick={handleRefresh} className="mt-4" variant="outline">
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Enhanced Page Header */}
+      {/* Page Header */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-inter tracking-tight">
-              📰 Live News Feed
+              📰 Financial News Feed
             </h1>
             <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-              Updated every few minutes using real-time financial sources
+              Real-time financial news from trusted sources like Bloomberg, Reuters, and CNBC
             </p>
           </div>
           
           {/* Live Status and Controls */}
           <div className="flex items-center space-x-3">
-            {hasNewUpdates && (
-              <Badge className="bg-blue-500/10 text-blue-600 border-blue-500/20 animate-pulse">
-                🔄 New headlines available
-              </Badge>
-            )}
-            
             <Button
-              onClick={toggleLiveMode}
+              onClick={() => setIsLive(!isLive)}
               variant="outline"
               size="sm"
               className={`${isLive ? 'text-green-600 border-green-500/20 bg-green-50/50' : 'text-gray-500'} transition-colors`}
@@ -267,21 +142,27 @@ export default function News() {
               className="transition-all duration-200"
             >
               <RefreshCw className={`w-4 h-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Refresh
+              Fetch Latest
             </Button>
           </div>
         </div>
-        
-        {/* Last Update Indicator */}
-        <div className="flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400">
-          <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
-          <span>Last updated: {formatTime(lastUpdateTime)}</span>
-        </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* Search and Filter Bar */}
       <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
         <CardContent className="p-4">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input
+                placeholder="Search financial news, tickers, companies..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+          
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <Filter className="w-4 h-4 text-slate-500" />
@@ -314,10 +195,11 @@ export default function News() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="animate-scale-in">
                 <DropdownMenuItem onClick={() => setTickerFilter('All')}>All</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTickerFilter('AAPL')}>AAPL</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTickerFilter('TSLA')}>TSLA</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTickerFilter('MSFT')}>MSFT</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTickerFilter('NFLX')}>NFLX</DropdownMenuItem>
+                {availableTickers.slice(0, 10).map(ticker => (
+                  <DropdownMenuItem key={ticker} onClick={() => setTickerFilter(ticker)}>
+                    {ticker}
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -330,68 +212,96 @@ export default function News() {
         </CardContent>
       </Card>
 
-      {/* Real-time News Feed */}
-      <ScrollArea className="h-[calc(100vh-300px)]">
-        <div className="space-y-4 pr-4">
-          {filteredNews.map((item, index) => (
-            <Card 
-              key={item.id} 
-              className={`group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer animate-fade-in ${item.time === 'Just now' ? 'ring-2 ring-blue-500/20 bg-blue-50/30 dark:bg-blue-900/10' : ''}`}
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  {/* Header with sentiment and ticker */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#00C49F] transition-colors leading-tight pr-4">
-                        {item.headline}
-                        {item.time === 'Just now' && (
-                          <Badge className="ml-2 bg-blue-500/10 text-blue-600 text-xs animate-pulse">
-                            NEW
-                          </Badge>
-                        )}
-                      </h3>
-                    </div>
-                    <div className="flex items-center space-x-2 flex-shrink-0">
-                      {item.ticker && (
-                        <Badge variant="outline" className="font-mono text-xs bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                          📈 {item.ticker}
-                        </Badge>
+      {/* News Feed */}
+      {loading ? (
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center">
+              <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2" />
+              <p>Loading financial news...</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <ScrollArea className="h-[calc(100vh-400px)]">
+          <div className="space-y-4 pr-4">
+            {filteredNews.length === 0 ? (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <p className="text-slate-600 dark:text-slate-400">
+                    {searchQuery ? 'No news found matching your search.' : 'No financial news available. Try fetching the latest news.'}
+                  </p>
+                  <Button onClick={handleRefresh} className="mt-4" variant="outline">
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Fetch News
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              filteredNews.map((item, index) => (
+                <Card 
+                  key={item.id} 
+                  className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer animate-fade-in"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      {/* Header with sentiment and ticker */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#00C49F] transition-colors leading-tight pr-4">
+                            {item.headline}
+                          </h3>
+                        </div>
+                        <div className="flex items-center space-x-2 flex-shrink-0">
+                          {item.ticker && (
+                            <Badge variant="outline" className="font-mono text-xs bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                              📈 {item.ticker}
+                            </Badge>
+                          )}
+                          {getSentimentBadge(item.sentiment)}
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      {item.content && (
+                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                          {item.content.substring(0, 200)}
+                          {item.content.length > 200 && '...'}
+                        </p>
                       )}
-                      {getSentimentBadge(item.sentiment)}
-                    </div>
-                  </div>
 
-                  {/* Excerpt */}
-                  {item.excerpt && (
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                      {item.excerpt}
-                    </p>
-                  )}
-
-                  {/* Footer with source and time */}
-                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <div className="flex items-center space-x-4 text-xs text-slate-500 dark:text-slate-400">
-                      <div className="flex items-center space-x-1">
-                        <span className="font-medium">🗞️ {item.source}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="w-3 h-3" />
-                        <span>{formatTime(item.timestamp)}</span>
+                      {/* Footer with source and time */}
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
+                        <div className="flex items-center space-x-4 text-xs text-slate-500 dark:text-slate-400">
+                          <div className="flex items-center space-x-1">
+                            <span className="font-medium">🗞️ {item.source}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Clock className="w-3 h-3" />
+                            <span>{formatTime(item.published_at)}</span>
+                          </div>
+                        </div>
+                        {item.url && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => window.open(item.url!, '_blank')}
+                          >
+                            <ExternalLink className="w-3 h-3 mr-1" />
+                            <span className="text-xs">Read more</span>
+                          </Button>
+                        )}
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      <ExternalLink className="w-3 h-3 mr-1" />
-                      <span className="text-xs">Read more</span>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </ScrollArea>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </ScrollArea>
+      )}
     </div>
   )
 }
