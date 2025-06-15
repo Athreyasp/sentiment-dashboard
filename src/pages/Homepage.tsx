@@ -17,7 +17,7 @@ import {
   ArrowRight,
   Play,
   Newspaper,
-  Portfolio,
+  Briefcase,
   Bell,
   Eye,
   BarChart3,
@@ -40,7 +40,7 @@ export default function Homepage() {
       description: "Get instant visual cues on market-moving news with sentiment-based color coding."
     },
     {
-      icon: <Portfolio className="w-8 h-8 text-purple-500" />,
+      icon: <Briefcase className="w-8 h-8 text-purple-500" />,
       title: "CSV Portfolio Upload",
       description: "Upload your portfolio and get personalized sentiment insights for your holdings."
     },
