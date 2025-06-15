@@ -45,27 +45,27 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Header with Logo and Toggle */}
       <div className={cn(
-        "flex items-center justify-center border-b border-slate-700/30 bg-gradient-to-r from-slate-900/50 to-slate-800/50 backdrop-blur-sm relative z-10",
+        "flex items-center justify-center border-b border-slate-700/30 bg-gradient-to-r from-slate-900/50 to-slate-800/50 backdrop-blur-sm relative z-10 transition-all duration-300",
         collapsed ? "h-20 px-2 flex-col py-3" : "h-24 px-6"
       )}>
         {!collapsed ? (
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 animate-fade-in">
               <SentinelLogo size="md" showText={true} variant="minimal" />
             </div>
             <button
               onClick={onToggle}
-              className="p-3 rounded-2xl hover:bg-slate-700/40 transition-all duration-300 text-slate-400 hover:text-white group border border-slate-600/20 hover:border-slate-500/40 bg-slate-800/30 backdrop-blur-sm"
+              className="p-3 rounded-2xl hover:bg-slate-700/40 transition-all duration-300 text-slate-400 hover:text-white group border border-slate-600/20 hover:border-slate-500/40 bg-slate-800/30 backdrop-blur-sm hover-glow"
             >
               <X className="w-5 h-5 group-hover:scale-110 group-hover:rotate-90 transition-all duration-300" />
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center space-y-3 w-full">
+          <div className="flex flex-col items-center space-y-3 w-full animate-scale-in">
             <SentinelLogo size="sm" showText={false} variant="icon-only" />
             <button
               onClick={onToggle}
-              className="p-2 rounded-xl hover:bg-slate-700/40 transition-all duration-300 text-slate-400 hover:text-white group border border-slate-600/20 hover:border-slate-500/40 bg-slate-800/30 backdrop-blur-sm"
+              className="p-2 rounded-xl hover:bg-slate-700/40 transition-all duration-300 text-slate-400 hover:text-white group border border-slate-600/20 hover:border-slate-500/40 bg-slate-800/30 backdrop-blur-sm hover-glow"
             >
               <Menu className="w-4 h-4 group-hover:scale-110 transition-all duration-300" />
             </button>
@@ -87,31 +87,26 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               to={item.href}
               className={({ isActive }) =>
                 cn(
-                  "group flex items-center rounded-2xl transition-all duration-300 hover:bg-slate-800/40 hover:backdrop-blur-sm border border-transparent hover:border-slate-600/30 relative overflow-hidden",
+                  "group flex items-center rounded-2xl transition-all duration-300 hover:bg-slate-800/40 hover:backdrop-blur-sm border border-transparent hover:border-slate-600/30 relative overflow-hidden nav-item-hover hover-lift",
                   collapsed ? "p-3 justify-center flex-col aspect-square" : "px-5 py-4",
                   isActive 
-                    ? "bg-gradient-to-r from-slate-800/60 to-slate-700/40 text-white border-slate-600/40 shadow-xl backdrop-blur-sm" 
-                    : "text-slate-300 hover:text-white"
+                    ? "bg-gradient-to-r from-slate-800/60 to-slate-700/40 text-white border-slate-600/40 shadow-xl backdrop-blur-sm active" 
+                    : "text-slate-300 hover:text-white",
+                  // Stagger animation delay
+                  index === 0 ? "animate-slide-up" : 
+                  index === 1 ? "animate-slide-up animate-stagger-1" :
+                  index === 2 ? "animate-slide-up animate-stagger-2" :
+                  index === 3 ? "animate-slide-up animate-stagger-3" :
+                  "animate-slide-up animate-stagger-4"
                 )
               }
             >
-              {/* Enhanced active indicator */}
-              <div className={cn(
-                "absolute left-0 top-0 h-full w-1.5 bg-gradient-to-b transition-all duration-300 rounded-r-full",
-                item.gradient.includes('blue') ? `bg-gradient-to-b ${item.gradient}` : 
-                item.gradient.includes('green') ? `bg-gradient-to-b ${item.gradient}` :
-                item.gradient.includes('purple') ? `bg-gradient-to-b ${item.gradient}` :
-                item.gradient.includes('orange') ? `bg-gradient-to-b ${item.gradient}` :
-                `bg-gradient-to-b ${item.gradient}`,
-                window.location.pathname === item.href ? "opacity-100 scale-y-100" : "opacity-0 scale-y-50 group-hover:opacity-60 group-hover:scale-y-75"
-              )}></div>
-
               {/* Enhanced icon container with gradient backgrounds */}
               <div className={cn(
-                "flex items-center justify-center rounded-xl transition-all duration-300 relative overflow-hidden",
+                "flex items-center justify-center rounded-xl transition-all duration-300 relative overflow-hidden group-hover:scale-105",
                 collapsed ? "w-8 h-8" : "w-12 h-12 mr-4",
                 window.location.pathname === item.href 
-                  ? `bg-gradient-to-r ${item.gradient} shadow-lg` 
+                  ? `bg-gradient-to-r ${item.gradient} shadow-lg animate-glow` 
                   : "bg-slate-700/40 group-hover:bg-slate-600/50 border border-slate-600/20 group-hover:border-slate-500/30"
               )}>
                 {/* Shimmer effect for active items */}
@@ -120,7 +115,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 )}
                 
                 <item.icon className={cn(
-                  "transition-all duration-300 relative z-10",
+                  "transition-all duration-300 relative z-10 icon-slide-right",
                   collapsed ? "w-4 h-4" : "w-6 h-6",
                   window.location.pathname === item.href 
                     ? "text-white scale-110" 
@@ -137,16 +132,16 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               {!collapsed && (
                 <>
                   <div className="flex-1">
-                    <span className="font-semibold text-lg">{item.name}</span>
+                    <span className="font-semibold text-lg underline-on-hover">{item.name}</span>
                     {window.location.pathname === item.href && (
-                      <div className="text-xs text-slate-400 mt-0.5 flex items-center space-x-1">
-                        <Zap className="w-3 h-3" />
+                      <div className="text-xs text-slate-400 mt-0.5 flex items-center space-x-1 animate-fade-in">
+                        <Zap className="w-3 h-3 animate-pulse-soft" />
                         <span>Active</span>
                       </div>
                     )}
                   </div>
                   <ChevronRight className={cn(
-                    "w-5 h-5 transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0",
+                    "w-5 h-5 transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 animate-icon-bounce",
                     window.location.pathname === item.href && "opacity-100 translate-x-0 text-white"
                   )} />
                 </>
@@ -154,7 +149,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
               {/* Enhanced tooltip for collapsed state */}
               {collapsed && (
-                <div className="absolute left-full ml-4 px-4 py-3 bg-slate-800/95 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap border border-slate-600/50 shadow-2xl backdrop-blur-sm z-50">
+                <div className="absolute left-full ml-4 px-4 py-3 bg-slate-800/95 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap border border-slate-600/50 shadow-2xl backdrop-blur-sm z-50 animate-scale-in">
                   <div className="flex items-center space-x-2">
                     <span className="font-semibold">{item.name}</span>
                     {window.location.pathname === item.href && (
@@ -177,8 +172,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Enhanced Status Footer */}
       {!collapsed ? (
-        <div className="p-4 border-t border-slate-700/30 relative z-10">
-          <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/40 backdrop-blur-sm rounded-2xl p-5 border border-slate-600/30 shadow-xl">
+        <div className="p-4 border-t border-slate-700/30 relative z-10 animate-slide-up">
+          <div className="bg-gradient-to-r from-slate-800/60 to-slate-700/40 backdrop-blur-sm rounded-2xl p-5 border border-slate-600/30 shadow-xl hover-lift">
             <div className="flex items-center space-x-3 mb-4">
               <div className="relative">
                 <div className="w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg"></div>
@@ -189,7 +184,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </span>
             </div>
             <div className="text-sm text-slate-300 space-y-2">
-              <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors duration-200">
                 <span className="flex items-center space-x-2">
                   <span>📈 Market Status:</span>
                 </span>
@@ -198,13 +193,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   <span>Open</span>
                 </span>
               </div>
-              <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors duration-200">
                 <span className="flex items-center space-x-2">
                   <span>⏱️ Last Update:</span>
                 </span>
                 <span className="text-blue-400 font-semibold">12:34 PM</span>
               </div>
-              <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-2 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors duration-200">
                 <span className="flex items-center space-x-2">
                   <span>⚡ Response:</span>
                 </span>
@@ -216,8 +211,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       ) : (
         <div className="p-2 border-t border-slate-700/30 flex justify-center relative z-10">
           <div className="relative group">
-            <div className="w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg"></div>
-            <div className="absolute left-full ml-4 px-4 py-3 bg-slate-800/95 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap border border-slate-600/50 shadow-2xl backdrop-blur-sm z-50">
+            <div className="w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg hover-lift"></div>
+            <div className="absolute left-full ml-4 px-4 py-3 bg-slate-800/95 text-white text-sm rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap border border-slate-600/50 shadow-2xl backdrop-blur-sm z-50 animate-scale-in">
               <div className="space-y-1">
                 <div className="font-semibold">🚀 Live Data Active</div>
                 <div className="text-xs text-slate-300">Market: Open • 12ms</div>

@@ -77,12 +77,58 @@ export default {
 				'chart-grow': {
 					'0%': { transform: 'scaleY(0)' },
 					'100%': { transform: 'scaleY(1)' }
+				},
+				'scale-in': {
+					'0%': { opacity: '0', transform: 'scale(0.95)' },
+					'100%': { opacity: '1', transform: 'scale(1)' }
+				},
+				'slide-up': {
+					'0%': { opacity: '0', transform: 'translateY(20px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'glow': {
+					'0%': { boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.4)' },
+					'50%': { boxShadow: '0 0 0 4px rgba(59, 130, 246, 0.1)' },
+					'100%': { boxShadow: '0 0 0 0 rgba(59, 130, 246, 0.4)' }
+				},
+				'pulse-soft': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.8' }
+				},
+				'count-up': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'underline-grow': {
+					'0%': { width: '0%' },
+					'100%': { width: '100%' }
+				},
+				'icon-bounce': {
+					'0%, 100%': { transform: 'translateX(0)' },
+					'50%': { transform: 'translateX(2px)' }
+				},
+				'rotate-icon': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(180deg)' }
+				},
+				'badge-flip': {
+					'0%': { transform: 'rotateY(0deg)' },
+					'100%': { transform: 'rotateY(180deg)' }
 				}
 			},
 			animation: {
 				'fade-in': 'fade-in 0.5s ease-out',
 				'slide-in': 'slide-in 0.3s ease-out',
-				'chart-grow': 'chart-grow 0.8s ease-out'
+				'chart-grow': 'chart-grow 0.8s ease-out',
+				'scale-in': 'scale-in 0.2s ease-out',
+				'slide-up': 'slide-up 0.3s ease-out',
+				'glow': 'glow 2s ease-in-out infinite',
+				'pulse-soft': 'pulse-soft 2s ease-in-out infinite',
+				'count-up': 'count-up 0.6s ease-out',
+				'underline-grow': 'underline-grow 0.3s ease-out',
+				'icon-bounce': 'icon-bounce 0.3s ease-in-out',
+				'rotate-icon': 'rotate-icon 0.3s ease-in-out',
+				'badge-flip': 'badge-flip 0.6s ease-in-out'
 			}
 		}
 	},

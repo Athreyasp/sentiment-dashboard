@@ -148,6 +148,82 @@
     animation: fadeIn 0.6s ease-out forwards;
   }
 
+  .animate-stagger-1 {
+    animation-delay: 50ms;
+  }
+
+  .animate-stagger-2 {
+    animation-delay: 100ms;
+  }
+
+  .animate-stagger-3 {
+    animation-delay: 150ms;
+  }
+
+  .animate-stagger-4 {
+    animation-delay: 200ms;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-200 ease-out hover:scale-105 hover:shadow-lg;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 ease-out hover:shadow-lg;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+  }
+
+  .nav-item-hover {
+    @apply relative transition-all duration-200 ease-out;
+  }
+
+  .nav-item-hover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, rgba(59, 130, 246, 1), rgba(147, 51, 234, 1));
+    transform: scaleY(0);
+    transition: transform 0.2s ease-out;
+  }
+
+  .nav-item-hover.active::before {
+    transform: scaleY(1);
+  }
+
+  .underline-on-hover {
+    @apply relative;
+  }
+
+  .underline-on-hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, rgba(59, 130, 246, 1), rgba(147, 51, 234, 1));
+    transform: scaleX(0);
+    transition: transform 0.3s ease-out;
+  }
+
+  .underline-on-hover:hover::after {
+    transform: scaleX(1);
+  }
+
+  .icon-slide-right {
+    @apply transition-transform duration-200 ease-out hover:translate-x-0.5;
+  }
+
+  .count-animation {
+    @apply animate-count-up;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -157,6 +233,21 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes slideUpFade {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .slide-up-fade {
+    animation: slideUpFade 0.4s ease-out forwards;
   }
 }
 

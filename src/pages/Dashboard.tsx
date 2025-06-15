@@ -20,46 +20,46 @@ export default function Dashboard() {
     <TooltipProvider>
       <div className="space-y-8 animate-fade-in">
         {/* Hero Header Section with improved design */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-900/20 dark:to-purple-900/20 rounded-3xl p-8 border border-blue-100 dark:border-slate-700 shadow-xl">
+        <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-blue-900/20 dark:to-purple-900/20 rounded-3xl p-8 border border-blue-100 dark:border-slate-700 shadow-xl animate-slide-up hover-glow">
           {/* Background decorations */}
           <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-400/20 to-pink-500/20 rounded-full blur-2xl"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-400/20 to-pink-500/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
           
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-4">
-                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg">
+              <div className="flex items-center space-x-4 animate-fade-in">
+                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl shadow-lg hover-lift">
                   <Activity className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent">
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-800 to-purple-800 dark:from-white dark:via-blue-200 dark:to-purple-200 bg-clip-text text-transparent animate-slide-up">
                     📊 Market Overview
                   </h1>
-                  <p className="text-lg text-slate-600 dark:text-slate-300">
+                  <p className="text-lg text-slate-600 dark:text-slate-300 animate-fade-in animate-stagger-1">
                     Real-time sentiment analysis powered by AI
                   </p>
                 </div>
               </div>
               
               {/* AI-backed insights badge */}
-              <Badge variant="outline" className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-800">
+              <Badge variant="outline" className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-blue-200 dark:border-blue-800 animate-scale-in hover-lift">
                 🤖 AI-backed insights
               </Badge>
             </div>
             
             {/* Filters Section */}
-            <div className="flex items-center space-x-4 mb-6">
+            <div className="flex items-center space-x-4 mb-6 animate-slide-up animate-stagger-1">
               <div className="flex items-center space-x-2">
                 <Filter className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                 <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Filters:</span>
               </div>
               
               <Select value={selectedSector} onValueChange={setSelectedSector}>
-                <SelectTrigger className="w-48 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
+                <SelectTrigger className="w-48 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-200 hover-glow">
                   <SelectValue placeholder="Select sector" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="animate-scale-in z-50">
                   <SelectItem value="all">All Sectors</SelectItem>
                   <SelectItem value="tech">Technology</SelectItem>
                   <SelectItem value="finance">Finance</SelectItem>
@@ -69,10 +69,10 @@ export default function Dashboard() {
               </Select>
               
               <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
-                <SelectTrigger className="w-32 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm">
+                <SelectTrigger className="w-32 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-200 hover-glow">
                   <SelectValue placeholder="Timeframe" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="animate-scale-in z-50">
                   <SelectItem value="1d">1 Day</SelectItem>
                   <SelectItem value="1w">1 Week</SelectItem>
                   <SelectItem value="1m">1 Month</SelectItem>
@@ -83,204 +83,165 @@ export default function Dashboard() {
             
             {/* Quick Stats Row with tooltips */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center space-x-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-200 cursor-help">
-                    <TrendingUp className="w-5 h-5 text-green-500" />
-                    <div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Market Trend</div>
-                      <div className="font-semibold text-green-600 flex items-center">
-                        🟢 Bullish
+              {[
+                { icon: TrendingUp, label: 'Market Trend', value: '🟢 Bullish', color: 'text-green-500', tooltip: 'Overall market sentiment based on AI analysis' },
+                { icon: Users, label: 'Active Traders', value: '2,847', color: 'text-blue-500', tooltip: 'Number of active traders on the platform' },
+                { icon: Shield, label: 'Security Score', value: '98.5%', color: 'text-purple-500', tooltip: 'Platform security and data protection score' },
+                { icon: Zap, label: 'Response Time', value: '12ms', color: 'text-yellow-500', tooltip: 'Average API response time for real-time data' }
+              ].map((stat, index) => (
+                <Tooltip key={stat.label}>
+                  <TooltipTrigger asChild>
+                    <div className={`flex items-center space-x-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-300 cursor-help hover-lift animate-slide-up ${
+                      index === 0 ? '' : 
+                      index === 1 ? 'animate-stagger-1' :
+                      index === 2 ? 'animate-stagger-2' :
+                      'animate-stagger-3'
+                    }`}>
+                      <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                      <div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">{stat.label}</div>
+                        <div className={`font-semibold ${stat.color} count-animation`}>
+                          {stat.value}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Overall market sentiment based on AI analysis</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center space-x-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-200 cursor-help">
-                    <Users className="w-5 h-5 text-blue-500" />
-                    <div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Active Traders</div>
-                      <div className="font-semibold text-blue-600">2,847</div>
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Number of active traders on the platform</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center space-x-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-200 cursor-help">
-                    <Shield className="w-5 h-5 text-purple-500" />
-                    <div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Security Score</div>
-                      <div className="font-semibold text-purple-600">98.5%</div>
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Platform security and data protection score</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center space-x-2 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-xl p-3 border border-white/20 hover:bg-white/80 dark:hover:bg-slate-800/80 transition-all duration-200 cursor-help">
-                    <Zap className="w-5 h-5 text-yellow-500" />
-                    <div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Response Time</div>
-                      <div className="font-semibold text-yellow-600">12ms</div>
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Average API response time for real-time data</p>
-                </TooltipContent>
-              </Tooltip>
+                  </TooltipTrigger>
+                  <TooltipContent className="animate-scale-in">
+                    <p>{stat.tooltip}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Enhanced Sentiment Score Cards */}
-        <div className="space-y-4">
+        <div className="space-y-4 animate-slide-up animate-stagger-1">
           <h2 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center space-x-2">
             <span>📈 Sentiment Insights</span>
             <Tooltip>
               <TooltipTrigger>
-                <Info className="w-4 h-4 text-muted-foreground" />
+                <Info className="w-4 h-4 text-muted-foreground hover:text-blue-500 transition-colors duration-200" />
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent className="animate-scale-in">
                 <p>AI-powered sentiment analysis of market data</p>
               </TooltipContent>
             </Tooltip>
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <SentimentCard
-              title="Overall Market Sentiment"
-              value="73.2"
-              change="+2.4%"
-              sentiment="positive"
-              subtitle="vs yesterday"
-              emoji="🟢"
-            />
-            <SentimentCard
-              title="Active Alerts"
-              value="12"
-              change="+3"
-              sentiment="neutral"
-              subtitle="new today"
-              emoji="🟡"
-            />
-            <SentimentCard
-              title="Portfolio Health"
-              value="8.7/10"
-              change="+0.3"
-              sentiment="positive"
-              subtitle="trending up"
-              emoji="🟢"
-            />
-            <SentimentCard
-              title="Risk Level"
-              value="Moderate"
-              change="-5%"
-              sentiment="positive"
-              subtitle="improving"
-              emoji="🟡"
-            />
+            {[
+              { title: "Overall Market Sentiment", value: "73.2", change: "+2.4%", sentiment: "positive", subtitle: "vs yesterday", emoji: "🟢" },
+              { title: "Active Alerts", value: "12", change: "+3", sentiment: "neutral", subtitle: "new today", emoji: "🟡" },
+              { title: "Portfolio Health", value: "8.7/10", change: "+0.3", sentiment: "positive", subtitle: "trending up", emoji: "🟢" },
+              { title: "Risk Level", value: "Moderate", change: "-5%", sentiment: "positive", subtitle: "improving", emoji: "🟡" }
+            ].map((card, index) => (
+              <div key={card.title} className={`hover-lift animate-slide-up ${
+                index === 0 ? '' : 
+                index === 1 ? 'animate-stagger-1' :
+                index === 2 ? 'animate-stagger-2' :
+                'animate-stagger-3'
+              }`}>
+                <SentimentCard
+                  title={card.title}
+                  value={card.value}
+                  change={card.change}
+                  sentiment={card.sentiment as any}
+                  subtitle={card.subtitle}
+                  emoji={card.emoji}
+                />
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Main Content Grid with new widgets */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-slide-up animate-stagger-2">
           <div className="lg:col-span-2 space-y-8">
-            <SentimentChart />
-            <HeatmapView />
+            <div className="hover-glow">
+              <SentimentChart />
+            </div>
+            <div className="hover-glow">
+              <HeatmapView />
+            </div>
           </div>
           <div className="space-y-8">
-            <PortfolioPreview />
-            <TopNewsPanel />
+            <div className="hover-glow">
+              <PortfolioPreview />
+            </div>
+            <div className="hover-glow">
+              <TopNewsPanel />
+            </div>
           </div>
         </div>
 
         {/* Enhanced Bottom Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-slide-up animate-stagger-3">
           {/* Top Performers with drill-down interaction */}
-          <div className="bg-gradient-to-br from-white via-green-50/30 to-emerald-50/50 dark:from-slate-800 dark:via-green-900/10 dark:to-emerald-900/20 p-6 rounded-2xl border border-green-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-white via-green-50/30 to-emerald-50/50 dark:from-slate-800 dark:via-green-900/10 dark:to-emerald-900/20 p-6 rounded-2xl border border-green-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg">
+              <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg hover-lift">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-xl font-bold text-slate-800 dark:text-white">🏆 Top Performers Today</h3>
             </div>
             <div className="space-y-4">
               {['AAPL', 'MSFT', 'GOOGL', 'TSLA'].map((ticker, index) => (
-                <div key={ticker} className="flex items-center justify-between p-3 bg-white/70 dark:bg-slate-700/50 rounded-xl border border-white/50 dark:border-slate-600/50 hover:bg-white/90 dark:hover:bg-slate-700/70 transition-all duration-200 cursor-pointer group">
+                <div key={ticker} className={`flex items-center justify-between p-3 bg-white/70 dark:bg-slate-700/50 rounded-xl border border-white/50 dark:border-slate-600/50 hover:bg-white/90 dark:hover:bg-slate-700/70 transition-all duration-300 cursor-pointer group hover-lift underline-on-hover animate-slide-up ${
+                  index === 0 ? '' : 
+                  index === 1 ? 'animate-stagger-1' :
+                  index === 2 ? 'animate-stagger-2' :
+                  'animate-stagger-3'
+                }`}>
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center hover-lift">
                       <span className="text-white font-bold text-sm">{ticker.slice(0, 2)}</span>
                     </div>
                     <span className="font-semibold text-slate-800 dark:text-white">{ticker}</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-positive font-bold text-lg">+{(2.5 + index * 0.5).toFixed(1)}%</div>
+                    <div className="text-positive font-bold text-lg count-animation">+{(2.5 + index * 0.5).toFixed(1)}%</div>
                     <div className="text-xs text-slate-500 dark:text-slate-400">Sentiment: {85 + index * 2}</div>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <ChevronDown className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-all duration-300 animate-icon-bounce" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Enhanced Sentiment Breakdown */}
-          <div className="bg-gradient-to-br from-white via-purple-50/30 to-blue-50/50 dark:from-slate-800 dark:via-purple-900/10 dark:to-blue-900/20 p-6 rounded-2xl border border-purple-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className="bg-gradient-to-br from-white via-purple-50/30 to-blue-50/50 dark:from-slate-800 dark:via-purple-900/10 dark:to-blue-900/20 p-6 rounded-2xl border border-purple-100 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg">
+              <div className="p-2 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg hover-lift">
                 <Bell className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-xl font-bold text-slate-800 dark:text-white">🧠 Sentiment Breakdown</h3>
             </div>
             <div className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center space-x-2">
-                    <span>🟢 Positive News</span>
-                  </span>
-                  <span className="text-sm font-semibold text-positive">65%</span>
+              {[
+                { label: '🟢 Positive News', percentage: 65, color: 'from-green-500 to-emerald-500', textColor: 'text-positive' },
+                { label: '🟡 Neutral News', percentage: 25, color: 'from-yellow-500 to-orange-500', textColor: 'text-neutral' },
+                { label: '🔴 Negative News', percentage: 10, color: 'from-red-500 to-pink-500', textColor: 'text-negative' }
+              ].map((item, index) => (
+                <div key={item.label} className={`space-y-2 animate-slide-up ${
+                  index === 0 ? '' : 
+                  index === 1 ? 'animate-stagger-1' :
+                  'animate-stagger-2'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center space-x-2">
+                      <span>{item.label}</span>
+                    </span>
+                    <span className={`text-sm font-semibold ${item.textColor} count-animation`}>{item.percentage}%</span>
+                  </div>
+                  <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full bg-gradient-to-r ${item.color} rounded-full transition-all duration-1000 ease-out animate-slide-in`} 
+                      style={{ width: `${item.percentage}%`, animationDelay: `${index * 200}ms` }}
+                    ></div>
+                  </div>
                 </div>
-                <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all duration-1000 ease-out" style={{ width: '65%' }}></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center space-x-2">
-                    <span>🟡 Neutral News</span>
-                  </span>
-                  <span className="text-sm font-semibold text-neutral">25%</span>
-                </div>
-                <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full transition-all duration-1000 ease-out" style={{ width: '25%' }}></div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-slate-700 dark:text-slate-300 flex items-center space-x-2">
-                    <span>🔴 Negative News</span>
-                  </span>
-                  <span className="text-sm font-semibold text-negative">10%</span>
-                </div>
-                <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-red-500 to-pink-500 rounded-full transition-all duration-1000 ease-out" style={{ width: '10%' }}></div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
