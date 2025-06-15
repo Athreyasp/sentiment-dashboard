@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +16,7 @@ import TickerInsights from "./pages/TickerInsights";
 import Portfolio from "./pages/Portfolio";
 import Alerts from "./pages/Alerts";
 import Explainer from "./pages/Explainer";
+import News from "./pages/News";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
@@ -57,6 +57,7 @@ const AppContent = () => {
         }>
           <Route index element={<Dashboard />} />
           <Route path="ticker" element={<TickerInsights />} />
+          <Route path="news" element={<News />} />
           <Route path="portfolio" element={<Portfolio />} />
           <Route path="alerts" element={<Alerts />} />
           <Route path="explainer" element={<Explainer />} />
