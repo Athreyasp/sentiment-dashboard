@@ -25,10 +25,10 @@ import { Preloader } from './components/Preloader'
 import { ModernLayout } from './components/ModernLayout'
 import { ThemeProvider } from './hooks/useTheme'
 
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const publishableKey = "pk_test_aW5jbHVkZWQtdXJjaGluLTE0LmNsZXJrLmFjY291bnRzLmRldiQ"
 
-if (!clerkPubKey) {
-  throw new Error("VITE_CLERK_PUBLISHABLE_KEY is not defined")
+if (!publishableKey) {
+  throw new Error("Clerk publishable key is not defined")
 }
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -46,8 +46,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const queryClient = new QueryClient()
-
-const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY!;
 
 function App() {
   const isLoading = usePreloader()
