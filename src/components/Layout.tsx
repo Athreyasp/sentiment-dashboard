@@ -1,33 +1,27 @@
 
-import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { Sidebar } from './Sidebar'
+import { DashboardSidebar } from './DashboardSidebar'
 import { Header } from './Header'
 
 export function Layout() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex w-full">
-      {/* Enhanced Sidebar */}
-      <Sidebar 
-        collapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
-      />
+      {/* Fixed Sidebar */}
+      <DashboardSidebar />
       
-      {/* Main content area with improved spacing */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Enhanced Header */}
-        <Header onMenuClick={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      {/* Main content area with left margin to account for fixed sidebar */}
+      <div className="flex-1 ml-64 flex flex-col min-h-screen">
+        {/* Header */}
+        <Header onMenuClick={() => {}} />
         
-        {/* Main dashboard with better container */}
+        {/* Main dashboard content */}
         <main className="flex-1 overflow-auto">
           <div className="max-w-7xl mx-auto p-6 space-y-6">
             <Outlet />
           </div>
         </main>
         
-        {/* Enhanced trust footer */}
+        {/* Footer */}
         <footer className="border-t border-slate-200/50 dark:border-slate-700/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-6 py-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-center space-x-8 text-xs text-slate-600 dark:text-slate-400">
