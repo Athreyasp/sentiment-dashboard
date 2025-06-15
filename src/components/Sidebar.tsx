@@ -12,9 +12,7 @@ import {
   Brain,
   ChevronLeft,
   ChevronRight,
-  TrendingUp,
-  Activity,
-  Zap
+  Activity
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -77,7 +75,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             "flex items-center space-x-3 transition-all duration-300",
             collapsed && "justify-center"
           )}>
-            <SentinelLogo size="sm" showText={!collapsed} variant="dark" />
+            <SentinelLogo size="sm" showText={!collapsed} variant="default" />
           </div>
           <Button
             variant="ghost"

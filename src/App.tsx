@@ -41,9 +41,7 @@ function App() {
           <Router>
             <Routes>
               {/* Public routes */}
-              <Route path="/" element={<AuthLayout />}>
-                <Route index element={<Index />} />
-              </Route>
+              <Route path="/" element={<AuthLayout><Index /></AuthLayout>} />
               
               {/* Protected dashboard routes */}
               <Route path="/dashboard" element={
