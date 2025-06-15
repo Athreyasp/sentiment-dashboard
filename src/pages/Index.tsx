@@ -156,8 +156,8 @@ const Index = () => {
 
       {/* Login Modal */}
       <LoginModal 
-        isOpen={showLogin} 
-        onClose={() => setShowLogin(false)} 
+        open={showLogin} 
+        onOpenChange={setShowLogin} 
       />
     </div>
   )
