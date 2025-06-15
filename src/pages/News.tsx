@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useFinancialNews } from '@/hooks/useFinancialNews'
 import { CompanyNewsSearch } from '@/components/CompanyNewsSearch'
+import { NewsFilter } from '@/components/NewsFilter'
 
 export default function News() {
   const [sentimentFilter, setSentimentFilter] = useState<string>('All')
@@ -139,7 +139,7 @@ export default function News() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <div className="max-w-6xl mx-auto p-6 space-y-8">
+      <div className="max-w-6xl mx-auto p-6 space-y-6">
         {/* Enhanced Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-center space-x-3 mb-4">
@@ -192,53 +192,16 @@ export default function News() {
           currentSearch={searchQuery}
         />
 
-        {/* Enhanced Filter Bar */}
-        <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border border-white/20 dark:border-slate-700/50 shadow-xl">
-          <CardContent className="p-6">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center space-x-2">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg">
-                  <Filter className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-lg font-semibold text-slate-800 dark:text-slate-200 font-inter">Filters</span>
-              </div>
-              
-              {/* Sentiment Filter */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="font-medium font-inter shadow-sm hover:shadow-md transition-all duration-200">
-                    Sentiment: {sentimentFilter}
-                    <ChevronDown className="w-3 h-3 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700">
-                  <DropdownMenuItem onClick={() => setSentimentFilter('All')}>All Sentiments</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSentimentFilter('Positive')}>🟢 Positive</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSentimentFilter('Neutral')}>🟡 Neutral</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setSentimentFilter('Negative')}>🔴 Negative</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Ticker Filter */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="font-medium font-inter shadow-sm hover:shadow-md transition-all duration-200">
-                    Ticker: {tickerFilter}
-                    <ChevronDown className="w-3 h-3 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700">
-                  <DropdownMenuItem onClick={() => setTickerFilter('All')}>All Tickers</DropdownMenuItem>
-                  {availableTickers.slice(0, 15).map(ticker => (
-                    <DropdownMenuItem key={ticker} onClick={() => setTickerFilter(ticker)}>
-                      📈 {ticker}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Compact News Filter */}
+        <NewsFilter
+          sentimentFilter={sentimentFilter}
+          tickerFilter={tickerFilter}
+          onSentimentChange={setSentimentFilter}
+          onTickerChange={setTickerFilter}
+          availableTickers={availableTickers}
+          totalArticles={news.length}
+          filteredArticles={filteredNews.length}
+        />
 
         {/* Enhanced News Feed */}
         {loading ? (
