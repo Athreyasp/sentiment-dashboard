@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Filter, ChevronDown, Clock, ExternalLink, RefreshCw, Wifi, WifiOff, Search } from 'lucide-react'
+import { Filter, ChevronDown, Clock, ExternalLink, RefreshCw, Wifi, WifiOff, Search, AlertCircle } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useFinancialNews } from '@/hooks/useFinancialNews'
+import { CompanyNewsSearch } from '@/components/CompanyNewsSearch'
 
 export default function News() {
   const [sentimentFilter, setSentimentFilter] = useState<string>('All')
@@ -97,11 +98,19 @@ export default function News() {
       <div className="space-y-6 animate-fade-in">
         <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">Error Loading News</h3>
-            <p className="text-red-600 dark:text-red-300">{error}</p>
-            <Button onClick={handleRefresh} className="mt-4" variant="outline">
-              Try Again
-            </Button>
+            <div className="flex items-center space-x-3">
+              <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
+              <div>
+                <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">Error Loading News</h3>
+                <p className="text-red-600 dark:text-red-300">{error}</p>
+                <p className="text-sm text-red-500 dark:text-red-400 mt-2">
+                  Please check if your NEWS_API_KEY is properly configured in the project settings.
+                </p>
+                <Button onClick={handleRefresh} className="mt-4" variant="outline">
+                  Try Again
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -148,14 +157,20 @@ export default function News() {
         </div>
       </div>
 
-      {/* Search and Filter Bar */}
+      {/* Company News Search */}
+      <CompanyNewsSearch 
+        onSearch={setSearchQuery}
+        currentSearch={searchQuery}
+      />
+
+      {/* Advanced Search and Filter Bar */}
       <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
         <CardContent className="p-4">
           <div className="flex items-center space-x-4 mb-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Input
-                placeholder="Search financial news, tickers, companies..."
+                placeholder="Advanced search in headlines, content, and tickers..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -229,7 +244,7 @@ export default function News() {
               <Card>
                 <CardContent className="p-6 text-center">
                   <p className="text-slate-600 dark:text-slate-400">
-                    {searchQuery ? 'No news found matching your search.' : 'No financial news available. Try fetching the latest news.'}
+                    {searchQuery ? `No news found for "${searchQuery}". Try searching for other companies like Apple, Tesla, Microsoft, or Renesas.` : 'No financial news available. Try fetching the latest news.'}
                   </p>
                   <Button onClick={handleRefresh} className="mt-4" variant="outline">
                     <RefreshCw className="w-4 h-4 mr-2" />
