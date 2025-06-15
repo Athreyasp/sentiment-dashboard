@@ -1,5 +1,6 @@
 
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useClerk } from '@clerk/clerk-react'
 import { 
   BarChart3, 
   TrendingUp, 
@@ -30,6 +31,8 @@ const navigation = [
 
 export function DashboardSidebar() {
   const { theme, setTheme } = useTheme()
+  const { signOut } = useClerk()
+  const navigate = useNavigate()
 
   const getThemeIcon = () => {
     switch (theme) {
@@ -47,6 +50,15 @@ export function DashboardSidebar() {
     const currentIndex = themes.indexOf(theme)
     const nextIndex = (currentIndex + 1) % themes.length
     setTheme(themes[nextIndex])
+  }
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+      navigate('/')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
   }
 
   const ThemeIcon = getThemeIcon()
@@ -117,6 +129,7 @@ export function DashboardSidebar() {
 
         {/* Logout */}
         <Button
+          onClick={handleLogout}
           variant="ghost"
           size="sm"
           className="w-full justify-start text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
