@@ -21,8 +21,20 @@ export default function News() {
   const [searchQuery, setSearchQuery] = useState('')
   const [isLive, setIsLive] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [autoRefresh, setAutoRefresh] = useState(true)
   
   const { news, loading, error, fetchNews, searchNews } = useFinancialNews()
+
+  // Auto-refresh every 60 seconds as specified
+  useEffect(() => {
+    if (autoRefresh && isLive) {
+      const interval = setInterval(() => {
+        fetchNews()
+      }, 60000) // 60 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [autoRefresh, isLive, fetchNews])
 
   // Handle search with debounce
   useEffect(() => {
@@ -47,19 +59,19 @@ export default function News() {
     switch (sentiment) {
       case 'positive':
         return (
-          <Badge className="bg-[#00C49F]/10 text-[#00C49F] border-[#00C49F]/20 hover:bg-[#00C49F]/20 transition-colors">
+          <Badge className="bg-[#00C49F]/10 text-[#00C49F] border-[#00C49F]/20 hover:bg-[#00C49F]/20 transition-colors font-inter">
             🟢 Positive
           </Badge>
         )
       case 'negative':
         return (
-          <Badge className="bg-[#FF4C4C]/10 text-[#FF4C4C] border-[#FF4C4C]/20 hover:bg-[#FF4C4C]/20 transition-colors">
+          <Badge className="bg-[#FF4C4C]/10 text-[#FF4C4C] border-[#FF4C4C]/20 hover:bg-[#FF4C4C]/20 transition-colors font-inter">
             🔴 Negative
           </Badge>
         )
       default:
         return (
-          <Badge className="bg-[#FFCB05]/10 text-[#FFCB05] border-[#FFCB05]/20 hover:bg-[#FFCB05]/20 transition-colors">
+          <Badge className="bg-[#FFCB05]/10 text-[#FFCB05] border-[#FFCB05]/20 hover:bg-[#FFCB05]/20 transition-colors font-inter">
             🟡 Neutral
           </Badge>
         )
@@ -95,18 +107,18 @@ export default function News() {
 
   if (error) {
     return (
-      <div className="space-y-6 animate-fade-in">
-        <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
+      <div className="space-y-6 animate-fade-in font-inter">
+        <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 rounded-lg">
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <AlertCircle className="w-6 h-6 text-red-600 dark:text-red-400" />
               <div>
-                <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">Error Loading News</h3>
-                <p className="text-red-600 dark:text-red-300">{error}</p>
-                <p className="text-sm text-red-500 dark:text-red-400 mt-2">
+                <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2 font-inter">Error Loading News</h3>
+                <p className="text-red-600 dark:text-red-300 font-inter">{error}</p>
+                <p className="text-sm text-red-500 dark:text-red-400 mt-2 font-inter">
                   Please check if your NEWS_API_KEY is properly configured in the project settings.
                 </p>
-                <Button onClick={handleRefresh} className="mt-4" variant="outline">
+                <Button onClick={handleRefresh} className="mt-4 font-inter" variant="outline">
                   Try Again
                 </Button>
               </div>
@@ -118,29 +130,29 @@ export default function News() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in font-inter">
       {/* Page Header */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white font-inter tracking-tight">
-              📰 Financial News Feed
+              📰 Real-time Financial News Feed
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-              Real-time financial news from trusted sources like Bloomberg, Reuters, and CNBC
+            <p className="text-sm text-slate-600 dark:text-slate-400 font-medium font-inter">
+              Live financial news powered by NewsAPI with sentiment analysis and ticker detection
             </p>
           </div>
           
           {/* Live Status and Controls */}
           <div className="flex items-center space-x-3">
             <Button
-              onClick={() => setIsLive(!isLive)}
+              onClick={() => setAutoRefresh(!autoRefresh)}
               variant="outline"
               size="sm"
-              className={`${isLive ? 'text-green-600 border-green-500/20 bg-green-50/50' : 'text-gray-500'} transition-colors`}
+              className={`${autoRefresh ? 'text-green-600 border-green-500/20 bg-green-50/50' : 'text-gray-500'} transition-colors font-inter`}
             >
-              {isLive ? <Wifi className="w-4 h-4 mr-1" /> : <WifiOff className="w-4 h-4 mr-1" />}
-              {isLive ? 'Live' : 'Offline'}
+              {autoRefresh ? <Wifi className="w-4 h-4 mr-1" /> : <WifiOff className="w-4 h-4 mr-1" />}
+              {autoRefresh ? 'Auto-refresh (60s)' : 'Manual'}
             </Button>
             
             <Button
@@ -148,10 +160,10 @@ export default function News() {
               variant="outline"
               size="sm"
               disabled={isRefreshing}
-              className="transition-all duration-200"
+              className="transition-all duration-200 font-inter"
             >
               <RefreshCw className={`w-4 h-4 mr-1 ${isRefreshing ? 'animate-spin' : ''}`} />
-              Fetch Latest
+              🔄 Refresh
             </Button>
           </div>
         </div>
@@ -163,32 +175,20 @@ export default function News() {
         currentSearch={searchQuery}
       />
 
-      {/* Advanced Search and Filter Bar */}
-      <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50">
+      {/* Filter Bar */}
+      <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 rounded-lg shadow-md">
         <CardContent className="p-4">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input
-                placeholder="Advanced search in headlines, content, and tickers..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-          
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <Filter className="w-4 h-4 text-slate-500" />
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Filters:</span>
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300 font-inter">Filters:</span>
             </div>
             
             {/* Sentiment Filter */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="font-medium">
-                  🏷 Sentiment: {sentimentFilter}
+                <Button variant="outline" size="sm" className="font-medium font-inter">
+                  🧠 Sentiment: {sentimentFilter}
                   <ChevronDown className="w-3 h-3 ml-1" />
                 </Button>
               </DropdownMenuTrigger>
@@ -203,14 +203,14 @@ export default function News() {
             {/* Ticker Filter */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="font-medium">
-                  🔎 Ticker: {tickerFilter}
+                <Button variant="outline" size="sm" className="font-medium font-inter">
+                  📈 Ticker: {tickerFilter}
                   <ChevronDown className="w-3 h-3 ml-1" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="animate-scale-in">
                 <DropdownMenuItem onClick={() => setTickerFilter('All')}>All</DropdownMenuItem>
-                {availableTickers.slice(0, 10).map(ticker => (
+                {availableTickers.slice(0, 15).map(ticker => (
                   <DropdownMenuItem key={ticker} onClick={() => setTickerFilter(ticker)}>
                     {ticker}
                   </DropdownMenuItem>
@@ -220,7 +220,7 @@ export default function News() {
 
             <div className="flex-1"></div>
             
-            <span className="text-xs text-slate-500 dark:text-slate-400">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-inter">
               {filteredNews.length} articles
             </span>
           </div>
@@ -229,11 +229,11 @@ export default function News() {
 
       {/* News Feed */}
       {loading ? (
-        <Card>
+        <Card className="rounded-lg shadow-md">
           <CardContent className="p-6">
             <div className="text-center">
               <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2" />
-              <p>Loading financial news...</p>
+              <p className="font-inter">Loading financial news...</p>
             </div>
           </CardContent>
         </Card>
@@ -241,12 +241,12 @@ export default function News() {
         <ScrollArea className="h-[calc(100vh-400px)]">
           <div className="space-y-4 pr-4">
             {filteredNews.length === 0 ? (
-              <Card>
+              <Card className="rounded-lg shadow-md">
                 <CardContent className="p-6 text-center">
-                  <p className="text-slate-600 dark:text-slate-400">
+                  <p className="text-slate-600 dark:text-slate-400 font-inter">
                     {searchQuery ? `No news found for "${searchQuery}". Try searching for other companies like Apple, Tesla, Microsoft, or Renesas.` : 'No financial news available. Try fetching the latest news.'}
                   </p>
-                  <Button onClick={handleRefresh} className="mt-4" variant="outline">
+                  <Button onClick={handleRefresh} className="mt-4 font-inter" variant="outline">
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Fetch News
                   </Button>
@@ -256,21 +256,21 @@ export default function News() {
               filteredNews.map((item, index) => (
                 <Card 
                   key={item.id} 
-                  className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer animate-fade-in"
+                  className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer animate-fade-in rounded-lg shadow-md p-4"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <CardContent className="p-6">
+                  <CardContent className="p-0">
                     <div className="space-y-4">
                       {/* Header with sentiment and ticker */}
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#00C49F] transition-colors leading-tight pr-4">
-                            {item.headline}
+                          <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-[#00C49F] transition-colors leading-tight pr-4 font-inter">
+                            📰 {item.headline}
                           </h3>
                         </div>
                         <div className="flex items-center space-x-2 flex-shrink-0">
                           {item.ticker && (
-                            <Badge variant="outline" className="font-mono text-xs bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                            <Badge variant="outline" className="font-mono text-xs bg-slate-50 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-inter">
                               📈 {item.ticker}
                             </Badge>
                           )}
@@ -280,7 +280,7 @@ export default function News() {
 
                       {/* Content */}
                       {item.content && (
-                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-inter">
                           {item.content.substring(0, 200)}
                           {item.content.length > 200 && '...'}
                         </p>
@@ -290,18 +290,18 @@ export default function News() {
                       <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
                         <div className="flex items-center space-x-4 text-xs text-slate-500 dark:text-slate-400">
                           <div className="flex items-center space-x-1">
-                            <span className="font-medium">🗞️ {item.source}</span>
+                            <span className="font-medium font-inter">🗞️ {item.source}</span>
                           </div>
                           <div className="flex items-center space-x-1">
                             <Clock className="w-3 h-3" />
-                            <span>{formatTime(item.published_at)}</span>
+                            <span className="font-inter">🕒 {formatTime(item.published_at)}</span>
                           </div>
                         </div>
                         {item.url && (
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity font-inter"
                             onClick={() => window.open(item.url!, '_blank')}
                           >
                             <ExternalLink className="w-3 h-3 mr-1" />

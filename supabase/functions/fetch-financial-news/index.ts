@@ -21,14 +21,14 @@ serve(async (req) => {
 
     const newsApiKey = Deno.env.get('NEWS_API_KEY')
     if (!newsApiKey) {
-      throw new Error('NEWS_API_KEY not found')
+      throw new Error('NEWS_API_KEY not found in environment variables')
     }
 
     console.log('Fetching financial news from NewsAPI...')
 
-    // Fetch financial news from NewsAPI
+    // Enhanced query for more comprehensive financial news
     const newsResponse = await fetch(
-      `https://newsapi.org/v2/everything?q=finance OR stock OR market OR trading OR cryptocurrency OR economy&sortBy=publishedAt&language=en&pageSize=20`,
+      `https://newsapi.org/v2/everything?q=stock%20market%20OR%20finance%20OR%20trading%20OR%20cryptocurrency%20OR%20economy%20OR%20earnings%20OR%20Apple%20OR%20Tesla%20OR%20Microsoft%20OR%20Renesas&sortBy=publishedAt&language=en&pageSize=50`,
       {
         headers: {
           'X-API-Key': newsApiKey,
@@ -37,33 +37,81 @@ serve(async (req) => {
     )
 
     if (!newsResponse.ok) {
-      throw new Error(`NewsAPI error: ${newsResponse.status}`)
+      console.error(`NewsAPI error: ${newsResponse.status}`)
+      const errorText = await newsResponse.text()
+      console.error('Error details:', errorText)
+      throw new Error(`NewsAPI error: ${newsResponse.status} - ${errorText}`)
     }
 
     const newsData = await newsResponse.json()
     console.log(`Fetched ${newsData.articles?.length || 0} articles`)
+
+    // Enhanced sentiment analysis with more keywords
+    const enhancedSentimentAnalysis = (text: string) => {
+      const headline = text.toLowerCase()
+      
+      const strongPositive = ['surge', 'soar', 'rally', 'boom', 'breakout', 'gains', 'beats', 'exceeds', 'record', 'all-time high']
+      const positive = ['rise', 'up', 'growth', 'profit', 'boost', 'strong', 'optimistic', 'bullish', 'upgrade']
+      const strongNegative = ['crash', 'plunge', 'collapse', 'tank', 'slump', 'disaster', 'crisis', 'panic']
+      const negative = ['fall', 'drop', 'down', 'decline', 'loss', 'concern', 'worry', 'bearish', 'downgrade', 'weak']
+      
+      if (strongPositive.some(word => headline.includes(word))) return 'positive'
+      if (strongNegative.some(word => headline.includes(word))) return 'negative'
+      if (positive.some(word => headline.includes(word))) return 'positive'
+      if (negative.some(word => headline.includes(word))) return 'negative'
+      
+      return 'neutral'
+    }
+
+    // Enhanced ticker extraction
+    const extractTicker = (text: string) => {
+      // Common company name to ticker mappings
+      const companyToTicker: Record<string, string> = {
+        'apple': 'AAPL',
+        'microsoft': 'MSFT',
+        'tesla': 'TSLA',
+        'google': 'GOOGL',
+        'alphabet': 'GOOGL',
+        'amazon': 'AMZN',
+        'meta': 'META',
+        'facebook': 'META',
+        'netflix': 'NFLX',
+        'nvidia': 'NVDA',
+        'jpmorgan': 'JPM',
+        'berkshire': 'BRK.A',
+        'johnson': 'JNJ',
+        'visa': 'V',
+        'procter': 'PG',
+        'mastercard': 'MA',
+        'toyota': 'TM',
+        'samsung': '005930.KS',
+        'asml': 'ASML',
+        'taiwan semiconductor': 'TSM',
+        'renesas': '6723.T',
+        'sony': 'SONY'
+      }
+
+      const lowerText = text.toLowerCase()
+      
+      // Check for company names first
+      for (const [company, ticker] of Object.entries(companyToTicker)) {
+        if (lowerText.includes(company)) {
+          return ticker
+        }
+      }
+
+      // Look for ticker patterns (2-5 uppercase letters)
+      const tickerMatch = text.match(/\b[A-Z]{2,5}\b/)
+      return tickerMatch ? tickerMatch[0] : null
+    }
 
     // Process and insert news articles
     if (newsData.articles && newsData.articles.length > 0) {
       const articlesToInsert = newsData.articles
         .filter((article: any) => article.title && article.publishedAt && article.url)
         .map((article: any) => {
-          // Simple sentiment analysis based on keywords
-          const headline = article.title.toLowerCase()
-          let sentiment = 'neutral'
-          
-          const positiveWords = ['surge', 'gains', 'up', 'rise', 'boost', 'growth', 'profit', 'beat', 'strong']
-          const negativeWords = ['drop', 'fall', 'down', 'decline', 'loss', 'concern', 'challenge', 'weak']
-          
-          if (positiveWords.some(word => headline.includes(word))) {
-            sentiment = 'positive'
-          } else if (negativeWords.some(word => headline.includes(word))) {
-            sentiment = 'negative'
-          }
-
-          // Extract potential ticker symbols (uppercase words 2-5 chars)
-          const tickerMatch = article.title.match(/\b[A-Z]{2,5}\b/)
-          const ticker = tickerMatch ? tickerMatch[0] : null
+          const sentiment = enhancedSentimentAnalysis(article.title + ' ' + (article.description || ''))
+          const ticker = extractTicker(article.title + ' ' + (article.description || ''))
 
           return {
             headline: article.title,
