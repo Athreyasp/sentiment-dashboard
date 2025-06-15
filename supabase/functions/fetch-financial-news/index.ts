@@ -46,7 +46,7 @@ serve(async (req) => {
     // Process and insert news articles
     if (newsData.articles && newsData.articles.length > 0) {
       const articlesToInsert = newsData.articles
-        .filter((article: any) => article.title && article.publishedAt)
+        .filter((article: any) => article.title && article.publishedAt && article.url)
         .map((article: any) => {
           // Simple sentiment analysis based on keywords
           const headline = article.title.toLowerCase()
@@ -76,26 +76,36 @@ serve(async (req) => {
           }
         })
 
-      // Insert articles into database (ignore duplicates)
-      const { data, error } = await supabaseClient
+      // Check for existing articles and only insert new ones
+      const { data: existingArticles } = await supabaseClient
         .from('financial_news')
-        .upsert(articlesToInsert, { 
-          onConflict: 'url',
-          ignoreDuplicates: true 
-        })
+        .select('url')
+        .in('url', articlesToInsert.map(article => article.url))
 
-      if (error) {
-        console.error('Database error:', error)
-        throw error
+      const existingUrls = new Set(existingArticles?.map(article => article.url) || [])
+      const newArticles = articlesToInsert.filter(article => !existingUrls.has(article.url))
+
+      if (newArticles.length > 0) {
+        const { data, error } = await supabaseClient
+          .from('financial_news')
+          .insert(newArticles)
+
+        if (error) {
+          console.error('Database error:', error)
+          throw error
+        }
+
+        console.log(`Successfully inserted ${newArticles.length} new news articles`)
+      } else {
+        console.log('No new articles to insert')
       }
-
-      console.log(`Successfully inserted ${articlesToInsert.length} news articles`)
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        articlesProcessed: newsData.articles?.length || 0 
+        articlesProcessed: newsData.articles?.length || 0,
+        message: 'Financial news fetched successfully'
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -107,7 +117,8 @@ serve(async (req) => {
     console.error('Error in fetch-financial-news function:', error)
     return new Response(
       JSON.stringify({ 
-        error: error.message 
+        error: error.message,
+        success: false
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

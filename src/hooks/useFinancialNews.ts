@@ -75,8 +75,14 @@ export function useFinancialNews() {
         throw error
       }
 
-      setNews(data || [])
-      console.log(`Loaded ${data?.length || 0} news articles`)
+      // Type the data properly to handle sentiment field
+      const typedData: FinancialNewsItem[] = (data || []).map(item => ({
+        ...item,
+        sentiment: item.sentiment as 'positive' | 'neutral' | 'negative' | null
+      }))
+
+      setNews(typedData)
+      console.log(`Loaded ${typedData.length} news articles`)
     } catch (err) {
       console.error('Error loading news:', err)
       setError(err instanceof Error ? err.message : 'Failed to load news')
@@ -104,17 +110,25 @@ export function useFinancialNews() {
           console.log('Real-time news update:', payload)
           
           if (payload.eventType === 'INSERT') {
-            setNews(prev => [payload.new as FinancialNewsItem, ...prev])
+            const newItem: FinancialNewsItem = {
+              ...payload.new as any,
+              sentiment: (payload.new as any).sentiment as 'positive' | 'neutral' | 'negative' | null
+            }
+            setNews(prev => [newItem, ...prev])
             toast({
               title: "📰 Breaking News",
-              description: (payload.new as FinancialNewsItem).headline.substring(0, 60) + "...",
+              description: newItem.headline.substring(0, 60) + "...",
             })
           } else if (payload.eventType === 'UPDATE') {
+            const updatedItem: FinancialNewsItem = {
+              ...payload.new as any,
+              sentiment: (payload.new as any).sentiment as 'positive' | 'neutral' | 'negative' | null
+            }
             setNews(prev => prev.map(item => 
-              item.id === payload.new.id ? payload.new as FinancialNewsItem : item
+              item.id === updatedItem.id ? updatedItem : item
             ))
           } else if (payload.eventType === 'DELETE') {
-            setNews(prev => prev.filter(item => item.id !== payload.old.id))
+            setNews(prev => prev.filter(item => item.id !== (payload.old as any).id))
           }
         }
       )
