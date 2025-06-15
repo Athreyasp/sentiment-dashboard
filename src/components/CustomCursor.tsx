@@ -55,37 +55,77 @@ export function CustomCursor() {
 
   return (
     <div
-      className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-150 ease-out ${
-        isHovering ? 'scale-150' : 'scale-100'
-      } ${isClicking ? 'scale-75' : ''}`}
+      className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-200 ease-out ${
+        isClicking ? 'scale-90' : isHovering ? 'scale-125' : 'scale-100'
+      }`}
       style={{
-        transform: `translate(${mousePosition.x - 12}px, ${mousePosition.y - 12}px) scale(${
-          isHovering ? 1.5 : 1
-        }) ${isClicking ? 'scale(0.75)' : ''}`,
+        transform: `translate(${mousePosition.x - 6}px, ${mousePosition.y - 6}px)`,
       }}
     >
-      <div
-        className={`w-6 h-6 transition-all duration-200 ${
-          isHovering 
-            ? 'opacity-80 drop-shadow-lg' 
-            : 'opacity-100'
+      {/* Custom SVG Arrow Cursor */}
+      <svg
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={`transition-all duration-300 ${
+          isHovering ? 'drop-shadow-lg' : 'drop-shadow-sm'
         }`}
       >
-        <img
-          src="/lovable-uploads/12a2755a-a895-48cd-8135-3acfd44e1c64.png"
-          alt="Custom Cursor"
-          className="w-full h-full object-contain filter drop-shadow-sm"
-          draggable={false}
+        {/* Outer glow effect */}
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+            <feMerge> 
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        
+        {/* Main arrow shape */}
+        <path
+          d="M4 4 L4 20 L10 14 L14 18 L18 14 L10 10 L16 4 Z"
+          fill="#00C49F"
+          stroke="#ffffff"
+          strokeWidth="1"
+          filter="url(#glow)"
+          className="transition-all duration-200"
         />
-      </div>
+        
+        {/* Inner highlight for futuristic effect */}
+        <path
+          d="M6 6 L6 16 L9 13 L12 16 L15 13 L9 9 L14 6 Z"
+          fill="rgba(255, 255, 255, 0.2)"
+          className={`transition-opacity duration-200 ${
+            isHovering ? 'opacity-40' : 'opacity-20'
+          }`}
+        />
+      </svg>
       
-      {/* Trailing effect */}
+      {/* Animated trailing dots */}
       <div
-        className={`absolute top-1/2 left-1/2 w-3 h-3 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300 ${
+        className={`absolute top-1/2 left-1/2 w-2 h-2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-500 ${
           isHovering 
-            ? 'bg-[#00C49F]/30 scale-150' 
+            ? 'bg-[#00C49F]/40 scale-150 animate-pulse' 
             : 'bg-[#00C49F]/20 scale-100'
         }`}
+        style={{
+          animationDelay: '0ms'
+        }}
+      />
+      
+      <div
+        className={`absolute top-1/2 left-1/2 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-700 ${
+          isHovering 
+            ? 'bg-[#00C49F]/30 scale-125' 
+            : 'bg-[#00C49F]/15 scale-75'
+        }`}
+        style={{
+          transform: `translate(calc(-50% - 8px), calc(-50% - 8px)) scale(${isHovering ? 1.25 : 0.75})`,
+          animationDelay: '100ms'
+        }}
       />
     </div>
   )

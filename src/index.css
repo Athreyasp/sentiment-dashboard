@@ -74,6 +74,11 @@
   body {
     @apply bg-background text-foreground font-inter;
   }
+  
+  /* Custom cursor styles - hide default cursor when custom cursor is active */
+  .custom-cursor-active * {
+    cursor: none !important;
+  }
 }
 
 @layer utilities {

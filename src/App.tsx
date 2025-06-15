@@ -33,6 +33,19 @@ const AppContent = () => {
   const { isLoading } = usePreloader({ minLoadTime: 5000 });
   const { showCustomCursor } = useCursor();
 
+  useEffect(() => {
+    // Add custom cursor class to body when custom cursor is active
+    if (showCustomCursor) {
+      document.body.classList.add('custom-cursor-active');
+    } else {
+      document.body.classList.remove('custom-cursor-active');
+    }
+
+    return () => {
+      document.body.classList.remove('custom-cursor-active');
+    };
+  }, [showCustomCursor]);
+
   if (isLoading) {
     return <Preloader />;
   }
