@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
-import { Upload, Plus, TrendingUp, TrendingDown, Briefcase, Target, Shield, Zap } from 'lucide-react'
+import { Upload, Plus, TrendingUp, TrendingDown, Briefcase, Target, Shield, Zap, Eye, BarChart3, Wallet, Activity } from 'lucide-react'
 
 const portfolioData = [
   {
@@ -15,7 +15,8 @@ const portfolioData = [
     currentPrice: 161.20,
     sentiment: 75,
     change: 7.32,
-    alerts: true
+    alerts: true,
+    logo: '🍎'
   },
   {
     ticker: 'MSFT',
@@ -25,7 +26,8 @@ const portfolioData = [
     currentPrice: 342.10,
     sentiment: 68,
     change: 3.53,
-    alerts: false
+    alerts: false,
+    logo: '🖥️'
   },
   {
     ticker: 'GOOGL',
@@ -35,7 +37,19 @@ const portfolioData = [
     currentPrice: 2680.75,
     sentiment: 72,
     change: 1.15,
-    alerts: true
+    alerts: true,
+    logo: '🔍'
+  },
+  {
+    ticker: 'TSLA',
+    name: 'Tesla Inc.',
+    shares: 75,
+    avgPrice: 245.80,
+    currentPrice: 267.50,
+    sentiment: 82,
+    change: 8.83,
+    alerts: true,
+    logo: '⚡'
   }
 ]
 
@@ -56,168 +70,214 @@ export default function Portfolio() {
   const totalGainLoss = holdings.reduce((sum, holding) => 
     sum + (holding.shares * (holding.currentPrice - holding.avgPrice)), 0
   )
+  const totalGainLossPercent = ((totalGainLoss / (totalValue - totalGainLoss)) * 100)
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-slate-900 dark:via-emerald-900/20 dark:to-green-900/20 rounded-3xl p-8 border border-emerald-100 dark:border-slate-700">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-emerald-400/20 to-green-500/20 rounded-full blur-3xl"></div>
-        
-        <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="p-4 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl shadow-xl">
-                <Briefcase className="w-10 h-10 text-white" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-emerald-800 to-green-800 dark:from-white dark:via-emerald-200 dark:to-green-200 bg-clip-text text-transparent">
-                  Portfolio Manager
-                </h1>
-                <p className="text-lg text-slate-600 dark:text-slate-300">
-                  Track sentiment impact on your investments
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <Button variant="outline" className="h-12 px-6 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm hover:bg-white dark:hover:bg-slate-700">
-                <Upload className="w-5 h-5 mr-2" />
-                Import CSV
-              </Button>
-              <Button className="h-12 px-6 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg">
-                <Plus className="w-5 h-5 mr-2" />
-                Add Stock
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Enhanced Portfolio Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-100 dark:border-blue-800 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-lg font-semibold text-slate-700 dark:text-slate-300">
-                Total Portfolio Value
-              </CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">${totalValue.toLocaleString()}</div>
-            <div className={`text-lg flex items-center ${totalGainLoss >= 0 ? 'text-positive' : 'text-negative'}`}>
-              {totalGainLoss >= 0 ? <TrendingUp className="w-5 h-5 mr-2" /> : <TrendingDown className="w-5 h-5 mr-2" />}
-              ${Math.abs(totalGainLoss).toLocaleString()} ({((totalGainLoss / (totalValue - totalGainLoss)) * 100).toFixed(2)}%)
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-100 dark:border-purple-800 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-lg font-semibold text-slate-700 dark:text-slate-300">
-                Average Sentiment
-              </CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">71.7</div>
-            <div className="text-lg text-positive">Positive outlook</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-2 border-orange-100 dark:border-orange-800 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <CardHeader className="pb-3">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <CardTitle className="text-lg font-semibold text-slate-700 dark:text-slate-300">
-                Active Alerts
-              </CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold mb-2">{holdings.filter(h => h.alerts).length}</div>
-            <div className="text-lg text-slate-600 dark:text-slate-400">of {holdings.length} holdings</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Enhanced Holdings Table */}
-      <Card className="bg-gradient-to-br from-white to-slate-50/50 dark:from-slate-800 dark:to-slate-900/50 border-2 border-slate-100 dark:border-slate-700 shadow-xl">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-3 text-2xl">
-            <div className="p-2 bg-gradient-to-r from-slate-600 to-slate-700 rounded-lg">
-              <Briefcase className="w-6 h-6 text-white" />
-            </div>
-            <span>Your Holdings</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {holdings.map((holding) => (
-              <div key={holding.ticker} className="p-6 bg-gradient-to-r from-white/80 to-slate-50/50 dark:from-slate-700/50 dark:to-slate-800/50 rounded-2xl border border-white/50 dark:border-slate-600/50 hover:shadow-xl transition-all duration-300 hover:scale-[1.01]">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                        <span className="text-white font-bold text-lg">{holding.ticker.slice(0, 2)}</span>
-                      </div>
-                      <div>
-                        <div className="font-bold text-lg">{holding.ticker}</div>
-                        <div className="text-slate-600 dark:text-slate-400">{holding.name}</div>
-                      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 p-6">
+      <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
+        {/* Hero Header with stunning design */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+          <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-yellow-400/20 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-6">
+                <div className="p-4 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30">
+                  <Wallet className="w-12 h-12 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-5xl font-bold mb-2">
+                    Portfolio Overview
+                  </h1>
+                  <p className="text-xl text-white/90">
+                    Your investment journey at a glance
+                  </p>
+                  <div className="flex items-center space-x-4 mt-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-sm">Live Updates Active</span>
                     </div>
-                    <Badge 
-                      className={`px-4 py-2 text-sm font-medium ${holding.sentiment >= 70 
-                        ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800" 
-                        : holding.sentiment >= 50
-                          ? "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800"
-                          : "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800"
-                      }`}
-                    >
-                      Sentiment: {holding.sentiment}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center space-x-8">
-                    <div className="text-right">
-                      <div className="font-bold text-xl">${holding.currentPrice.toFixed(2)}</div>
-                      <div className={`text-lg flex items-center ${holding.change >= 0 ? 'text-positive' : 'text-negative'}`}>
-                        {holding.change >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
-                        {holding.change >= 0 ? '+' : ''}{holding.change.toFixed(2)}%
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="text-sm text-slate-600 dark:text-slate-400">{holding.shares} shares</div>
-                      <div className="font-bold text-lg">
-                        ${(holding.shares * holding.currentPrice).toLocaleString()}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <span className="text-sm font-medium">Alerts</span>
-                      <Switch
-                        checked={holding.alerts}
-                        onCheckedChange={() => toggleAlert(holding.ticker)}
-                      />
-                    </div>
+                    <div className="w-px h-4 bg-white/30"></div>
+                    <span className="text-sm">{holdings.length} Holdings</span>
                   </div>
                 </div>
               </div>
-            ))}
+              
+              <div className="flex items-center space-x-4">
+                <Button variant="secondary" className="h-12 px-6 bg-white/20 backdrop-blur-sm border-white/30 text-white hover:bg-white/30">
+                  <Upload className="w-5 h-5 mr-2" />
+                  Import
+                </Button>
+                <Button className="h-12 px-6 bg-white text-indigo-600 hover:bg-white/90 font-semibold">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add Stock
+                </Button>
+              </div>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Portfolio Stats - Modern Card Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-900/20 dark:to-green-900/10 border-emerald-200 dark:border-emerald-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">Total Value</p>
+                  <p className="text-3xl font-bold text-emerald-900 dark:text-emerald-100">${totalValue.toLocaleString()}</p>
+                </div>
+                <div className="p-3 bg-emerald-500 rounded-2xl">
+                  <Target className="w-8 h-8 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/10 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-700 dark:text-blue-400">Total P&L</p>
+                  <div className="flex items-center space-x-2">
+                    <p className={`text-3xl font-bold ${totalGainLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {totalGainLoss >= 0 ? '+' : ''}${totalGainLoss.toLocaleString()}
+                    </p>
+                    {totalGainLoss >= 0 ? <TrendingUp className="w-6 h-6 text-green-500" /> : <TrendingDown className="w-6 h-6 text-red-500" />}
+                  </div>
+                  <p className={`text-sm ${totalGainLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {totalGainLoss >= 0 ? '+' : ''}{totalGainLossPercent.toFixed(2)}%
+                  </p>
+                </div>
+                <div className="p-3 bg-blue-500 rounded-2xl">
+                  <BarChart3 className="w-8 h-8 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/10 border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-purple-700 dark:text-purple-400">Avg Sentiment</p>
+                  <p className="text-3xl font-bold text-purple-900 dark:text-purple-100">
+                    {(holdings.reduce((sum, h) => sum + h.sentiment, 0) / holdings.length).toFixed(1)}
+                  </p>
+                  <p className="text-sm text-green-600">Positive</p>
+                </div>
+                <div className="p-3 bg-purple-500 rounded-2xl">
+                  <Activity className="w-8 h-8 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-900/20 dark:to-red-900/10 border-orange-200 dark:border-orange-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-orange-700 dark:text-orange-400">Active Alerts</p>
+                  <p className="text-3xl font-bold text-orange-900 dark:text-orange-100">
+                    {holdings.filter(h => h.alerts).length}
+                  </p>
+                  <p className="text-sm text-gray-600">of {holdings.length} stocks</p>
+                </div>
+                <div className="p-3 bg-orange-500 rounded-2xl">
+                  <Zap className="w-8 h-8 text-white" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Holdings - Modern List Design */}
+        <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-white/20 dark:border-slate-700/50 shadow-2xl">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center space-x-3 text-2xl">
+                <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl">
+                  <Briefcase className="w-6 h-6 text-white" />
+                </div>
+                <span>Your Holdings</span>
+              </CardTitle>
+              <Button variant="outline" size="sm" className="h-10">
+                <Eye className="w-4 h-4 mr-2" />
+                View All
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="space-y-1">
+              {holdings.map((holding, index) => (
+                <div key={holding.ticker} className="group p-6 hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50/30 dark:hover:from-slate-800/50 dark:hover:to-blue-900/10 transition-all duration-300 border-b border-slate-100 dark:border-slate-700/50 last:border-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-6">
+                      <div className="relative">
+                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          {holding.logo}
+                        </div>
+                        <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white dark:border-slate-800 animate-pulse"></div>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <div className="flex items-center space-x-3">
+                          <h3 className="text-xl font-bold text-slate-900 dark:text-white">{holding.ticker}</h3>
+                          <Badge 
+                            variant="secondary"
+                            className={`px-3 py-1 ${holding.sentiment >= 70 
+                              ? "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400" 
+                              : holding.sentiment >= 50
+                                ? "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                : "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400"
+                            }`}
+                          >
+                            {holding.sentiment}% Sentiment
+                          </Badge>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-400 font-medium">{holding.name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-500">{holding.shares} shares • Avg: ${holding.avgPrice.toFixed(2)}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-8">
+                      <div className="text-right space-y-1">
+                        <div className="text-2xl font-bold text-slate-900 dark:text-white">
+                          ${holding.currentPrice.toFixed(2)}
+                        </div>
+                        <div className={`flex items-center justify-end space-x-1 text-lg font-semibold ${holding.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {holding.change >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
+                          <span>{holding.change >= 0 ? '+' : ''}{holding.change.toFixed(2)}%</span>
+                        </div>
+                      </div>
+
+                      <div className="text-right space-y-1">
+                        <div className="text-lg font-bold text-slate-900 dark:text-white">
+                          ${(holding.shares * holding.currentPrice).toLocaleString()}
+                        </div>
+                        <div className="text-sm text-slate-500 dark:text-slate-400">
+                          Total Value
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <div className="text-right">
+                          <div className="text-sm font-medium text-slate-700 dark:text-slate-300">Alerts</div>
+                          <Switch
+                            checked={holding.alerts}
+                            onCheckedChange={() => toggleAlert(holding.ticker)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
