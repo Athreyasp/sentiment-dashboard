@@ -58,41 +58,40 @@ export function CustomCursor() {
   return (
     <div
       className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-200 ease-out ${
-        isClicking ? 'scale-90' : isHovering ? 'scale-125' : 'scale-100'
+        isClicking ? 'scale-90' : isHovering ? 'scale-110' : 'scale-100'
       }`}
       style={{
-        transform: `translate(${mousePosition.x - 12}px, ${mousePosition.y - 12}px) ${
-          isClicking ? 'scale(0.9)' : isHovering ? 'scale(1.25)' : 'scale(1)'
-        }`,
+        transform: `translate(${mousePosition.x - 16}px, ${mousePosition.y - 16}px)`,
       }}
     >
       <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className={`transition-all duration-200 ${
           isHovering ? 'drop-shadow-lg' : 'drop-shadow-md'
         }`}
         style={{
-          filter: `drop-shadow(0 4px 8px rgba(0, 196, 159, 0.4))`,
+          filter: `drop-shadow(0 4px 12px rgba(0, 196, 159, 0.4))`,
         }}
       >
+        {/* Main cursor body - smooth rounded triangular arrow */}
         <path
-          d="M5 7.5C5 6.11929 6.11929 5 7.5 5H16.5C17.3284 5 18 5.67157 18 6.5C18 7.32843 17.3284 8 16.5 8H10L16.5 14.5C17.3284 14.5 18 15.1716 18 16C18 16.8284 17.3284 17.5 16.5 17.5H7.5C6.11929 17.5 5 16.3807 5 15V7.5Z"
+          d="M6 6C6 4.89543 6.89543 4 8 4C8.55228 4 9.05228 4.22386 9.4 4.6L24.4 19.6C25.2 20.4 25.2 21.6 24.4 22.4C23.6 23.2 22.4 23.2 21.6 22.4L16 16.8V24C16 25.1046 15.1046 26 14 26H8C6.89543 26 6 25.1046 6 24V6Z"
           fill="#00C49F"
           className={`transition-all duration-200 ${
             isClicking ? 'opacity-80' : 'opacity-100'
           }`}
         />
         
-        {/* Subtle highlight for depth */}
+        {/* Inner highlight for depth */}
         <path
-          d="M7 8C7 7.44772 7.44772 7 8 7H15C15.2761 7 15.5 7.22386 15.5 7.5C15.5 7.77614 15.2761 8 15 8H9.5L15 13.5C15.2761 13.5 15.5 13.7239 15.5 14C15.5 14.2761 15.2761 14.5 15 14.5H8C7.44772 14.5 7 14.0523 7 13.5V8Z"
-          fill="rgba(255, 255, 255, 0.3)"
+          d="M8 6C8 5.44772 8.44772 5 9 5C9.27614 5 9.52386 5.11193 9.7 5.3L22.7 18.3C23.1 18.7 23.1 19.3 22.7 19.7C22.3 20.1 21.7 20.1 21.3 19.7L17 15.4V23C17 23.5523 16.5523 24 16 24H9C8.44772 24 8 23.5523 8 23V6Z"
+          fill="rgba(255, 255, 255, 0.25)"
           className={`transition-opacity duration-200 ${
-            isHovering ? 'opacity-40' : 'opacity-20'
+            isHovering ? 'opacity-40' : 'opacity-25'
           }`}
         />
       </svg>
@@ -104,8 +103,8 @@ export function CustomCursor() {
           style={{
             background: 'radial-gradient(circle, rgba(0, 196, 159, 0.3) 0%, transparent 70%)',
             transform: 'translate(-4px, -4px)',
-            width: '32px',
-            height: '32px',
+            width: '40px',
+            height: '40px',
           }}
         />
       )}
