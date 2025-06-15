@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,7 +28,7 @@ const queryClient = new QueryClient();
 const CLERK_PUBLISHABLE_KEY = "pk_test_aW5jbHVkZWQtdXJjaGluLTE0LmNsZXJrLmFjY291bnRzLmRldiQ";
 
 const AppContent = () => {
-  const isLoading = usePreloader(5000);
+  const { isLoading } = usePreloader({ minLoadTime: 5000 });
 
   if (isLoading) {
     return <Preloader />;
