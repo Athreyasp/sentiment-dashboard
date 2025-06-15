@@ -55,23 +55,20 @@ export function CustomCursor() {
     }
   }, [])
 
-  // Get theme-aware colors
-  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  const fillColor = '#00C49F' // Brand accent color
-  const strokeColor = isDarkMode ? '#ffffff' : '#000000'
-
   return (
     <div
-      className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-150 ease-out ${
-        isClicking ? 'scale-90' : isHovering ? 'scale-110' : 'scale-100'
+      className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-all duration-200 ease-out ${
+        isClicking ? 'scale-90' : isHovering ? 'scale-125' : 'scale-100'
       }`}
       style={{
-        transform: `translate(${mousePosition.x - 2}px, ${mousePosition.y - 2}px)`,
+        transform: `translate(${mousePosition.x - 12}px, ${mousePosition.y - 12}px) ${
+          isClicking ? 'scale(0.9)' : isHovering ? 'scale(1.25)' : 'scale(1)'
+        }`,
       }}
     >
       <svg
-        width="32"
-        height="32"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -79,44 +76,36 @@ export function CustomCursor() {
           isHovering ? 'drop-shadow-lg' : 'drop-shadow-md'
         }`}
         style={{
-          filter: `drop-shadow(0 4px 8px rgba(0, 196, 159, 0.3))`,
+          filter: `drop-shadow(0 4px 8px rgba(0, 196, 159, 0.4))`,
         }}
       >
-        <defs>
-          <linearGradient id="cursor-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={fillColor} />
-            <stop offset="100%" stopColor="#00A085" />
-          </linearGradient>
-        </defs>
-        
         <path
-          d="M4 4L20 12L13 13L12 20L4 4Z"
-          fill="url(#cursor-gradient)"
-          stroke={strokeColor}
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          d="M5 7.5C5 6.11929 6.11929 5 7.5 5H16.5C17.3284 5 18 5.67157 18 6.5C18 7.32843 17.3284 8 16.5 8H10L16.5 14.5C17.3284 14.5 18 15.1716 18 16C18 16.8284 17.3284 17.5 16.5 17.5H7.5C6.11929 17.5 5 16.3807 5 15V7.5Z"
+          fill="#00C49F"
           className={`transition-all duration-200 ${
             isClicking ? 'opacity-80' : 'opacity-100'
           }`}
         />
         
-        {/* Add subtle inner highlight */}
+        {/* Subtle highlight for depth */}
         <path
-          d="M6 6L16 11.5L12 12L11.5 16L6 6Z"
-          fill="rgba(255, 255, 255, 0.2)"
+          d="M7 8C7 7.44772 7.44772 7 8 7H15C15.2761 7 15.5 7.22386 15.5 7.5C15.5 7.77614 15.2761 8 15 8H9.5L15 13.5C15.2761 13.5 15.5 13.7239 15.5 14C15.5 14.2761 15.2761 14.5 15 14.5H8C7.44772 14.5 7 14.0523 7 13.5V8Z"
+          fill="rgba(255, 255, 255, 0.3)"
           className={`transition-opacity duration-200 ${
-            isHovering ? 'opacity-60' : 'opacity-30'
+            isHovering ? 'opacity-40' : 'opacity-20'
           }`}
         />
       </svg>
 
-      {/* Hover indicator ring */}
+      {/* Hover glow effect */}
       {isHovering && (
         <div 
-          className="absolute inset-0 w-8 h-8 rounded-full border border-[#00C49F]/40 animate-ping"
+          className="absolute inset-0 rounded-full animate-ping"
           style={{
+            background: 'radial-gradient(circle, rgba(0, 196, 159, 0.3) 0%, transparent 70%)',
             transform: 'translate(-4px, -4px)',
+            width: '32px',
+            height: '32px',
           }}
         />
       )}
