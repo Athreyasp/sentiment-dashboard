@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { SentinelLogo } from '@/components/SentinelLogo'
 import { LoginModal } from '@/components/LoginModal'
-import { Preloader } from '@/components/Preloader'
+import { SimplePreloader } from '@/components/SimplePreloader'
 import { usePreloader } from '@/hooks/usePreloader'
 import { useTheme } from '@/hooks/useTheme'
 import { 
@@ -35,18 +35,14 @@ export default function Homepage() {
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [pageLoaded, setPageLoaded] = useState(false)
   
-  const { isLoading, isExiting } = usePreloader({
-    minLoadTime: 5000,
+  const { isLoading } = usePreloader({
+    minLoadTime: 3000,
     onComplete: () => setPageLoaded(true)
   })
 
   // Show preloader during initial load
   if (isLoading) {
-    return (
-      <div className={`transition-all duration-800 ease-in-out ${isExiting ? 'opacity-0 scale-105' : 'opacity-100 scale-100'}`}>
-        <Preloader />
-      </div>
-    )
+    return <SimplePreloader onComplete={() => setPageLoaded(true)} />
   }
 
   const features = [
@@ -267,7 +263,7 @@ export default function Homepage() {
                   </div>
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span>Real-time Data</span>
+                    <span className="text-xs text-slate-500">Real-time Data</span>
                   </div>
                 </div>
               </div>

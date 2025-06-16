@@ -6,25 +6,17 @@ interface UsePreloaderOptions {
   onComplete?: () => void
 }
 
-export function usePreloader({ minLoadTime = 5000, onComplete }: UsePreloaderOptions = {}) {
+export function usePreloader({ minLoadTime = 3000, onComplete }: UsePreloaderOptions = {}) {
   const [isLoading, setIsLoading] = useState(true)
-  const [isExiting, setIsExiting] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Start exit animation
-      setIsExiting(true)
-      
-      // Complete loading after exit animation
-      setTimeout(() => {
-        setIsLoading(false)
-        onComplete?.()
-      }, 800) // Allow time for fade-out animation
-      
+      setIsLoading(false)
+      onComplete?.()
     }, minLoadTime)
 
     return () => clearTimeout(timer)
   }, [minLoadTime, onComplete])
 
-  return { isLoading, isExiting }
+  return { isLoading }
 }
