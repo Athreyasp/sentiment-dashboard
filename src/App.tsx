@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -8,7 +9,7 @@ import { ClerkProvider } from '@clerk/clerk-react';
 import { ThemeProvider } from "@/hooks/useTheme";
 import { usePreloader } from "@/hooks/usePreloader";
 import { useCursor } from "@/hooks/useCursor";
-import { Preloader } from "@/components/Preloader";
+import { SimplePreloader } from "@/components/SimplePreloader";
 import { CustomCursor } from "@/components/CustomCursor";
 import { Layout } from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
@@ -31,7 +32,7 @@ const queryClient = new QueryClient();
 const CLERK_PUBLISHABLE_KEY = "pk_test_aW5jbHVkZWQtdXJjaGluLTE0LmNsZXJrLmFjY291bnRzLmRldiQ";
 
 const AppContent = () => {
-  const { isLoading } = usePreloader({ minLoadTime: 5000 });
+  const { isLoading } = usePreloader({ minLoadTime: 3000 });
   const { showCustomCursor } = useCursor();
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const AppContent = () => {
   }, [showCustomCursor]);
 
   if (isLoading) {
-    return <Preloader />;
+    return <SimplePreloader onComplete={() => {}} />;
   }
 
   return (
