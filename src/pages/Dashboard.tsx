@@ -1,5 +1,6 @@
+
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, Activity, Bell, Brain, Target, Eye, BarChart3, IndianRupee, Zap, LineChart, Plus, RefreshCw } from 'lucide-react'
+import { TrendingUp, TrendingDown, Activity, Bell, Brain, Target, Eye, BarChart3, IndianRupee, Zap, LineChart, Plus, RefreshCw, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -52,6 +53,19 @@ export default function Dashboard() {
       case 'negative': return 'text-red-400'
       default: return 'text-pixel-orange'
     }
+  }
+
+  const formatLastUpdated = (timestamp: string) => {
+    const now = new Date()
+    const updated = new Date(timestamp)
+    const diff = now.getTime() - updated.getTime()
+    const minutes = Math.floor(diff / (1000 * 60))
+    
+    if (minutes < 1) return 'Just now'
+    if (minutes < 60) return `${minutes}m ago`
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}h ago`
+    return `${Math.floor(hours / 24)}d ago`
   }
 
   return (
@@ -218,7 +232,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Watchlist */}
+          {/* Enhanced Watchlist with Live Prices */}
           <Card className="pixel-card border">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center justify-between text-lg font-pixel">
@@ -249,32 +263,56 @@ export default function Dashboard() {
                     className="stock-card p-3 rounded-lg hover:pixel-glow-cyan transition-all duration-300 group"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex-1">
-                        <span className="font-semibold text-foreground font-pixel text-sm">{stock.symbol}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-semibold text-foreground font-pixel text-sm">{stock.symbol}</span>
+                          {stock.current_price && (
+                            <Badge variant="outline" className="text-xs px-1 py-0 font-pixel">
+                              LIVE
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-xs text-muted-foreground line-clamp-1 font-space">{stock.name}</p>
                       </div>
-                      <div className="text-right">
-                        {stock.current_price && (
-                          <>
-                            <span className="font-bold text-foreground font-space">₹{stock.current_price.toFixed(2)}</span>
-                            <div className="flex items-center space-x-2">
-                              <span className={`text-xs font-pixel ${stock.change && stock.change >= 0 ? 'text-pixel-green' : 'text-red-400'}`}>
-                                {stock.change_percent && (stock.change_percent >= 0 ? '+' : '')}{stock.change_percent?.toFixed(2)}%
-                              </span>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => removeFromWatchlist(stock.symbol)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity text-xs h-5 w-5 p-0 hover:bg-red-400/20 hover:text-red-400"
-                              >
-                                ×
-                              </Button>
-                            </div>
-                          </>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => removeFromWatchlist(stock.symbol)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-xs h-5 w-5 p-0 hover:bg-red-400/20 hover:text-red-400"
+                      >
+                        ×
+                      </Button>
+                    </div>
+                    
+                    {stock.current_price ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-foreground font-space">₹{stock.current_price.toFixed(2)}</span>
+                          <span className={`text-xs font-pixel ${stock.change && stock.change >= 0 ? 'text-pixel-green' : 'text-red-400'}`}>
+                            {stock.change_percent && (stock.change_percent >= 0 ? '+' : '')}{stock.change_percent?.toFixed(2)}%
+                          </span>
+                        </div>
+                        
+                        {stock.day_high && stock.day_low && (
+                          <div className="flex items-center justify-between text-xs text-muted-foreground font-pixel">
+                            <span>H: ₹{stock.day_high.toFixed(2)}</span>
+                            <span>L: ₹{stock.day_low.toFixed(2)}</span>
+                          </div>
+                        )}
+                        
+                        {stock.last_updated && (
+                          <div className="flex items-center space-x-1 text-xs text-muted-foreground font-pixel">
+                            <Clock className="w-3 h-3" />
+                            <span>{formatLastUpdated(stock.last_updated)}</span>
+                          </div>
                         )}
                       </div>
-                    </div>
+                    ) : (
+                      <div className="text-xs text-muted-foreground font-pixel">
+                        Loading price data...
+                      </div>
+                    )}
                   </div>
                 ))
               )}
@@ -311,7 +349,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Quick Actions */}
           <Card className="pixel-card border">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg font-pixel gradient-text">QUICK ACTIONS</CardTitle>
