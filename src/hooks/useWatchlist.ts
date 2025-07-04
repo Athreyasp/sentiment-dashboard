@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 
@@ -41,19 +40,22 @@ export function useWatchlist() {
 
   const addToWatchlist = async (symbol: string, name: string) => {
     try {
+      // Validate and format symbol for Indian stocks
+      const formattedSymbol = formatStockSymbol(symbol.toUpperCase())
+      
       // Check if already exists
-      if (watchlist.find(stock => stock.symbol === symbol)) {
+      if (watchlist.find(stock => stock.symbol === formattedSymbol)) {
         throw new Error('Stock already in watchlist')
       }
 
-      const newStock: WatchlistStock = { symbol, name }
+      const newStock: WatchlistStock = { symbol: formattedSymbol, name }
       const updatedWatchlist = [...watchlist, newStock]
       
       setWatchlist(updatedWatchlist)
       localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist))
       
       // Fetch current price immediately
-      await updateStockPrice(symbol)
+      await updateStockPrice(formattedSymbol)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add to watchlist')
     }
@@ -63,6 +65,17 @@ export function useWatchlist() {
     const updatedWatchlist = watchlist.filter(stock => stock.symbol !== symbol)
     setWatchlist(updatedWatchlist)
     localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist))
+  }
+
+  // Format stock symbol for Yahoo Finance API (Indian stocks)
+  const formatStockSymbol = (symbol: string): string => {
+    // If already has .NS or .BO, return as is
+    if (symbol.includes('.NS') || symbol.includes('.BO')) {
+      return symbol
+    }
+    
+    // Add .NS for NSE stocks by default
+    return `${symbol}.NS`
   }
 
   const updateStockPrice = async (symbol: string) => {
