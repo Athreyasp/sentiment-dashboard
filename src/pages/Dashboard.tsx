@@ -1,25 +1,25 @@
-
 import { useState } from 'react'
-import { TrendingUp, TrendingDown, Activity, Bell, Brain, Target, Eye, BarChart3, IndianRupee, Zap, LineChart } from 'lucide-react'
+import { TrendingUp, TrendingDown, Activity, Bell, Brain, Target, Eye, BarChart3, IndianRupee, Zap, LineChart, Plus, RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
 import { useFinancialNews } from '@/hooks/useFinancialNews'
+import { useWatchlist } from '@/hooks/useWatchlist'
+import { StockPredictionModal } from '@/components/StockPredictionModal'
 
 export default function Dashboard() {
   const [selectedTimeframe, setSelectedTimeframe] = useState('1d')
+  const [selectedNews, setSelectedNews] = useState<any>(null)
+  const [showPredictionModal, setShowPredictionModal] = useState(false)
+  const [newStockSymbol, setNewStockSymbol] = useState('')
+  const [newStockName, setNewStockName] = useState('')
+  
   const { news, loading } = useFinancialNews()
+  const { watchlist, loading: watchlistLoading, addToWatchlist, removeFromWatchlist, updateAllPrices } = useWatchlist()
 
-  // Mock Indian stock data for demonstration
-  const indianStocks = [
-    { symbol: 'RELIANCE.NS', name: 'Reliance Industries', price: 2456.75, change: 2.3, prediction: 'bullish' },
-    { symbol: 'TCS.NS', name: 'Tata Consultancy Services', price: 3678.20, change: -0.8, prediction: 'neutral' },
-    { symbol: 'HDFCBANK.NS', name: 'HDFC Bank', price: 1598.45, change: 1.2, prediction: 'bullish' },
-    { symbol: 'INFY.NS', name: 'Infosys', price: 1456.30, change: -1.5, prediction: 'bearish' },
-    { symbol: 'ICICIBANK.NS', name: 'ICICI Bank', price: 987.60, change: 0.9, prediction: 'bullish' },
-  ]
-
+  // Mock Indian stock data for market indices
   const marketIndices = [
     { name: 'NIFTY 50', value: 19842.75, change: 0.8 },
     { name: 'SENSEX', value: 66589.93, change: 1.2 },
@@ -27,18 +27,29 @@ export default function Dashboard() {
     { name: 'NIFTY IT', value: 29876.45, change: -0.9 },
   ]
 
+  // Popular Indian stocks for predictions when news doesn't specify
+  const popularIndianStocks = [
+    'RELIANCE.NS', 'TCS.NS', 'HDFCBANK.NS', 'INFY.NS', 'ICICIBANK.NS',
+    'HINDUNILVR.NS', 'ITC.NS', 'SBIN.NS', 'BHARTIARTL.NS', 'KOTAKBANK.NS'
+  ]
+
+  const handleNewsClick = (newsItem: any) => {
+    setSelectedNews(newsItem)
+    setShowPredictionModal(true)
+  }
+
+  const handleAddStock = async () => {
+    if (newStockSymbol && newStockName) {
+      await addToWatchlist(newStockSymbol.toUpperCase(), newStockName)
+      setNewStockSymbol('')
+      setNewStockName('')
+    }
+  }
+
   const getSentimentColor = (sentiment: string | null) => {
     switch (sentiment) {
       case 'positive': return 'text-pixel-green'
       case 'negative': return 'text-red-400'
-      default: return 'text-pixel-orange'
-    }
-  }
-
-  const getPredictionColor = (prediction: string) => {
-    switch (prediction) {
-      case 'bullish': return 'text-pixel-green'
-      case 'bearish': return 'text-red-400'
       default: return 'text-pixel-orange'
     }
   }
@@ -136,11 +147,10 @@ export default function Dashboard() {
                   <div
                     key={item.id}
                     className="news-card p-4 rounded-lg cursor-pointer hover:pixel-glow transition-all duration-300"
-                    onClick={() => item.url && window.open(item.url, '_blank')}
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <div className="flex items-start justify-between space-x-3">
-                      <div className="flex-1">
+                      <div className="flex-1" onClick={() => item.url && window.open(item.url, '_blank')}>
                         <h3 className="font-semibold text-foreground hover:text-pixel-green transition-colors line-clamp-2 font-space">
                           {item.headline}
                         </h3>
@@ -160,8 +170,7 @@ export default function Dashboard() {
                           className="pixel-button text-xs h-6"
                           onClick={(e) => {
                             e.stopPropagation()
-                            // This would open stock prediction modal
-                            console.log('Opening stock prediction for:', item.headline)
+                            handleNewsClick(item)
                           }}
                         >
                           PREDICT
@@ -175,42 +184,100 @@ export default function Dashboard() {
           </Card>
         </div>
         
-        {/* Stock Watchlist & Predictions */}
+        {/* Watchlist & Predictions */}
         <div className="space-y-6">
-          {/* Top Indian Stocks */}
+          {/* Add Stock to Watchlist */}
           <Card className="pixel-card border">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center space-x-2 text-lg font-pixel">
-                <IndianRupee className="w-5 h-5 text-pixel-orange" />
-                <span className="gradient-text">TOP NSE STOCKS</span>
+                <Plus className="w-5 h-5 text-pixel-green" />
+                <span className="gradient-text">ADD TO WATCHLIST</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {indianStocks.map((stock, index) => (
-                <div 
-                  key={stock.symbol} 
-                  className="stock-card p-3 rounded-lg hover:pixel-glow-cyan transition-all duration-300"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+              <Input
+                placeholder="Stock Symbol (e.g., RELIANCE.NS)"
+                value={newStockSymbol}
+                onChange={(e) => setNewStockSymbol(e.target.value)}
+                className="bg-secondary/50 border-pixel-green/30 font-pixel"
+              />
+              <Input
+                placeholder="Company Name"
+                value={newStockName}
+                onChange={(e) => setNewStockName(e.target.value)}
+                className="bg-secondary/50 border-pixel-green/30 font-space"
+              />
+              <Button 
+                onClick={handleAddStock} 
+                className="w-full pixel-button"
+                disabled={!newStockSymbol || !newStockName}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                ADD STOCK
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Watchlist */}
+          <Card className="pixel-card border">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center justify-between text-lg font-pixel">
+                <div className="flex items-center space-x-2">
+                  <IndianRupee className="w-5 h-5 text-pixel-orange" />
+                  <span className="gradient-text">MY WATCHLIST</span>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={updateAllPrices}
+                  disabled={watchlistLoading}
+                  className="pixel-button text-xs h-6"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <span className="font-semibold text-foreground font-pixel text-sm">{stock.symbol}</span>
-                      <p className="text-xs text-muted-foreground line-clamp-1 font-space">{stock.name}</p>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-bold text-foreground font-space">₹{stock.price}</span>
-                      <div className="flex items-center space-x-2">
-                        <span className={`text-xs font-pixel ${stock.change >= 0 ? 'text-pixel-green' : 'text-red-400'}`}>
-                          {stock.change >= 0 ? '+' : ''}{stock.change}%
-                        </span>
-                        <Badge className={`text-xs px-1 py-0 font-pixel ${getPredictionColor(stock.prediction)} bg-transparent border`}>
-                          {stock.prediction.toUpperCase()}
-                        </Badge>
+                  <RefreshCw className={`w-3 h-3 mr-1 ${watchlistLoading ? 'animate-spin' : ''}`} />
+                  UPDATE
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {watchlist.length === 0 ? (
+                <p className="text-center text-muted-foreground font-pixel text-sm py-4">
+                  No stocks in watchlist
+                </p>
+              ) : (
+                watchlist.map((stock, index) => (
+                  <div 
+                    key={stock.symbol} 
+                    className="stock-card p-3 rounded-lg hover:pixel-glow-cyan transition-all duration-300 group"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <span className="font-semibold text-foreground font-pixel text-sm">{stock.symbol}</span>
+                        <p className="text-xs text-muted-foreground line-clamp-1 font-space">{stock.name}</p>
+                      </div>
+                      <div className="text-right">
+                        {stock.current_price && (
+                          <>
+                            <span className="font-bold text-foreground font-space">₹{stock.current_price.toFixed(2)}</span>
+                            <div className="flex items-center space-x-2">
+                              <span className={`text-xs font-pixel ${stock.change && stock.change >= 0 ? 'text-pixel-green' : 'text-red-400'}`}>
+                                {stock.change_percent && (stock.change_percent >= 0 ? '+' : '')}{stock.change_percent?.toFixed(2)}%
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => removeFromWatchlist(stock.symbol)}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity text-xs h-5 w-5 p-0 hover:bg-red-400/20 hover:text-red-400"
+                              >
+                                ×
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 
@@ -252,7 +319,7 @@ export default function Dashboard() {
             <CardContent className="space-y-3">
               <Button className="w-full justify-start pixel-button">
                 <Target className="w-4 h-4 mr-2" />
-                Add Stock to Watchlist
+                View Portfolio Analysis
               </Button>
               <Button className="w-full justify-start pixel-button">
                 <Bell className="w-4 h-4 mr-2" />
@@ -260,12 +327,26 @@ export default function Dashboard() {
               </Button>
               <Button className="w-full justify-start pixel-button">
                 <Eye className="w-4 h-4 mr-2" />
-                View AI Analysis
+                Market Trends Report
               </Button>
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Stock Prediction Modal */}
+      {selectedNews && (
+        <StockPredictionModal 
+          isOpen={showPredictionModal}
+          onClose={() => {
+            setShowPredictionModal(false)
+            setSelectedNews(null)
+          }}
+          newsHeadline={selectedNews.headline}
+          sentiment={selectedNews.sentiment}
+          potentialStocks={selectedNews.ticker ? [selectedNews.ticker] : popularIndianStocks}
+        />
+      )}
     </div>
   )
 }
