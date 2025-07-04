@@ -5,7 +5,7 @@ import { Header } from './Header'
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex w-full">
+    <div className="min-h-screen bg-background flex w-full">
       {/* Fixed Sidebar */}
       <DashboardSidebar />
       
@@ -21,21 +21,21 @@ export function Layout() {
           </div>
         </main>
         
-        {/* Footer */}
-        <footer className="border-t border-slate-200/50 dark:border-slate-700/50 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm px-6 py-4">
+        {/* Pixel-themed Footer */}
+        <footer className="border-t border-pixel-green/20 bg-card/50 backdrop-blur-sm px-6 py-4">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-center justify-center space-x-8 text-xs text-slate-600 dark:text-slate-400">
-              <div className="flex items-center space-x-2 group hover:text-green-600 dark:hover:text-green-400 transition-colors">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="font-medium">🔒 Bank-level Security</span>
+            <div className="flex items-center justify-center space-x-8 text-xs text-muted-foreground">
+              <div className="flex items-center space-x-2 group hover:text-pixel-green transition-colors font-pixel">
+                <div className="w-2 h-2 bg-pixel-green rounded-full animate-pixel-pulse"></div>
+                <span className="font-medium">🔒 SECURE TRADING</span>
               </div>
-              <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
-              <div className="flex items-center space-x-2 group hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                <span className="font-medium">🤖 AI-Powered Analytics</span>
+              <div className="w-px h-4 bg-pixel-green/30"></div>
+              <div className="flex items-center space-x-2 group hover:text-pixel-cyan transition-colors font-pixel">
+                <span className="font-medium">🤖 AI-POWERED INSIGHTS</span>
               </div>
-              <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
-              <div className="flex items-center space-x-2 group hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
-                <span className="font-medium">⚡ Real-time Data Feed</span>
+              <div className="w-px h-4 bg-pixel-green/30"></div>
+              <div className="flex items-center space-x-2 group hover:text-pixel-orange transition-colors font-pixel">
+                <span className="font-medium">⚡ REAL-TIME NSE/BSE DATA</span>
               </div>
             </div>
           </div>
