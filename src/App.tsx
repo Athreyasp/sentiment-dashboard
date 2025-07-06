@@ -8,9 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ClerkProvider } from '@clerk/clerk-react';
 import { ThemeProvider } from "@/hooks/useTheme";
 import { usePreloader } from "@/hooks/usePreloader";
-import { useCursor } from "@/hooks/useCursor";
 import { SimplePreloader } from "@/components/SimplePreloader";
-import { CustomCursor } from "@/components/CustomCursor";
 import { Layout } from "@/components/Layout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AuthLayout } from "@/components/AuthLayout";
@@ -33,62 +31,45 @@ const CLERK_PUBLISHABLE_KEY = "pk_test_aW5jbHVkZWQtdXJjaGluLTE0LmNsZXJrLmFjY291b
 
 const AppContent = () => {
   const { isLoading } = usePreloader({ minLoadTime: 3000 });
-  const { showCustomCursor } = useCursor();
-
-  useEffect(() => {
-    // Add custom cursor class to body when custom cursor is active
-    if (showCustomCursor) {
-      document.body.classList.add('custom-cursor-active');
-    } else {
-      document.body.classList.remove('custom-cursor-active');
-    }
-
-    return () => {
-      document.body.classList.remove('custom-cursor-active');
-    };
-  }, [showCustomCursor]);
 
   if (isLoading) {
     return <SimplePreloader onComplete={() => {}} />;
   }
 
   return (
-    <>
-      {showCustomCursor && <CustomCursor />}
-      <BrowserRouter>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={
-            <AuthLayout>
-              <Login />
-            </AuthLayout>
-          } />
-          <Route path="/signup" element={
-            <AuthLayout>
-              <Signup />
-            </AuthLayout>
-          } />
-          
-          {/* Protected routes */}
-          <Route path="/dashboard" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<Dashboard />} />
-            <Route path="ticker" element={<TickerInsights />} />
-            <Route path="news" element={<News />} />
-            <Route path="portfolio" element={<Portfolio />} />
-            <Route path="alerts" element={<Alerts />} />
-            <Route path="explainer" element={<Explainer />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Homepage />} />
+        <Route path="/login" element={
+          <AuthLayout>
+            <Login />
+          </AuthLayout>
+        } />
+        <Route path="/signup" element={
+          <AuthLayout>
+            <Signup />
+          </AuthLayout>
+        } />
+        
+        {/* Protected routes */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }>
+          <Route index element={<Dashboard />} />
+          <Route path="ticker" element={<TickerInsights />} />
+          <Route path="news" element={<News />} />
+          <Route path="portfolio" element={<Portfolio />} />
+          <Route path="alerts" element={<Alerts />} />
+          <Route path="explainer" element={<Explainer />} />
+          <Route path="settings" element={<Settings />} />
+        </Route>
+        
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

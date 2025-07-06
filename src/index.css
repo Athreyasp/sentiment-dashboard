@@ -81,11 +81,6 @@
       linear-gradient(135deg, transparent 0%, rgba(var(--pixel-purple), 0.02) 100%);
     min-height: 100vh;
   }
-  
-  /* Custom cursor styles */
-  .custom-cursor-active * {
-    cursor: none !important;
-  }
 }
 
 @layer utilities {
