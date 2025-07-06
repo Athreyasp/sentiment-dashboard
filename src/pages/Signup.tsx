@@ -1,25 +1,28 @@
 
 import { SignUp } from '@clerk/clerk-react'
+import { Shield, TrendingUp, Brain, Activity, Target, Zap } from 'lucide-react'
+import { ModernSentinelLogo } from '@/components/ModernSentinelLogo'
 
 export default function Signup() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute top-40 left-40 w-60 h-60 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-pixel-green/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pixel-cyan/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000"></div>
+        <div className="absolute top-40 left-40 w-60 h-60 bg-pixel-purple/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-4000"></div>
+        <div className="absolute top-1/2 right-1/4 w-40 h-40 bg-pixel-orange/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-1000"></div>
       </div>
       
       {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="rgb(0,255,127)" fill-opacity="0.03"%3E%3Cpath d="M20 20h20v20H20V20zm-20 0h20v20H0V20z"/%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
       
       {/* Floating elements */}
       <div className="absolute inset-0">
-        {[...Array(15)].map((_, i) => (
+        {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-white rounded-full opacity-20 animate-pulse"
+            className="absolute w-1 h-1 bg-pixel-green rounded-full opacity-40 animate-pulse"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -33,86 +36,142 @@ export default function Signup() {
       <div className="w-full max-w-md relative z-10">
         {/* Hero section */}
         <div className="text-center mb-8 animate-fade-in">
-          <div className="mb-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl transform hover:scale-110 transition-transform duration-300">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-              </svg>
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-indigo-100 to-pink-200 bg-clip-text text-transparent mb-2">
-              Join Sentinel 2.0
+          <ModernSentinelLogo 
+            size="lg" 
+            variant="hero" 
+            showText={true}
+            className="mb-6"
+          />
+          
+          <div className="space-y-3">
+            <h1 className="text-3xl md:text-4xl font-bold font-pixel bg-gradient-to-r from-white via-pixel-green to-pixel-cyan bg-clip-text text-transparent mb-3">
+              JOIN SENTINEL 2.0
             </h1>
-            <p className="text-slate-300 text-lg">
-              Start your <span className="text-indigo-400 font-semibold">market analysis</span> journey today
+            <p className="text-slate-300 text-lg font-space">
+              Start your <span className="text-pixel-green font-bold">AI-powered trading</span> journey
             </p>
+            <div className="flex items-center justify-center space-x-3 mt-4">
+              <div className="w-2 h-2 bg-pixel-green rounded-full animate-pulse shadow-lg shadow-pixel-green/50"></div>
+              <span className="text-sm text-slate-400 font-pixel font-semibold">NEXT-GEN MARKET INTELLIGENCE</span>
+              <div className="w-2 h-2 bg-pixel-cyan rounded-full animate-pulse shadow-lg shadow-pixel-cyan/50" style={{ animationDelay: '0.5s' }}></div>
+            </div>
           </div>
           
           {/* Benefits showcase */}
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="backdrop-blur-sm bg-white/10 rounded-xl p-3 border border-white/20">
-              <div className="text-indigo-400 text-2xl mb-1">🚀</div>
-              <div className="text-white text-sm font-medium">Lightning Fast</div>
-              <div className="text-slate-400 text-xs">Real-time analysis</div>
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            <div className="pixel-card p-4 border border-pixel-green/30 rounded-xl">
+              <TrendingUp className="w-8 h-8 text-pixel-green mx-auto mb-2" />
+              <div className="text-white text-sm font-pixel font-bold">REAL-TIME</div>
+              <div className="text-slate-400 text-xs font-space">Live market data</div>
             </div>
-            <div className="backdrop-blur-sm bg-white/10 rounded-xl p-3 border border-white/20">
-              <div className="text-purple-400 text-2xl mb-1">🔒</div>
-              <div className="text-white text-sm font-medium">Secure</div>
-              <div className="text-slate-400 text-xs">Bank-grade security</div>
+            <div className="pixel-card p-4 border border-pixel-cyan/30 rounded-xl">
+              <Shield className="w-8 h-8 text-pixel-cyan mx-auto mb-2" />
+              <div className="text-white text-sm font-pixel font-bold">SECURE</div>
+              <div className="text-slate-400 text-xs font-space">Bank-grade security</div>
             </div>
-            <div className="backdrop-blur-sm bg-white/10 rounded-xl p-3 border border-white/20">
-              <div className="text-pink-400 text-2xl mb-1">📊</div>
-              <div className="text-white text-sm font-medium">Advanced Analytics</div>
-              <div className="text-slate-400 text-xs">AI-powered insights</div>
+            <div className="pixel-card p-4 border border-pixel-purple/30 rounded-xl">
+              <Brain className="w-8 h-8 text-pixel-purple mx-auto mb-2" />
+              <div className="text-white text-sm font-pixel font-bold">AI-POWERED</div>
+              <div className="text-slate-400 text-xs font-space">Smart insights</div>
             </div>
-            <div className="backdrop-blur-sm bg-white/10 rounded-xl p-3 border border-white/20">
-              <div className="text-yellow-400 text-2xl mb-1">💡</div>
-              <div className="text-white text-sm font-medium">Smart Alerts</div>
-              <div className="text-slate-400 text-xs">Never miss opportunities</div>
+            <div className="pixel-card p-4 border border-pixel-orange/30 rounded-xl">
+              <Target className="w-8 h-8 text-pixel-orange mx-auto mb-2" />
+              <div className="text-white text-sm font-pixel font-bold">PRECISION</div>
+              <div className="text-slate-400 text-xs font-space">Accurate predictions</div>
             </div>
           </div>
         </div>
 
         {/* Signup form container */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-1 shadow-2xl">
-          <div className="bg-gradient-to-b from-white/5 to-white/10 rounded-xl p-6">
-            <SignUp 
-              appearance={{
-                elements: {
-                  rootBox: "mx-auto",
-                  card: "bg-white/95 backdrop-blur-sm border-0 shadow-2xl rounded-xl",
-                  headerTitle: "text-slate-800 text-2xl font-bold",
-                  headerSubtitle: "text-slate-600",
-                  socialButtonsBlockButton: "bg-white/90 border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium transition-all duration-200 hover:scale-105 hover:shadow-lg",
-                  socialButtonsBlockButtonText: "font-medium",
-                  formButtonPrimary: "bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white font-semibold py-3 transition-all duration-200 hover:scale-105 hover:shadow-lg",
-                  footerActionLink: "text-indigo-600 hover:text-purple-600 font-semibold transition-colors duration-200",
-                  identityPreviewText: "text-slate-600",
-                  identityPreviewEditButton: "text-indigo-600 hover:text-purple-600",
-                  formFieldInput: "border-slate-200 focus:border-indigo-500 focus:ring-indigo-500/20 transition-all duration-200",
-                  formFieldLabel: "text-slate-700 font-medium",
-                  dividerLine: "bg-slate-200",
-                  dividerText: "text-slate-500",
-                  formHeaderTitle: "text-slate-800 font-bold",
-                  formHeaderSubtitle: "text-slate-600"
-                }
-              }}
-              redirectUrl="/dashboard"
-            />
+        <div className="pixel-card rounded-lg shadow-2xl p-8 border border-pixel-green/30">
+          <div className="text-center mb-6">
+            <h2 className="text-xl font-bold font-pixel text-white mb-2">
+              CREATE ACCOUNT
+            </h2>
+            <p className="text-sm text-slate-400 font-space">
+              Get instant access to advanced market intelligence
+            </p>
           </div>
+
+          <SignUp 
+            appearance={{
+              elements: {
+                rootBox: "w-full",
+                card: "bg-transparent border-0 shadow-none p-0",
+                headerTitle: "hidden",
+                headerSubtitle: "hidden",
+                socialButtonsBlockButton: `
+                  w-full bg-slate-800/50 border border-pixel-green/30 
+                  hover:bg-slate-700/50 hover:border-pixel-green/50 text-white 
+                  font-medium transition-all duration-200 py-3 rounded-lg mb-3 font-space
+                `,
+                socialButtonsBlockButtonText: "font-medium text-sm",
+                formButtonPrimary: `
+                  w-full bg-gradient-to-r from-pixel-green to-pixel-cyan hover:from-pixel-green/80 hover:to-pixel-cyan/80 
+                  text-black font-bold py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-lg 
+                  font-pixel text-sm uppercase tracking-wide
+                `,
+                footerActionLink: `
+                  text-pixel-green hover:text-pixel-cyan font-medium transition-colors 
+                  duration-200 text-sm underline-offset-4 hover:underline font-space
+                `,
+                formFieldInput: `
+                  w-full border border-slate-600 bg-slate-800/50 text-white 
+                  focus:border-pixel-green focus:ring-1 focus:ring-pixel-green/50
+                  rounded-lg py-3 px-4 transition-all duration-200 font-space
+                `,
+                formFieldLabel: "text-slate-300 font-medium text-sm mb-2 font-space",
+                dividerLine: "bg-slate-600",
+                dividerText: "text-slate-400 text-sm bg-slate-900 px-4 font-space",
+                identityPreviewText: "text-slate-300 text-sm font-space",
+                identityPreviewEditButton: "text-pixel-green hover:text-pixel-cyan font-medium text-sm font-space",
+                formHeaderTitle: "text-white font-bold text-lg font-pixel",
+                formHeaderSubtitle: "text-slate-400 text-sm font-space"
+              }
+            }}
+            redirectUrl="/dashboard"
+          />
+        </div>
+
+        {/* Login link */}
+        <div className="text-center mt-6">
+          <p className="text-sm text-slate-400 font-space">
+            Already have an account?{' '}
+            <a 
+              href="/login" 
+              className="text-pixel-green hover:text-pixel-cyan font-medium transition-colors duration-200 underline-offset-4 hover:underline font-pixel"
+            >
+              SIGN IN
+            </a>
+          </p>
         </div>
 
         {/* Bottom testimonial */}
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <div className="flex items-center justify-center space-x-1 mb-2">
             {[...Array(5)].map((_, i) => (
-              <svg key={i} className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-              </svg>
+              <div key={i} className="w-3 h-3 bg-pixel-green rounded-full opacity-80"></div>
             ))}
           </div>
-          <p className="text-slate-400 text-sm">
-            "The best trading platform I've ever used" - <span className="text-indigo-400">Sarah M.</span>
+          <p className="text-slate-400 text-sm font-space">
+            "The most advanced trading platform I've used" - <span className="text-pixel-green font-pixel">ALPHA TRADER</span>
           </p>
+        </div>
+
+        {/* Status indicators */}
+        <div className="flex justify-center space-x-6 mt-6">
+          <div className="flex items-center space-x-2">
+            <Activity className="w-4 h-4 text-pixel-green animate-pulse" />
+            <span className="text-xs text-slate-400 font-pixel">LIVE</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Zap className="w-4 h-4 text-pixel-cyan animate-pulse" />
+            <span className="text-xs text-slate-400 font-pixel">FAST</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Shield className="w-4 h-4 text-pixel-purple animate-pulse" />
+            <span className="text-xs text-slate-400 font-pixel">SECURE</span>
+          </div>
         </div>
       </div>
     </div>
