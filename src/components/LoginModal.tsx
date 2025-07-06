@@ -26,7 +26,12 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
             </div>
             
             {/* Grid pattern */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="rgb(0,255,127)" fill-opacity="0.05"%3E%3Cpath d="M20 20h20v20H20V20zm-20 0h20v20H0V20z"/%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
+            <div 
+              className="absolute inset-0 opacity-50"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgb(0,255,127)' fill-opacity='0.05'%3E%3Cpath d='M20 20h20v20H20V20zm-20 0h20v20H0V20z'/%3E%3C/g%3E%3C/svg%3E")`
+              }}
+            ></div>
             
             {/* Content */}
             <div className="relative z-10 text-center">

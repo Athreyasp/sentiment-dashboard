@@ -15,7 +15,12 @@ export default function Signup() {
       </div>
       
       {/* Grid pattern overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="rgb(0,255,127)" fill-opacity="0.03"%3E%3Cpath d="M20 20h20v20H20V20zm-20 0h20v20H0V20z"/%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+      <div 
+        className="absolute inset-0 opacity-30"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgb(0,255,127)' fill-opacity='0.03'%3E%3Cpath d='M20 20h20v20H20V20zm-20 0h20v20H0V20z'/%3E%3C/g%3E%3C/svg%3E")`
+        }}
+      ></div>
       
       {/* Floating elements */}
       <div className="absolute inset-0">
