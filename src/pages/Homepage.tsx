@@ -2,17 +2,11 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { SentinelLogo } from '@/components/SentinelLogo'
+import { AttractivePremiumHeader } from '@/components/AttractivePremiumHeader'
 import { LoginModal } from '@/components/LoginModal'
 import { SimplePreloader } from '@/components/SimplePreloader'
 import { usePreloader } from '@/hooks/usePreloader'
-import { useTheme } from '@/hooks/useTheme'
 import { 
-  Sun, 
-  Moon, 
-  Monitor, 
-  Menu, 
-  X, 
   Search, 
   Brain, 
   TrendingUp, 
@@ -30,8 +24,6 @@ import {
 } from 'lucide-react'
 
 export default function Homepage() {
-  const { theme, setTheme } = useTheme()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [loginModalOpen, setLoginModalOpen] = useState(false)
   const [pageLoaded, setPageLoaded] = useState(false)
   
@@ -114,114 +106,11 @@ export default function Homepage() {
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-emerald-400/10 to-cyan-600/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
 
-        {/* Header */}
-        <header className={`sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-slate-900/5 transition-all duration-800 ${pageLoaded ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-18">
-              {/* Logo */}
-              <div className="flex items-center animate-fade-in">
-                <SentinelLogo size="sm" showText={true} variant="minimal" />
-              </div>
+        {/* New Attractive Header */}
+        <AttractivePremiumHeader onAuthClick={() => setLoginModalOpen(true)} />
 
-              {/* Desktop Navigation */}
-              <nav className="hidden md:flex items-center space-x-8">
-                <a href="#features" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-all duration-300 relative group">
-                  Features
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-600 to-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#how-it-works" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-all duration-300 relative group">
-                  How It Works
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-600 to-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-                <a href="#contact" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-all duration-300 relative group">
-                  Contact
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-600 to-blue-600 transition-all duration-300 group-hover:w-full"></span>
-                </a>
-              </nav>
-
-              {/* Right Side Actions */}
-              <div className="flex items-center space-x-4">
-                {/* Theme Toggle */}
-                <div className="flex items-center space-x-1 bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl p-1.5 shadow-inner">
-                  <button
-                    onClick={() => setTheme('light')}
-                    className={`p-2.5 rounded-lg transition-all duration-300 ${theme === 'light' ? 'bg-white dark:bg-slate-700 shadow-lg scale-105' : 'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105'}`}
-                  >
-                    <Sun className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setTheme('dark')}
-                    className={`p-2.5 rounded-lg transition-all duration-300 ${theme === 'dark' ? 'bg-white dark:bg-slate-700 shadow-lg scale-105' : 'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105'}`}
-                  >
-                    <Moon className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setTheme('system')}
-                    className={`p-2.5 rounded-lg transition-all duration-300 ${theme === 'system' ? 'bg-white dark:bg-slate-700 shadow-lg scale-105' : 'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105'}`}
-                  >
-                    <Monitor className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Auth Buttons */}
-                <div className="hidden md:flex items-center space-x-3">
-                  <Button 
-                    variant="ghost" 
-                    className="font-medium hover:scale-105 transition-transform duration-200"
-                    onClick={() => setLoginModalOpen(true)}
-                  >
-                    Log In
-                  </Button>
-                  <Button 
-                    className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
-                    onClick={() => setLoginModalOpen(true)}
-                  >
-                    Get Started
-                    <Sparkles className="ml-2 w-4 h-4" />
-                  </Button>
-                </div>
-
-                {/* Mobile Menu Button */}
-                <button
-                  className="md:hidden p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200"
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                >
-                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Mobile Menu */}
-            {mobileMenuOpen && (
-              <div className="md:hidden py-4 border-t border-slate-200 dark:border-slate-700 animate-fade-in">
-                <nav className="flex flex-col space-y-4">
-                  <a href="#features" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 font-medium transition-colors duration-200">Features</a>
-                  <a href="#how-it-works" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 font-medium transition-colors duration-200">How It Works</a>
-                  <a href="#contact" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 font-medium transition-colors duration-200">Contact</a>
-                  <div className="flex flex-col space-y-2 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start"
-                      onClick={() => setLoginModalOpen(true)}
-                    >
-                      Log In
-                    </Button>
-                    <Button 
-                      className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white"
-                      onClick={() => setLoginModalOpen(true)}
-                    >
-                      Get Started
-                      <Sparkles className="ml-2 w-4 h-4" />
-                    </Button>
-                  </div>
-                </nav>
-              </div>
-            )}
-          </div>
-        </header>
-
-        {/* Hero Section with enhanced entrance animations */}
-        <section className={`py-20 lg:py-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        {/* Hero Section with enhanced entrance animations - adjusted for fixed header */}
+        <section className={`pt-32 pb-20 lg:pt-40 lg:pb-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-in">

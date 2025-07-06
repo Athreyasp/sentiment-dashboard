@@ -5,25 +5,25 @@ import { ModernSentinelLogo } from '@/components/ModernSentinelLogo'
 
 export default function Signup() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative">
-      {/* Animated background elements - lower z-index */}
-      <div className="absolute inset-0 overflow-hidden -z-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4 relative overflow-y-auto">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-pixel-green/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pixel-cyan/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-2000"></div>
         <div className="absolute top-40 left-40 w-60 h-60 bg-pixel-purple/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-4000"></div>
         <div className="absolute top-1/2 right-1/4 w-40 h-40 bg-pixel-orange/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse animation-delay-1000"></div>
       </div>
       
-      {/* Grid pattern overlay - lower z-index */}
+      {/* Grid pattern overlay */}
       <div 
-        className="absolute inset-0 opacity-30 -z-10"
+        className="fixed inset-0 opacity-30 pointer-events-none"
         style={{
-          backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgb(0,255,127)' fill-opacity='0.03'%3E%3Cpath d='M20 20h20v20H20V20zm-20 0h20v20H0V20z'/%3E%3C/g%3E%3C/svg%3E")`
+          backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgb(0,255,127)' fill-opacity='0.03'%3E%3Cpath d='M20 20h20v20H20V20z'/%3E%3C/g%3E%3C/svg%3E")`
         }}
       ></div>
       
-      {/* Floating elements - lower z-index */}
-      <div className="absolute inset-0 -z-10">
+      {/* Floating elements */}
+      <div className="fixed inset-0 pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
@@ -38,7 +38,7 @@ export default function Signup() {
         ))}
       </div>
 
-      <div className="w-full max-w-md relative z-20 my-8 max-h-screen overflow-y-auto">
+      <div className="w-full max-w-md relative z-10 my-8">
         {/* Hero section */}
         <div className="text-center mb-8 animate-fade-in">
           <ModernSentinelLogo 
@@ -88,7 +88,7 @@ export default function Signup() {
         </div>
 
         {/* Signup form container */}
-        <div className="pixel-card rounded-lg shadow-2xl p-8 border border-pixel-green/30 relative z-30">
+        <div className="pixel-card rounded-lg shadow-2xl p-8 border border-pixel-green/30 relative">
           <div className="text-center mb-6">
             <h2 className="text-xl font-bold font-pixel text-white mb-2">
               CREATE ACCOUNT
@@ -98,46 +98,45 @@ export default function Signup() {
             </p>
           </div>
 
-          <div className="relative z-40">
+          <div className="relative">
             <SignUp 
               appearance={{
                 elements: {
-                  rootBox: "w-full relative z-50",
-                  card: "bg-transparent border-0 shadow-none p-0 relative z-50",
+                  rootBox: "w-full",
+                  card: "bg-transparent border-0 shadow-none p-0",
                   headerTitle: "hidden",
                   headerSubtitle: "hidden",
                   socialButtonsBlockButton: `
                     w-full bg-slate-800/50 border border-pixel-green/30 
                     hover:bg-slate-700/50 hover:border-pixel-green/50 text-white 
                     font-medium transition-all duration-200 py-3 rounded-lg mb-3 font-space
-                    relative z-50
                   `,
                   socialButtonsBlockButtonText: "font-medium text-sm",
                   formButtonPrimary: `
                     w-full bg-gradient-to-r from-pixel-green to-pixel-cyan hover:from-pixel-green/80 hover:to-pixel-cyan/80 
                     text-black font-bold py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-lg 
-                    font-pixel text-sm uppercase tracking-wide relative z-50
+                    font-pixel text-sm uppercase tracking-wide
                   `,
                   footerActionLink: `
                     text-pixel-green hover:text-pixel-cyan font-medium transition-colors 
-                    duration-200 text-sm underline-offset-4 hover:underline font-space relative z-50
+                    duration-200 text-sm underline-offset-4 hover:underline font-space
                   `,
                   formFieldInput: `
                     w-full border border-slate-600 bg-slate-800/50 text-white 
                     focus:border-pixel-green focus:ring-1 focus:ring-pixel-green/50
-                    rounded-lg py-3 px-4 transition-all duration-200 font-space relative z-50
+                    rounded-lg py-3 px-4 transition-all duration-200 font-space
                   `,
-                  formFieldLabel: "text-slate-300 font-medium text-sm mb-2 font-space relative z-50",
-                  dividerLine: "bg-slate-600 relative z-50",
-                  dividerText: "text-slate-400 text-sm bg-slate-900 px-4 font-space relative z-50",
-                  identityPreviewText: "text-slate-300 text-sm font-space relative z-50",
-                  identityPreviewEditButton: "text-pixel-green hover:text-pixel-cyan font-medium text-sm font-space relative z-50",
-                  formHeaderTitle: "text-white font-bold text-lg font-pixel relative z-50",
-                  formHeaderSubtitle: "text-slate-400 text-sm font-space relative z-50",
-                  phoneInputBox: "relative z-50",
-                  selectButton: "relative z-50 bg-slate-800/50 border border-slate-600",
-                  selectSearchInput: "relative z-50 bg-slate-800/50 text-white",
-                  selectOption: "relative z-50 bg-slate-800 text-white hover:bg-slate-700"
+                  formFieldLabel: "text-slate-300 font-medium text-sm mb-2 font-space",
+                  dividerLine: "bg-slate-600",
+                  dividerText: "text-slate-400 text-sm bg-slate-900 px-4 font-space",
+                  identityPreviewText: "text-slate-300 text-sm font-space",
+                  identityPreviewEditButton: "text-pixel-green hover:text-pixel-cyan font-medium text-sm font-space",
+                  formHeaderTitle: "text-white font-bold text-lg font-pixel",
+                  formHeaderSubtitle: "text-slate-400 text-sm font-space",
+                  phoneInputBox: "bg-slate-800/50 border border-slate-600",
+                  selectButton: "bg-slate-800/50 border border-slate-600 text-white hover:bg-slate-700/50",
+                  selectSearchInput: "bg-slate-800/50 text-white",
+                  selectOption: "bg-slate-800 text-white hover:bg-slate-700"
                 }
               }}
               redirectUrl="/dashboard"
