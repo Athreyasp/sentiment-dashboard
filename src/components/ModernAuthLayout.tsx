@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react'
 import { SignIn, SignUp } from '@clerk/clerk-react'
-import { Apple, Facebook, Google, Eye, EyeOff, Mail, Lock, User } from 'lucide-react'
+import { Apple, Facebook, Mail, Eye, EyeOff, Lock, User } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface ModernAuthLayoutProps {
@@ -131,7 +131,7 @@ export function ModernAuthLayout({ defaultTab = 'login' }: ModernAuthLayoutProps
             {/* Social Login Buttons */}
             <div className="space-y-3 mb-6">
               <button className="w-full flex items-center justify-center px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200 hover:shadow-md group">
-                <Google className="w-5 h-5 mr-3 text-red-500 group-hover:scale-110 transition-transform" />
+                <Mail className="w-5 h-5 mr-3 text-red-500 group-hover:scale-110 transition-transform" />
                 <span className="text-gray-700 font-medium">Continue with Google</span>
               </button>
               
