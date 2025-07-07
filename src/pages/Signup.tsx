@@ -5,7 +5,7 @@ import { ModernSentinelLogo } from '@/components/ModernSentinelLogo'
 
 export default function Signup() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-pixel-green/10 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
@@ -39,7 +39,7 @@ export default function Signup() {
       </div>
 
       {/* Scrollable content container */}
-      <div className="relative z-10 py-8 px-4 overflow-y-auto">
+      <div className="relative z-10 py-8 px-4">
         <div className="w-full max-w-md mx-auto">
           {/* Hero section */}
           <div className="text-center mb-8 animate-fade-in">
@@ -90,7 +90,7 @@ export default function Signup() {
           </div>
 
           {/* Signup form container */}
-          <div className="pixel-card rounded-lg shadow-2xl p-8 border border-pixel-green/30 relative">
+          <div className="pixel-card rounded-lg shadow-2xl p-8 border border-pixel-green/30 relative mb-8">
             <div className="text-center mb-6">
               <h2 className="text-xl font-bold font-pixel text-white mb-2">
                 CREATE ACCOUNT
@@ -100,7 +100,7 @@ export default function Signup() {
               </p>
             </div>
 
-            <div className="relative z-50">
+            <div className="relative">
               <SignUp 
                 appearance={{
                   elements: {
@@ -135,11 +135,11 @@ export default function Signup() {
                     identityPreviewEditButton: "text-pixel-green hover:text-pixel-cyan font-medium text-sm font-space",
                     formHeaderTitle: "text-white font-bold text-lg font-pixel",
                     formHeaderSubtitle: "text-slate-400 text-sm font-space",
-                    phoneInputBox: "bg-slate-800/50 border border-slate-600 z-50 relative",
-                    selectButton: "bg-slate-800/50 border border-slate-600 text-white hover:bg-slate-700/50 z-50 relative",
-                    selectSearchInput: "bg-slate-800/50 text-white z-50",
-                    selectOption: "bg-slate-800 text-white hover:bg-slate-700 z-50",
-                    selectOptionsContainer: "bg-slate-800 border border-slate-600 z-50"
+                    phoneInputBox: "bg-slate-800/50 border border-slate-600",
+                    selectButton: "bg-slate-800/50 border border-slate-600 text-white hover:bg-slate-700/50",
+                    selectSearchInput: "bg-slate-800/50 text-white",
+                    selectOption: "bg-slate-800 text-white hover:bg-slate-700",
+                    selectOptionsContainer: "bg-slate-800 border border-slate-600"
                   }
                 }}
                 redirectUrl="/dashboard"
@@ -148,7 +148,7 @@ export default function Signup() {
           </div>
 
           {/* Login link */}
-          <div className="text-center mt-6">
+          <div className="text-center mb-6">
             <p className="text-sm text-slate-400 font-space">
               Already have an account?{' '}
               <a 
@@ -161,7 +161,7 @@ export default function Signup() {
           </div>
 
           {/* Bottom testimonial */}
-          <div className="text-center mt-8">
+          <div className="text-center mb-8">
             <div className="flex items-center justify-center space-x-1 mb-2">
               {[...Array(5)].map((_, i) => (
                 <div key={i} className="w-3 h-3 bg-pixel-green rounded-full opacity-80"></div>
@@ -173,7 +173,7 @@ export default function Signup() {
           </div>
 
           {/* Status indicators */}
-          <div className="flex justify-center space-x-6 mt-6">
+          <div className="flex justify-center space-x-6 mb-8">
             <div className="flex items-center space-x-2">
               <Activity className="w-4 h-4 text-pixel-green animate-pulse" />
               <span className="text-xs text-slate-400 font-pixel">LIVE</span>
