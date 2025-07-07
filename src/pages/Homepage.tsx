@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -5,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { AttractivePremiumHeader } from '@/components/AttractivePremiumHeader'
 import { LoginModal } from '@/components/LoginModal'
 import { SimplePreloader } from '@/components/SimplePreloader'
+import { SentinelLogo } from '@/components/SentinelLogo'
 import { usePreloader } from '@/hooks/usePreloader'
 import { 
   Search, 
