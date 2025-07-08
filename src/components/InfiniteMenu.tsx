@@ -90,7 +90,11 @@ void main() {
 `;
 
 class Face {
-  constructor(a, b, c) {
+  a: number;
+  b: number;
+  c: number;
+
+  constructor(a: number, b: number, c: number) {
     this.a = a;
     this.b = b;
     this.c = c;
@@ -98,7 +102,11 @@ class Face {
 }
 
 class Vertex {
-  constructor(x, y, z) {
+  position: vec3;
+  normal: vec3;
+  uv: vec2;
+
+  constructor(x: number, y: number, z: number) {
     this.position = vec3.fromValues(x, y, z);
     this.normal = vec3.create();
     this.uv = vec2.create();
@@ -106,19 +114,22 @@ class Vertex {
 }
 
 class Geometry {
+  vertices: Vertex[];
+  faces: Face[];
+
   constructor() {
     this.vertices = [];
     this.faces = [];
   }
 
-  addVertex(...args) {
+  addVertex(...args: number[]) {
     for (let i = 0; i < args.length; i += 3) {
       this.vertices.push(new Vertex(args[i], args[i + 1], args[i + 2]));
     }
     return this;
   }
 
-  addFace(...args) {
+  addFace(...args: number[]) {
     for (let i = 0; i < args.length; i += 3) {
       this.faces.push(new Face(args[i], args[i + 1], args[i + 2]));
     }
@@ -130,7 +141,7 @@ class Geometry {
   }
 
   subdivide(divisions = 1) {
-    const midPointCache = {};
+    const midPointCache: { [key: string]: number } = {};
     let f = this.faces;
 
     for (let div = 0; div < divisions; ++div) {
@@ -188,7 +199,7 @@ class Geometry {
     return new Uint16Array(this.faces.flatMap((f) => [f.a, f.b, f.c]));
   }
 
-  getMidPoint(ndxA, ndxB, cache) {
+  getMidPoint(ndxA: number, ndxB: number, cache: { [key: string]: number }) {
     const cacheKey = ndxA < ndxB ? `k_${ndxB}_${ndxA}` : `k_${ndxA}_${ndxB}`;
     if (Object.prototype.hasOwnProperty.call(cache, cacheKey)) {
       return cache[cacheKey];
@@ -249,8 +260,10 @@ class DiscGeometry extends Geometry {
   }
 }
 
-function createShader(gl, type, source) {
+function createShader(gl: WebGL2RenderingContext, type: number, source: string) {
   const shader = gl.createShader(type);
+  if (!shader) return null;
+  
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
@@ -264,8 +277,9 @@ function createShader(gl, type, source) {
   return null;
 }
 
-function createProgram(gl, shaderSources, transformFeedbackVaryings, attribLocations) {
+function createProgram(gl: WebGL2RenderingContext, shaderSources: string[], transformFeedbackVaryings?: string[], attribLocations?: { [key: string]: number }) {
   const program = gl.createProgram();
+  if (!program) return null;
 
   [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER].forEach((type, ndx) => {
     const shader = createShader(gl, type, shaderSources[ndx]);
@@ -294,7 +308,7 @@ function createProgram(gl, shaderSources, transformFeedbackVaryings, attribLocat
   return null;
 }
 
-function makeVertexArray(gl, bufLocNumElmPairs, indices) {
+function makeVertexArray(gl: WebGL2RenderingContext, bufLocNumElmPairs: [WebGLBuffer, number, number][], indices?: Uint16Array) {
   const va = gl.createVertexArray();
   gl.bindVertexArray(va);
 
@@ -315,14 +329,14 @@ function makeVertexArray(gl, bufLocNumElmPairs, indices) {
   if (indices) {
     const indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
   }
 
   gl.bindVertexArray(null);
   return va;
 }
 
-function resizeCanvasToDisplaySize(canvas) {
+function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement) {
   const dpr = Math.min(2, window.devicePixelRatio);
   const displayWidth = Math.round(canvas.clientWidth * dpr);
   const displayHeight = Math.round(canvas.clientHeight * dpr);
@@ -334,7 +348,7 @@ function resizeCanvasToDisplaySize(canvas) {
   return needResize;
 }
 
-function makeBuffer(gl, sizeOrData, usage) {
+function makeBuffer(gl: WebGL2RenderingContext, sizeOrData: number | ArrayBuffer | ArrayBufferView, usage: number) {
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
   gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, usage);
@@ -342,7 +356,7 @@ function makeBuffer(gl, sizeOrData, usage) {
   return buf;
 }
 
-function createAndSetupTexture(gl, minFilter, magFilter, wrapS, wrapT) {
+function createAndSetupTexture(gl: WebGL2RenderingContext, minFilter: number, magFilter: number, wrapS: number, wrapT: number) {
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapS);
@@ -359,18 +373,23 @@ class ArcballControl {
   rotationVelocity = 0;
   rotationAxis = vec3.fromValues(1, 0, 0);
   snapDirection = vec3.fromValues(0, 0, -1);
-  snapTargetDirection;
+  snapTargetDirection?: vec3;
   EPSILON = 0.1;
   IDENTITY_QUAT = quat.create();
+  
+  canvas: HTMLCanvasElement;
+  updateCallback: (deltaTime: number) => void;
+  pointerPos: vec2;
+  previousPointerPos: vec2;
+  private _rotationVelocity = 0;
+  private _combinedQuat = quat.create();
 
-  constructor(canvas, updateCallback) {
+  constructor(canvas: HTMLCanvasElement, updateCallback?: (deltaTime: number) => void) {
     this.canvas = canvas;
     this.updateCallback = updateCallback || (() => null);
 
     this.pointerPos = vec2.create();
     this.previousPointerPos = vec2.create();
-    this._rotationVelocity = 0;
-    this._combinedQuat = quat.create();
 
     canvas.addEventListener('pointerdown', (e) => {
       vec2.set(this.pointerPos, e.clientX, e.clientY);
@@ -392,7 +411,7 @@ class ArcballControl {
     canvas.style.touchAction = 'none';
   }
 
-  update(deltaTime, targetFrameDuration = 16) {
+  update(deltaTime: number, targetFrameDuration = 16) {
     const timeScale = deltaTime / targetFrameDuration + 0.00001;
     let angleFactor = timeScale;
     let snapRotation = quat.create();
@@ -407,8 +426,8 @@ class ArcballControl {
       if (vec2.sqrLen(midPointerPos) > this.EPSILON) {
         vec2.add(midPointerPos, this.previousPointerPos, midPointerPos);
 
-        const p = this.#project(midPointerPos);
-        const q = this.#project(this.previousPointerPos);
+        const p = this.project(midPointerPos);
+        const q = this.project(this.previousPointerPos);
         const a = vec3.normalize(vec3.create(), p);
         const b = vec3.normalize(vec3.create(), q);
 
@@ -460,7 +479,7 @@ class ArcballControl {
     this.updateCallback(deltaTime);
   }
 
-  quatFromVectors(a, b, out, angleFactor = 1) {
+  quatFromVectors(a: vec3, b: vec3, out: quat, angleFactor = 1) {
     const axis = vec3.cross(vec3.create(), a, b);
     vec3.normalize(axis, axis);
     const d = Math.max(-1, Math.min(1, vec3.dot(a, b)));
@@ -469,7 +488,7 @@ class ArcballControl {
     return { q: out, axis, angle };
   }
 
-  #project(pos) {
+  private project(pos: vec2) {
     const r = 2;
     const w = this.canvas.clientWidth;
     const h = this.canvas.clientHeight;
@@ -490,14 +509,21 @@ class ArcballControl {
   }
 }
 
+interface MenuItem {
+  image: string;
+  link: string;
+  title: string;
+  description: string;
+}
+
 class InfiniteGridMenu {
   TARGET_FRAME_DURATION = 1000 / 60;
   SPHERE_RADIUS = 2;
 
-  #time = 0;
-  #deltaTime = 0;
-  #deltaFrames = 0;
-  #frames = 0;
+  private time = 0;
+  private deltaTime = 0;
+  private deltaFrames = 0;
+  private frames = 0;
 
   camera = {
     matrix: mat4.create(),
@@ -514,17 +540,38 @@ class InfiniteGridMenu {
     },
   };
 
-  nearestVertexIndex = null;
+  nearestVertexIndex: number | null = null;
   smoothRotationVelocity = 0;
   scaleFactor = 1.0;
   movementActive = false;
 
-  constructor(canvas, items, onActiveItemChange, onMovementChange, onInit = null) {
+  canvas: HTMLCanvasElement;
+  items: MenuItem[];
+  onActiveItemChange: (index: number) => void;
+  onMovementChange: (isMoving: boolean) => void;
+  gl?: WebGL2RenderingContext;
+  viewportSize?: vec2;
+  drawBufferSize?: vec2;
+  discProgram?: WebGLProgram;
+  discLocations?: { [key: string]: WebGLUniformLocation | number };
+  discGeo?: DiscGeometry;
+  discBuffers?: any;
+  discVAO?: WebGLVertexArrayObject;
+  icoGeo?: IcosahedronGeometry;
+  instancePositions?: vec3[];
+  DISC_INSTANCE_COUNT?: number;
+  discInstances?: any;
+  worldMatrix?: mat4;
+  tex?: WebGLTexture;
+  atlasSize?: number;
+  control?: ArcballControl;
+
+  constructor(canvas: HTMLCanvasElement, items: MenuItem[], onActiveItemChange?: (index: number) => void, onMovementChange?: (isMoving: boolean) => void, onInit?: (instance: InfiniteGridMenu) => void) {
     this.canvas = canvas;
     this.items = items || [];
     this.onActiveItemChange = onActiveItemChange || (() => { });
     this.onMovementChange = onMovementChange || (() => { });
-    this.#init(onInit);
+    this.init(onInit);
   }
 
   resize() {
@@ -535,28 +582,30 @@ class InfiniteGridMenu {
     );
 
     const gl = this.gl;
-    const needsResize = resizeCanvasToDisplaySize(gl.canvas);
+    if (!gl) return;
+    
+    const needsResize = resizeCanvasToDisplaySize(gl.canvas as HTMLCanvasElement);
     if (needsResize) {
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     }
 
-    this.#updateProjectionMatrix(gl);
+    this.updateProjectionMatrix(gl);
   }
 
   run(time = 0) {
-    this.#deltaTime = Math.min(32, time - this.#time);
-    this.#time = time;
-    this.#deltaFrames = this.#deltaTime / this.TARGET_FRAME_DURATION;
-    this.#frames += this.#deltaFrames;
+    this.deltaTime = Math.min(32, time - this.time);
+    this.time = time;
+    this.deltaFrames = this.deltaTime / this.TARGET_FRAME_DURATION;
+    this.frames += this.deltaFrames;
 
-    this.#animate(this.#deltaTime);
-    this.#render();
+    this.animate(this.deltaTime);
+    this.render();
 
     requestAnimationFrame((t) => this.run(t));
   }
 
-  #init(onInit) {
-    this.gl = this.canvas.getContext('webgl2', { antialias: true, alpha: false });
+  private init(onInit?: (instance: InfiniteGridMenu) => void) {
+    this.gl = this.canvas.getContext('webgl2', { antialias: true, alpha: false }) || undefined;
     const gl = this.gl;
     if (!gl) {
       throw new Error('No WebGL 2 context!');
@@ -565,12 +614,14 @@ class InfiniteGridMenu {
     this.viewportSize = vec2.fromValues(this.canvas.clientWidth, this.canvas.clientHeight);
     this.drawBufferSize = vec2.clone(this.viewportSize);
 
-    this.discProgram = createProgram(gl, [discVertShaderSource, discFragShaderSource], null, {
+    this.discProgram = createProgram(gl, [discVertShaderSource, discFragShaderSource], undefined, {
       aModelPosition: 0,
       aModelNormal: 1,
       aModelUvs: 2,
       aInstanceMatrix: 3,
-    });
+    }) || undefined;
+
+    if (!this.discProgram) return;
 
     this.discLocations = {
       aModelPosition: gl.getAttribLocation(this.discProgram, 'aModelPosition'),
@@ -593,8 +644,8 @@ class InfiniteGridMenu {
     this.discVAO = makeVertexArray(
       gl,
       [
-        [makeBuffer(gl, this.discBuffers.vertices, gl.STATIC_DRAW), this.discLocations.aModelPosition, 3],
-        [makeBuffer(gl, this.discBuffers.uvs, gl.STATIC_DRAW), this.discLocations.aModelUvs, 2],
+        [makeBuffer(gl, this.discBuffers.vertices, gl.STATIC_DRAW)!, this.discLocations.aModelPosition as number, 3],
+        [makeBuffer(gl, this.discBuffers.uvs, gl.STATIC_DRAW)!, this.discLocations.aModelUvs as number, 2],
       ],
       this.discBuffers.indices
     );
@@ -603,35 +654,39 @@ class InfiniteGridMenu {
     this.icoGeo.subdivide(1).spherize(this.SPHERE_RADIUS);
     this.instancePositions = this.icoGeo.vertices.map((v) => v.position);
     this.DISC_INSTANCE_COUNT = this.icoGeo.vertices.length;
-    this.#initDiscInstances(this.DISC_INSTANCE_COUNT);
+    this.initDiscInstances(this.DISC_INSTANCE_COUNT);
 
     this.worldMatrix = mat4.create();
-    this.#initTexture();
+    this.initTexture();
 
-    this.control = new ArcballControl(this.canvas, (deltaTime) => this.#onControlUpdate(deltaTime));
+    this.control = new ArcballControl(this.canvas, (deltaTime) => this.onControlUpdate(deltaTime));
 
-    this.#updateCameraMatrix();
-    this.#updateProjectionMatrix(gl);
+    this.updateCameraMatrix();
+    this.updateProjectionMatrix(gl);
     this.resize();
 
     if (onInit) onInit(this);
   }
 
-  #initTexture() {
+  private initTexture() {
     const gl = this.gl;
+    if (!gl) return;
+    
     this.tex = createAndSetupTexture(gl, gl.LINEAR, gl.LINEAR, gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE);
 
     const itemCount = Math.max(1, this.items.length);
     this.atlasSize = Math.ceil(Math.sqrt(itemCount));
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
     const cellSize = 512;
 
     canvas.width = this.atlasSize * cellSize;
     canvas.height = this.atlasSize * cellSize;
 
     Promise.all(this.items.map(item =>
-      new Promise(resolve => {
+      new Promise<HTMLImageElement>(resolve => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => resolve(img);
@@ -639,19 +694,21 @@ class InfiniteGridMenu {
       })
     )).then(images => {
       images.forEach((img, i) => {
-        const x = (i % this.atlasSize) * cellSize;
-        const y = Math.floor(i / this.atlasSize) * cellSize;
+        const x = (i % this.atlasSize!) * cellSize;
+        const y = Math.floor(i / this.atlasSize!) * cellSize;
         ctx.drawImage(img, x, y, cellSize, cellSize);
       });
 
-      gl.bindTexture(gl.TEXTURE_2D, this.tex);
+      gl.bindTexture(gl.TEXTURE_2D, this.tex!);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
       gl.generateMipmap(gl.TEXTURE_2D);
     });
   }
 
-  #initDiscInstances(count) {
+  private initDiscInstances(count: number) {
     const gl = this.gl;
+    if (!gl || !this.discVAO || !this.discLocations) return;
+    
     this.discInstances = {
       matricesArray: new Float32Array(count * 16),
       matrices: [],
@@ -668,7 +725,7 @@ class InfiniteGridMenu {
     const mat4AttribSlotCount = 4;
     const bytesPerMatrix = 16 * 4;
     for (let j = 0; j < mat4AttribSlotCount; ++j) {
-      const loc = this.discLocations.aInstanceMatrix + j;
+      const loc = (this.discLocations.aInstanceMatrix as number) + j;
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(
         loc,
@@ -684,8 +741,10 @@ class InfiniteGridMenu {
     gl.bindVertexArray(null);
   }
 
-  #animate(deltaTime) {
+  private animate(deltaTime: number) {
     const gl = this.gl;
+    if (!gl || !this.control || !this.instancePositions || !this.discInstances) return;
+    
     this.control.update(deltaTime, this.TARGET_FRAME_DURATION);
 
     let positions = this.instancePositions.map((p) => vec3.transformQuat(vec3.create(), p, this.control.orientation));
@@ -710,8 +769,10 @@ class InfiniteGridMenu {
     this.smoothRotationVelocity = this.control.rotationVelocity;
   }
 
-  #render() {
+  private render() {
     const gl = this.gl;
+    if (!gl || !this.discProgram || !this.discLocations || !this.discVAO || !this.discBuffers) return;
+    
     gl.useProgram(this.discProgram);
 
     gl.enable(gl.CULL_FACE);
@@ -720,26 +781,26 @@ class InfiniteGridMenu {
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    gl.uniformMatrix4fv(this.discLocations.uWorldMatrix, false, this.worldMatrix);
-    gl.uniformMatrix4fv(this.discLocations.uViewMatrix, false, this.camera.matrices.view);
-    gl.uniformMatrix4fv(this.discLocations.uProjectionMatrix, false, this.camera.matrices.projection);
-    gl.uniform3f(this.discLocations.uCameraPosition, this.camera.position[0], this.camera.position[1], this.camera.position[2]);
+    gl.uniformMatrix4fv(this.discLocations.uWorldMatrix as WebGLUniformLocation, false, this.worldMatrix!);
+    gl.uniformMatrix4fv(this.discLocations.uViewMatrix as WebGLUniformLocation, false, this.camera.matrices.view);
+    gl.uniformMatrix4fv(this.discLocations.uProjectionMatrix as WebGLUniformLocation, false, this.camera.matrices.projection);
+    gl.uniform3f(this.discLocations.uCameraPosition as WebGLUniformLocation, this.camera.position[0], this.camera.position[1], this.camera.position[2]);
     gl.uniform4f(
-      this.discLocations.uRotationAxisVelocity,
-      this.control.rotationAxis[0],
-      this.control.rotationAxis[1],
-      this.control.rotationAxis[2],
+      this.discLocations.uRotationAxisVelocity as WebGLUniformLocation,
+      this.control!.rotationAxis[0],
+      this.control!.rotationAxis[1],
+      this.control!.rotationAxis[2],
       this.smoothRotationVelocity * 1.1
     );
 
-    gl.uniform1i(this.discLocations.uItemCount, this.items.length);
-    gl.uniform1i(this.discLocations.uAtlasSize, this.atlasSize);
+    gl.uniform1i(this.discLocations.uItemCount as WebGLUniformLocation, this.items.length);
+    gl.uniform1i(this.discLocations.uAtlasSize as WebGLUniformLocation, this.atlasSize!);
 
-    gl.uniform1f(this.discLocations.uFrames, this.#frames);
-    gl.uniform1f(this.discLocations.uScaleFactor, this.scaleFactor);
-    gl.uniform1i(this.discLocations.uTex, 0);
+    gl.uniform1f(this.discLocations.uFrames as WebGLUniformLocation, this.frames);
+    gl.uniform1f(this.discLocations.uScaleFactor as WebGLUniformLocation, this.scaleFactor);
+    gl.uniform1i(this.discLocations.uTex as WebGLUniformLocation, 0);
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this.tex);
+    gl.bindTexture(gl.TEXTURE_2D, this.tex!);
 
     gl.bindVertexArray(this.discVAO);
     gl.drawElementsInstanced(
@@ -747,17 +808,17 @@ class InfiniteGridMenu {
       this.discBuffers.indices.length,
       gl.UNSIGNED_SHORT,
       0,
-      this.DISC_INSTANCE_COUNT
+      this.DISC_INSTANCE_COUNT!
     );
   }
 
-  #updateCameraMatrix() {
+  private updateCameraMatrix() {
     mat4.targetTo(this.camera.matrix, this.camera.position, [0, 0, 0], this.camera.up);
     mat4.invert(this.camera.matrices.view, this.camera.matrix);
   }
 
-  #updateProjectionMatrix(gl) {
-    this.camera.aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  private updateProjectionMatrix(gl: WebGL2RenderingContext) {
+    this.camera.aspect = gl.canvas.width / gl.canvas.height;
     const height = this.SPHERE_RADIUS * 0.35;
     const distance = this.camera.position[2];
     if (this.camera.aspect > 1) {
@@ -775,7 +836,9 @@ class InfiniteGridMenu {
     mat4.invert(this.camera.matrices.inversProjection, this.camera.matrices.projection);
   }
 
-  #onControlUpdate(deltaTime) {
+  private onControlUpdate(deltaTime: number) {
+    if (!this.control) return;
+    
     const timeScale = deltaTime / this.TARGET_FRAME_DURATION + 0.0001;
     let damping = 5 / timeScale;
     let cameraTargetZ = 3;
@@ -788,10 +851,10 @@ class InfiniteGridMenu {
     }
 
     if (!this.control.isPointerDown) {
-      const nearestVertexIndex = this.#findNearestVertexIndex();
+      const nearestVertexIndex = this.findNearestVertexIndex();
       const itemIndex = nearestVertexIndex % Math.max(1, this.items.length);
       this.onActiveItemChange(itemIndex);
-      const snapDirection = vec3.normalize(vec3.create(), this.#getVertexWorldPosition(nearestVertexIndex));
+      const snapDirection = vec3.normalize(vec3.create(), this.getVertexWorldPosition(nearestVertexIndex));
       this.control.snapTargetDirection = snapDirection;
     }
     else {
@@ -800,16 +863,18 @@ class InfiniteGridMenu {
     }
 
     this.camera.position[2] += (cameraTargetZ - this.camera.position[2]) / damping;
-    this.#updateCameraMatrix();
+    this.updateCameraMatrix();
   }
 
-  #findNearestVertexIndex() {
+  private findNearestVertexIndex() {
+    if (!this.control || !this.instancePositions) return 0;
+    
     const n = this.control.snapDirection;
     const inversOrientation = quat.conjugate(quat.create(), this.control.orientation);
     const nt = vec3.transformQuat(vec3.create(), n, inversOrientation);
 
     let maxD = -1;
-    let nearestVertexIndex;
+    let nearestVertexIndex = 0;
     for (let i = 0; i < this.instancePositions.length; ++i) {
       const d = vec3.dot(nt, this.instancePositions[i]);
       if (d > maxD) {
@@ -820,13 +885,15 @@ class InfiniteGridMenu {
     return nearestVertexIndex;
   }
 
-  #getVertexWorldPosition(index) {
+  private getVertexWorldPosition(index: number) {
+    if (!this.control || !this.instancePositions) return vec3.create();
+    
     const nearestVertexPos = this.instancePositions[index];
     return vec3.transformQuat(vec3.create(), nearestVertexPos, this.control.orientation);
   }
 }
 
-const defaultItems = [
+const defaultItems: MenuItem[] = [
   {
     image: 'https://picsum.photos/900/900?grayscale',
     link: 'https://google.com/',
@@ -835,16 +902,16 @@ const defaultItems = [
   }
 ];
 
-export default function InfiniteMenu({ items = [] }) {
-  const canvasRef = useRef(null);
-  const [activeItem, setActiveItem] = useState(null);
+export default function InfiniteMenu({ items = [] }: { items?: MenuItem[] }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
   const [isMoving, setIsMoving] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    let sketch;
+    let sketch: InfiniteGridMenu | undefined;
 
-    const handleActiveItem = (index) => {
+    const handleActiveItem = (index: number) => {
       const itemIndex = index % items.length;
       setActiveItem(items[itemIndex]);
     };
