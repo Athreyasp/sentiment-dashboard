@@ -2,7 +2,7 @@
 import React from 'react'
 import { UserButton } from '@clerk/clerk-react'
 import { DockMenu } from './DockMenu'
-import { SentinelLogo } from './SentinelLogo'
+import { ModernSentinelLogo } from './ModernSentinelLogo'
 import { Search, Bell, Heart, Bookmark, Home, TrendingUp, BarChart3, Settings } from 'lucide-react'
 
 export function AttractiveHeader() {
@@ -69,7 +69,7 @@ export function AttractiveHeader() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-4">
-            <SentinelLogo size="sm" showText={true} variant="gradient" />
+            <ModernSentinelLogo size="sm" showText={true} variant="default" />
             <div className="hidden md:flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Live Market Data</span>
