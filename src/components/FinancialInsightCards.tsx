@@ -15,7 +15,7 @@ export function FinancialInsightCards() {
         height={180}
         cardDistance={35}
         verticalDistance={45}
-        delay={5000}
+        delay={3000}
         pauseOnHover={true}
         onCardClick={handleCardClick}
         skewAmount={3}
