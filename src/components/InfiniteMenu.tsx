@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 import './InfiniteMenu.css';
@@ -308,12 +307,12 @@ function createProgram(gl: WebGL2RenderingContext, shaderSources: string[], tran
   return null;
 }
 
-function makeVertexArray(gl: WebGL2RenderingContext, bufLocNumElmPairs: [WebGLBuffer, number, number][], indices?: Uint16Array) {
+function makeVertexArray(gl: WebGL2RenderingContext, bufLocNumElmPairs: [WebGLBuffer | null, number, number][], indices?: Uint16Array) {
   const va = gl.createVertexArray();
   gl.bindVertexArray(va);
 
   for (const [buffer, loc, numElem] of bufLocNumElmPairs) {
-    if (loc === -1) continue;
+    if (loc === -1 || !buffer) continue;
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(
@@ -348,10 +347,10 @@ function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement) {
   return needResize;
 }
 
-function makeBuffer(gl: WebGL2RenderingContext, sizeOrData: number | ArrayBuffer | ArrayBufferView, usage: number) {
+function makeBuffer(gl: WebGL2RenderingContext, data: ArrayBuffer | ArrayBufferView, usage: number) {
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, usage);
+  gl.bufferData(gl.ARRAY_BUFFER, data, usage);
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
   return buf;
 }
@@ -644,8 +643,8 @@ class InfiniteGridMenu {
     this.discVAO = makeVertexArray(
       gl,
       [
-        [makeBuffer(gl, this.discBuffers.vertices, gl.STATIC_DRAW)!, this.discLocations.aModelPosition as number, 3],
-        [makeBuffer(gl, this.discBuffers.uvs, gl.STATIC_DRAW)!, this.discLocations.aModelUvs as number, 2],
+        [makeBuffer(gl, this.discBuffers.vertices, gl.STATIC_DRAW), this.discLocations.aModelPosition as number, 3],
+        [makeBuffer(gl, this.discBuffers.uvs, gl.STATIC_DRAW), this.discLocations.aModelUvs as number, 2],
       ],
       this.discBuffers.indices
     );

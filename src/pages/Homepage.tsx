@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -42,6 +41,51 @@ export default function Homepage() {
   }
 
   const features = [
+    {
+      title: "Real-Time Ticker Sentiment",
+      description: "Monitor sentiment changes across thousands of stocks in real-time with AI-powered analysis.",
+      gradient: "from-emerald-500 to-green-600",
+      image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=400&fit=crop",
+      link: "/dashboard"
+    },
+    {
+      title: "News Feed with Color Tags", 
+      description: "Get instant visual cues on market-moving news with sentiment-based color coding.",
+      gradient: "from-blue-500 to-cyan-600",
+      image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=400&fit=crop",
+      link: "/news"
+    },
+    {
+      title: "CSV Portfolio Upload",
+      description: "Upload your portfolio and get personalized sentiment insights for your holdings.",
+      gradient: "from-purple-500 to-pink-600", 
+      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&fit=crop",
+      link: "/portfolio"
+    },
+    {
+      title: "Telegram Alerts",
+      description: "Receive instant notifications when significant sentiment shifts occur in your watchlist.",
+      gradient: "from-amber-500 to-orange-600",
+      image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=400&fit=crop",
+      link: "/alerts"
+    },
+    {
+      title: "Explainable AI",
+      description: "Understand exactly why our AI made specific predictions with transparent explanations.",
+      gradient: "from-cyan-500 to-blue-600",
+      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=400&fit=crop",
+      link: "/explainer"
+    },
+    {
+      title: "Sector Heatmaps & Backtesting",
+      description: "Visualize market sentiment across sectors and backtest strategies with historical data.",
+      gradient: "from-rose-500 to-red-600",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop",
+      link: "/dashboard"
+    }
+  ]
+
+  const featuresWithIcons = [
     {
       icon: <TrendingUp className="w-8 h-8 text-emerald-500" />,
       title: "Real-Time Ticker Sentiment",
@@ -262,7 +306,7 @@ export default function Homepage() {
 
             {/* Traditional Grid as Fallback/Additional Info */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((feature, index) => (
+              {featuresWithIcons.map((feature, index) => (
                 <Card 
                   key={index} 
                   className="hover:shadow-2xl transition-all duration-500 border-2 hover:border-emerald-200 dark:hover:border-emerald-800 group hover:scale-105 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900"
