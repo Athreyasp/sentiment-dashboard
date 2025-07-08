@@ -21,7 +21,7 @@ export function FinancialInsightCards() {
         skewAmount={3}
         easing="elastic"
       >
-        <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white">
+        <Card className="bg-gradient-to-br from-emerald-500 to-green-600 text-white financial-card rounded-2xl border border-white/10 backdrop-blur-sm shadow-2xl cursor-pointer transition-shadow duration-300 hover:shadow-3xl">
           <div className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <TrendingUp className="w-8 h-8" />
@@ -37,7 +37,7 @@ export function FinancialInsightCards() {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white">
+        <Card className="bg-gradient-to-br from-blue-500 to-cyan-600 text-white financial-card rounded-2xl border border-white/10 backdrop-blur-sm shadow-2xl cursor-pointer transition-shadow duration-300 hover:shadow-3xl">
           <div className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <Brain className="w-8 h-8" />
@@ -53,7 +53,7 @@ export function FinancialInsightCards() {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white">
+        <Card className="bg-gradient-to-br from-purple-500 to-pink-600 text-white financial-card rounded-2xl border border-white/10 backdrop-blur-sm shadow-2xl cursor-pointer transition-shadow duration-300 hover:shadow-3xl">
           <div className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <BarChart3 className="w-8 h-8" />
@@ -69,7 +69,7 @@ export function FinancialInsightCards() {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-500 to-red-600 text-white">
+        <Card className="bg-gradient-to-br from-orange-500 to-red-600 text-white financial-card rounded-2xl border border-white/10 backdrop-blur-sm shadow-2xl cursor-pointer transition-shadow duration-300 hover:shadow-3xl">
           <div className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <Zap className="w-8 h-8" />
@@ -85,7 +85,7 @@ export function FinancialInsightCards() {
           </div>
         </Card>
 
-        <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+        <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white financial-card rounded-2xl border border-white/10 backdrop-blur-sm shadow-2xl cursor-pointer transition-shadow duration-300 hover:shadow-3xl">
           <div className="p-6 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <Target className="w-8 h-8" />
@@ -101,45 +101,6 @@ export function FinancialInsightCards() {
           </div>
         </Card>
       </FinancialCardSwap>
-
-      <style jsx>{`
-        .financial-card-swap-container {
-          position: relative;
-          perspective: 1000px;
-          overflow: visible;
-        }
-
-        .financial-card {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          border-radius: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-          transform-style: preserve-3d;
-          will-change: transform;
-          backface-visibility: hidden;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-          cursor: pointer;
-          transition: box-shadow 0.3s ease;
-        }
-
-        .financial-card:hover {
-          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
-        }
-
-        @media (max-width: 768px) {
-          .financial-card-swap-container {
-            transform: scale(0.8);
-          }
-        }
-
-        @media (max-width: 480px) {
-          .financial-card-swap-container {
-            transform: scale(0.65);
-          }
-        }
-      `}</style>
     </div>
   );
 }

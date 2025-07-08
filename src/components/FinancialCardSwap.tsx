@@ -215,7 +215,6 @@ const FinancialCardSwap: React.FC<CardSwapProps> = ({
     isValidElement(child)
       ? cloneElement(child, {
         key: i,
-        ref: refs[i],
         style: { width, height, ...(child.props.style ?? {}) },
         onClick: (e: React.MouseEvent) => {
           child.props.onClick?.(e);
@@ -224,13 +223,29 @@ const FinancialCardSwap: React.FC<CardSwapProps> = ({
       }) : child
   );
 
+  // Set refs after cloning
+  useEffect(() => {
+    rendered.forEach((child, i) => {
+      if (isValidElement(child) && refs[i].current) {
+        // The ref will be set by React automatically
+      }
+    });
+  }, [rendered, refs]);
+
   return (
     <div
       ref={container}
       className="financial-card-swap-container"
       style={{ width, height }}
     >
-      {rendered}
+      {rendered.map((child, i) => 
+        isValidElement(child) ? 
+          React.cloneElement(child, { 
+            ...child.props,
+            ref: refs[i],
+            key: i 
+          }) : child
+      )}
     </div>
   );
 };
