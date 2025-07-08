@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -7,6 +6,7 @@ import { AttractivePremiumHeader } from '@/components/AttractivePremiumHeader'
 import { LoginModal } from '@/components/LoginModal'
 import { SimplePreloader } from '@/components/SimplePreloader'
 import { SentinelLogo } from '@/components/SentinelLogo'
+import { FinancialInsightCards } from '@/components/FinancialInsightCards'
 import { usePreloader } from '@/hooks/usePreloader'
 import { 
   Search, 
@@ -159,56 +159,20 @@ export default function Homepage() {
                 </div>
               </div>
               
-              <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                {/* Enhanced dashboard mockup */}
-                <div className="relative bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-8 border border-slate-200 dark:border-slate-700 hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                        <BarChart3 className="w-5 h-5 text-emerald-500" />
-                        <span>Live Market Sentiment</span>
-                      </h3>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-xs text-slate-500">Live</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      {[
-                        { ticker: 'AAPL', value: '+0.85', color: 'green', bg: 'bg-green-50 dark:bg-green-950/20', border: 'border-green-500' },
-                        { ticker: 'TSLA', value: '-0.32', color: 'red', bg: 'bg-red-50 dark:bg-red-950/20', border: 'border-red-500' },
-                        { ticker: 'MSFT', value: '+0.12', color: 'blue', bg: 'bg-blue-50 dark:bg-blue-950/20', border: 'border-blue-500' },
-                        { ticker: 'GOOGL', value: '+0.67', color: 'green', bg: 'bg-green-50 dark:bg-green-950/20', border: 'border-green-500' }
-                      ].map((stock, index) => (
-                        <div 
-                          key={stock.ticker} 
-                          className={`flex items-center justify-between p-4 ${stock.bg} rounded-xl border-l-4 ${stock.border} hover:scale-105 transition-all duration-300 cursor-pointer`}
-                          style={{ animationDelay: `${index * 0.1}s` }}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-gradient-to-r from-slate-600 to-slate-800 rounded-lg flex items-center justify-center">
-                              <span className="text-white font-bold text-xs">{stock.ticker.slice(0, 2)}</span>
-                            </div>
-                            <span className="font-semibold text-slate-900 dark:text-white">{stock.ticker}</span>
-                          </div>
-                          <div className="text-right">
-                            <span className={`text-${stock.color}-600 dark:text-${stock.color}-400 font-bold text-lg`}>
-                              {stock.value}
-                            </span>
-                            <div className="text-xs text-slate-500">Sentiment</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+              <div className="relative animate-fade-in flex justify-center" style={{ animationDelay: '0.2s' }}>
+                {/* Financial Card Swap Component */}
+                <div className="relative">
+                  <FinancialInsightCards />
                   
-                  {/* Floating indicators */}
-                  <div className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-bounce shadow-lg flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-white" />
+                  {/* Floating indicators around the cards */}
+                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-bounce shadow-lg flex items-center justify-center">
+                    <TrendingUp className="w-8 h-8 text-white" />
                   </div>
-                  <div className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg flex items-center justify-center">
-                    <Brain className="w-5 h-5 text-white" />
+                  <div className="absolute -bottom-8 -left-8 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg flex items-center justify-center">
+                    <Brain className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="absolute top-1/2 -left-12 w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-ping shadow-lg flex items-center justify-center">
+                    <Zap className="w-5 h-5 text-white" />
                   </div>
                 </div>
               </div>
