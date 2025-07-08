@@ -7,7 +7,6 @@ import { LoginModal } from '@/components/LoginModal'
 import { SimplePreloader } from '@/components/SimplePreloader'
 import { SentinelLogo } from '@/components/SentinelLogo'
 import { FinancialInsightCards } from '@/components/FinancialInsightCards'
-import InfiniteMenu from '@/components/InfiniteMenu'
 import { usePreloader } from '@/hooks/usePreloader'
 import { 
   Search, 
@@ -42,91 +41,40 @@ export default function Homepage() {
 
   const features = [
     {
-      title: "Real-Time Ticker Sentiment",
-      description: "Monitor sentiment changes across thousands of stocks in real-time with AI-powered analysis.",
-      gradient: "from-emerald-500 to-green-600",
-      image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=400&fit=crop",
-      link: "/dashboard"
-    },
-    {
-      title: "News Feed with Color Tags", 
-      description: "Get instant visual cues on market-moving news with sentiment-based color coding.",
-      gradient: "from-blue-500 to-cyan-600",
-      image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=400&fit=crop",
-      link: "/news"
-    },
-    {
-      title: "CSV Portfolio Upload",
-      description: "Upload your portfolio and get personalized sentiment insights for your holdings.",
-      gradient: "from-purple-500 to-pink-600", 
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&fit=crop",
-      link: "/portfolio"
-    },
-    {
-      title: "Telegram Alerts",
-      description: "Receive instant notifications when significant sentiment shifts occur in your watchlist.",
-      gradient: "from-amber-500 to-orange-600",
-      image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=400&fit=crop",
-      link: "/alerts"
-    },
-    {
-      title: "Explainable AI",
-      description: "Understand exactly why our AI made specific predictions with transparent explanations.",
-      gradient: "from-cyan-500 to-blue-600",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=400&fit=crop",
-      link: "/explainer"
-    },
-    {
-      title: "Sector Heatmaps & Backtesting",
-      description: "Visualize market sentiment across sectors and backtest strategies with historical data.",
-      gradient: "from-rose-500 to-red-600",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop",
-      link: "/dashboard"
-    }
-  ]
-
-  const featuresWithIcons = [
-    {
       icon: <TrendingUp className="w-8 h-8 text-emerald-500" />,
       title: "Real-Time Ticker Sentiment",
       description: "Monitor sentiment changes across thousands of stocks in real-time with AI-powered analysis.",
-      gradient: "from-emerald-500 to-green-600",
-      image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=400&fit=crop"
+      gradient: "from-emerald-500 to-green-600"
     },
     {
       icon: <Newspaper className="w-8 h-8 text-blue-500" />,
       title: "News Feed with Color Tags",
       description: "Get instant visual cues on market-moving news with sentiment-based color coding.",
-      gradient: "from-blue-500 to-cyan-600",
-      image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=400&fit=crop"
+      gradient: "from-blue-500 to-cyan-600"
     },
     {
       icon: <Briefcase className="w-8 h-8 text-purple-500" />,
       title: "CSV Portfolio Upload",
       description: "Upload your portfolio and get personalized sentiment insights for your holdings.",
-      gradient: "from-purple-500 to-pink-600",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=400&fit=crop"
+      gradient: "from-purple-500 to-pink-600"
     },
     {
       icon: <Bell className="w-8 h-8 text-amber-500" />,
       title: "Telegram Alerts",
       description: "Receive instant notifications when significant sentiment shifts occur in your watchlist.",
-      gradient: "from-amber-500 to-orange-600",
-      image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=400&fit=crop"
+      gradient: "from-amber-500 to-orange-600"
     },
     {
       icon: <Eye className="w-8 h-8 text-cyan-500" />,
       title: "Explainable AI",
       description: "Understand exactly why our AI made specific predictions with transparent explanations.",
-      gradient: "from-cyan-500 to-blue-600",
-      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=400&fit=crop"
+      gradient: "from-cyan-500 to-blue-600"
     },
     {
       icon: <BarChart3 className="w-8 h-8 text-rose-500" />,
       title: "Sector Heatmaps & Backtesting",
       description: "Visualize market sentiment across sectors and backtest strategies with historical data.",
-      gradient: "from-rose-500 to-red-600",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop"
+      gradient: "from-rose-500 to-red-600"
     }
   ]
 
@@ -281,7 +229,7 @@ export default function Homepage() {
           </div>
         </section>
 
-        {/* Features Grid with Interactive 3D Sphere */}
+        {/* Features Grid */}
         <section id="features" className={`py-20 transition-all duration-1000 delay-700 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-20">
@@ -292,21 +240,13 @@ export default function Homepage() {
               <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
                 Everything You Need to Win
               </h2>
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-12">
-                Explore our comprehensive tools and insights in an interactive 3D experience. Click and drag to discover features designed to give you the competitive edge.
+              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                Comprehensive tools and insights designed to give you the competitive edge in today's fast-moving markets.
               </p>
             </div>
             
-            {/* Interactive 3D Feature Sphere */}
-            <div className="mb-16">
-              <div style={{ height: '600px', position: 'relative' }} className="rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 border border-emerald-200/20">
-                <InfiniteMenu items={features} />
-              </div>
-            </div>
-
-            {/* Traditional Grid as Fallback/Additional Info */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuresWithIcons.map((feature, index) => (
+              {features.map((feature, index) => (
                 <Card 
                   key={index} 
                   className="hover:shadow-2xl transition-all duration-500 border-2 hover:border-emerald-200 dark:hover:border-emerald-800 group hover:scale-105 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900"
