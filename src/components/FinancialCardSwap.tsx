@@ -9,7 +9,6 @@ import React, {
   useRef,
 } from "react";
 import gsap from "gsap";
-import { TrendingUp, TrendingDown, BarChart3, Brain, Target, Zap } from 'lucide-react';
 
 export const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { customClass?: string }>(
   ({ customClass, ...rest }, ref) => (
@@ -211,41 +210,48 @@ const FinancialCardSwap: React.FC<CardSwapProps> = ({
     easing,
   ]);
 
-  const rendered = childArr.map((child, i) =>
-    isValidElement(child)
-      ? cloneElement(child, {
-        key: i,
-        style: { width, height, ...(child.props.style ?? {}) },
-        onClick: (e: React.MouseEvent) => {
-          child.props.onClick?.(e);
-          onCardClick?.(i);
-        },
-      }) : child
-  );
-
-  // Set refs after cloning
-  useEffect(() => {
-    rendered.forEach((child, i) => {
-      if (isValidElement(child) && refs[i].current) {
-        // The ref will be set by React automatically
-      }
-    });
-  }, [rendered, refs]);
-
   return (
     <div
       ref={container}
       className="financial-card-swap-container"
-      style={{ width, height }}
+      style={{ 
+        width, 
+        height,
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        transform: 'translate(5%, 20%)',
+        transformOrigin: 'bottom right',
+        perspective: '900px',
+        overflow: 'visible'
+      }}
     >
-      {rendered.map((child, i) => 
-        isValidElement(child) ? 
-          React.cloneElement(child, { 
-            ...child.props,
+      {childArr.map((child, i) => {
+        if (isValidElement(child)) {
+          return cloneElement(child as React.ReactElement<any>, {
+            key: i,
             ref: refs[i],
-            key: i 
-          }) : child
-      )}
+            style: { 
+              width, 
+              height, 
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transformStyle: 'preserve-3d',
+              willChange: 'transform',
+              backfaceVisibility: 'hidden',
+              ...(child.props.style || {})
+            },
+            onClick: (e: React.MouseEvent) => {
+              if (child.props.onClick) {
+                child.props.onClick(e);
+              }
+              onCardClick?.(i);
+            },
+          });
+        }
+        return child;
+      })}
     </div>
   );
 };
