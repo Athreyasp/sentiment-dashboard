@@ -7,6 +7,7 @@ import { LoginModal } from '@/components/LoginModal'
 import { SimplePreloader } from '@/components/SimplePreloader'
 import { SentinelLogo } from '@/components/SentinelLogo'
 import { FinancialInsightCards } from '@/components/FinancialInsightCards'
+import { ChromaGrid } from '@/components/ChromaGrid'
 import { usePreloader } from '@/hooks/usePreloader'
 import { 
   Search, 
@@ -22,7 +23,8 @@ import {
   Target,
   Sparkles,
   Zap,
-  Shield
+  Shield,
+  Users
 } from 'lucide-react'
 
 export default function Homepage() {
@@ -225,6 +227,36 @@ export default function Homepage() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Meet Our Team Section */}
+        <section id="team" className={`py-20 bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-900 dark:to-slate-800 transition-all duration-1000 delay-600 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-20">
+              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-4 py-2 rounded-full border border-purple-200 dark:border-purple-800 mb-6">
+                <Users className="w-4 h-4 text-purple-600" />
+                <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Our Team</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+                Meet the Minds Behind Sentinel
+              </h2>
+              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                A passionate team of AI researchers, financial experts, and engineers dedicated to democratizing market intelligence.
+              </p>
+            </div>
+            
+            {/* ChromaGrid Team Display */}
+            <div className="flex justify-center">
+              <ChromaGrid 
+                radius={300}
+                damping={0.45}
+                fadeOut={0.6}
+                ease="power3.out"
+                columns={3}
+                rows={1}
+              />
             </div>
           </div>
         </section>
