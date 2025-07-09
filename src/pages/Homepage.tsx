@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -253,20 +252,6 @@ export default function Homepage() {
                 </ScrollFloat>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* Inspirational Quote Section */}
-        <section className="py-20 bg-gradient-to-br from-slate-100 to-blue-100/50 dark:from-slate-800 dark:to-slate-700">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <ScrollFloat direction="left" intensity={60} delay={0.3}>
-              <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white leading-relaxed mb-8">
-                When does a man die? When he is hit by a bullet? No! When he suffers a disease? No! When he ate a soup made out of a poisonous mushroom? No! A man dies when he is forgotten!
-              </h2>
-            </ScrollFloat>
-            <ScrollFloat direction="right" intensity={40} delay={0.6}>
-              <p className="text-lg text-slate-600 dark:text-slate-300 italic">- Dr. Hiluluk, One Piece</p>
-            </ScrollFloat>
           </div>
         </section>
 
