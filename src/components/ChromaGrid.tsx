@@ -109,13 +109,11 @@ export const ChromaGrid = ({
     <div
       ref={rootRef}
       className={`chroma-grid ${className}`}
-      style={
-        {
-          "--r": `${radius}px`,
-          "--cols": columns,
-          "--rows": rows,
-        }
-      }
+      style={{
+        "--r": `${radius}px`,
+        "--cols": columns,
+        "--rows": rows,
+      } as React.CSSProperties}
       onPointerMove={handleMove}
       onPointerLeave={handleLeave}
     >
@@ -125,13 +123,11 @@ export const ChromaGrid = ({
           className="chroma-card"
           onMouseMove={handleCardMove}
           onClick={() => handleCardClick(c.url)}
-          style={
-            {
-              "--card-border": c.borderColor || "transparent",
-              "--card-gradient": c.gradient,
-              cursor: c.url ? "pointer" : "default",
-            }
-          }
+          style={{
+            "--card-border": c.borderColor || "transparent",
+            "--card-gradient": c.gradient,
+            cursor: c.url ? "pointer" : "default",
+          } as React.CSSProperties}
         >
           <div className="chroma-img-wrapper">
             <img src={c.image} alt={c.title} loading="lazy" />
