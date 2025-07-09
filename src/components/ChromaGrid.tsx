@@ -12,6 +12,15 @@ export const ChromaGrid = ({
   damping = 0.45,
   fadeOut = 0.6,
   ease = "power3.out",
+}: {
+  items?: any[];
+  className?: string;
+  radius?: number;
+  columns?: number;
+  rows?: number;
+  damping?: number;
+  fadeOut?: number;
+  ease?: string;
 }) => {
   const rootRef = useRef(null);
   const fadeRef = useRef(null);
@@ -21,31 +30,31 @@ export const ChromaGrid = ({
 
   const demo = [
     {
-      image: "https://i.pravatar.cc/300?img=1",
-      title: "Sarah Johnson",
-      subtitle: "Frontend Developer",
-      handle: "@sarahjohnson",
-      borderColor: "#3B82F6",
-      gradient: "linear-gradient(145deg, #3B82F6, #000)",
-      url: "https://github.com/sarahjohnson"
+      image: "https://i.pravatar.cc/300?img=8",
+      title: "Alex Rivera",
+      subtitle: "Full Stack Developer",
+      handle: "@alexrivera",
+      borderColor: "#4F46E5",
+      gradient: "linear-gradient(145deg, #4F46E5, #000)",
+      url: "https://github.com/",
     },
     {
-      image: "https://i.pravatar.cc/300?img=2",
-      title: "Mike Chen",
-      subtitle: "Backend Engineer",
-      handle: "@mikechen",
+      image: "https://i.pravatar.cc/300?img=11",
+      title: "Jordan Chen",
+      subtitle: "DevOps Engineer",
+      handle: "@jordanchen",
       borderColor: "#10B981",
-      gradient: "linear-gradient(180deg, #10B981, #000)",
-      url: "https://linkedin.com/in/mikechen"
+      gradient: "linear-gradient(210deg, #10B981, #000)",
+      url: "https://linkedin.com/in/",
     },
     {
       image: "https://i.pravatar.cc/300?img=3",
-      title: "Alex Rivera",
+      title: "Morgan Blake",
       subtitle: "UI/UX Designer",
-      handle: "@alexrivera",
-      borderColor: "#8B5CF6",
-      gradient: "linear-gradient(225deg, #8B5CF6, #000)",
-      url: "https://dribbble.com/alexrivera"
+      handle: "@morganblake",
+      borderColor: "#F59E0B",
+      gradient: "linear-gradient(165deg, #F59E0B, #000)",
+      url: "https://dribbble.com/",
     }
   ];
   
