@@ -1,0 +1,20 @@
+
+.scroll-float {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.scroll-float:hover {
+  transition: transform 0.3s ease-out;
+}
+
+/* Add subtle shadow effect for floating elements */
+.scroll-float-card {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.scroll-float-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}

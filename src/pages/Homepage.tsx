@@ -9,7 +9,7 @@ import { SimplePreloader } from '@/components/SimplePreloader'
 import { SentinelLogo } from '@/components/SentinelLogo'
 import { FinancialInsightCards } from '@/components/FinancialInsightCards'
 import { ChromaGrid } from '@/components/ChromaGrid'
-import ScrollReveal from '@/components/ScrollReveal'
+import ScrollFloat from '@/components/ScrollFloat'
 import { usePreloader } from '@/hooks/usePreloader'
 import { 
   Search, 
@@ -120,70 +120,75 @@ export default function Homepage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-in">
-                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/20 dark:to-blue-950/20 px-4 py-2 rounded-full border border-emerald-200 dark:border-emerald-800 mb-6">
-                  <Zap className="w-4 h-4 text-emerald-600" />
-                  <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">AI-Powered Intelligence</span>
-                </div>
-                
-                <ScrollReveal
-                  baseOpacity={0}
-                  enableBlur={true}
-                  baseRotation={5}
-                  blurStrength={10}
-                  containerClassName="mb-6"
-                  textClassName="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight"
-                >
-                  Turn Real-Time News Into Market Insight
-                </ScrollReveal>
-                
-                <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 leading-relaxed max-w-lg">
-                  AI-powered financial sentiment platform that transforms market noise into actionable insights for smarter investment decisions.
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 mb-8">
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-                    onClick={() => setLoginModalOpen(true)}
-                  >
-                    Get Started Free
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                  <Button size="lg" variant="outline" className="font-semibold px-8 py-4 text-lg border-2 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-105 transition-all duration-300">
-                    <Play className="mr-2 w-5 h-5" />
-                    Watch Demo
-                  </Button>
-                </div>
-                
-                <div className="flex items-center space-x-6 text-sm text-slate-500 dark:text-slate-400">
-                  <div className="flex items-center space-x-2">
-                    <Shield className="w-4 h-4 text-green-500" />
-                    <span>Enterprise Security</span>
+                <ScrollFloat direction="up" intensity={40} delay={0.2}>
+                  <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/20 dark:to-blue-950/20 px-4 py-2 rounded-full border border-emerald-200 dark:border-emerald-800 mb-6">
+                    <Zap className="w-4 h-4 text-emerald-600" />
+                    <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">AI-Powered Intelligence</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs text-slate-500">Real-time Data</span>
+                </ScrollFloat>
+                
+                <ScrollFloat direction="left" intensity={60} delay={0.4}>
+                  <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                    Turn Real-Time News Into Market Insight
+                  </h1>
+                </ScrollFloat>
+                
+                <ScrollFloat direction="right" intensity={40} delay={0.6}>
+                  <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 leading-relaxed max-w-lg">
+                    AI-powered financial sentiment platform that transforms market noise into actionable insights for smarter investment decisions.
+                  </p>
+                </ScrollFloat>
+                
+                <ScrollFloat direction="up" intensity={30} delay={0.8}>
+                  <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                      onClick={() => setLoginModalOpen(true)}
+                    >
+                      Get Started Free
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                    <Button size="lg" variant="outline" className="font-semibold px-8 py-4 text-lg border-2 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-105 transition-all duration-300">
+                      <Play className="mr-2 w-5 h-5" />
+                      Watch Demo
+                    </Button>
                   </div>
-                </div>
+                </ScrollFloat>
+                
+                <ScrollFloat direction="up" intensity={20} delay={1.0}>
+                  <div className="flex items-center space-x-6 text-sm text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center space-x-2">
+                      <Shield className="w-4 h-4 text-green-500" />
+                      <span>Enterprise Security</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-xs text-slate-500">Real-time Data</span>
+                    </div>
+                  </div>
+                </ScrollFloat>
               </div>
               
-              <div className="relative animate-fade-in flex justify-center" style={{ animationDelay: '0.2s' }}>
-                {/* Financial Card Swap Component */}
-                <div className="relative">
-                  <FinancialInsightCards />
-                  
-                  {/* Floating indicators around the cards */}
-                  <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-bounce shadow-lg flex items-center justify-center">
-                    <TrendingUp className="w-8 h-8 text-white" />
-                  </div>
-                  <div className="absolute -bottom-8 -left-8 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg flex items-center justify-center">
-                    <Brain className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="absolute top-1/2 -left-12 w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-ping shadow-lg flex items-center justify-center">
-                    <Zap className="w-5 h-5 text-white" />
+              <ScrollFloat direction="right" intensity={80} delay={0.4}>
+                <div className="relative animate-fade-in flex justify-center" style={{ animationDelay: '0.2s' }}>
+                  {/* Financial Card Swap Component */}
+                  <div className="relative">
+                    <FinancialInsightCards />
+                    
+                    {/* Floating indicators around the cards */}
+                    <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-bounce shadow-lg flex items-center justify-center">
+                      <TrendingUp className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="absolute -bottom-8 -left-8 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg flex items-center justify-center">
+                      <Brain className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="absolute top-1/2 -left-12 w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-ping shadow-lg flex items-center justify-center">
+                      <Zap className="w-5 h-5 text-white" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </ScrollFloat>
             </div>
           </div>
         </section>
@@ -192,55 +197,60 @@ export default function Homepage() {
         <section id="how-it-works" className={`py-20 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm transition-all duration-1000 delay-500 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-20">
-              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800 mb-6">
-                <Brain className="w-4 h-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">How It Works</span>
-              </div>
+              <ScrollFloat direction="down" intensity={30} delay={0.2}>
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800 mb-6">
+                  <Brain className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">How It Works</span>
+                </div>
+              </ScrollFloat>
               
-              <ScrollReveal
-                baseOpacity={0.2}
-                enableBlur={true}
-                baseRotation={3}
-                blurStrength={6}
-                containerClassName="mb-6"
-                textClassName="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white"
-              >
-                Three Steps to Market Mastery
-              </ScrollReveal>
+              <ScrollFloat direction="up" intensity={50} delay={0.4}>
+                <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+                  Three Steps to Market Mastery
+                </h2>
+              </ScrollFloat>
               
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                Our sophisticated AI pipeline transforms raw financial news into actionable market insights through advanced machine learning.
-              </p>
+              <ScrollFloat direction="up" intensity={30} delay={0.6}>
+                <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                  Our sophisticated AI pipeline transforms raw financial news into actionable market insights through advanced machine learning.
+                </p>
+              </ScrollFloat>
             </div>
             
             <div className="grid md:grid-cols-3 gap-8">
               {workSteps.map((step, index) => (
-                <Card 
-                  key={index} 
-                  className="relative hover:shadow-2xl transition-all duration-500 border-2 hover:border-emerald-200 dark:hover:border-emerald-800 group hover:scale-105 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900"
-                  style={{ animationDelay: `${index * 0.2}s` }}
+                <ScrollFloat 
+                  key={index}
+                  direction="up" 
+                  intensity={40} 
+                  delay={0.2 * index}
+                  className="scroll-float-card"
                 >
-                  <CardContent className="p-8 text-center relative">
-                    {/* Step number */}
-                    <div className="absolute -top-6 left-8 w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-2xl flex items-center justify-center text-xl font-bold shadow-lg">
-                      {step.number}
-                    </div>
-                    
-                    <div className="flex justify-center mb-8 mt-6">
-                      <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-600 rounded-3xl group-hover:scale-110 transition-transform duration-300">
-                        {step.icon}
+                  <Card 
+                    className="relative hover:shadow-2xl transition-all duration-500 border-2 hover:border-emerald-200 dark:hover:border-emerald-800 group hover:scale-105 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900"
+                  >
+                    <CardContent className="p-8 text-center relative">
+                      {/* Step number */}
+                      <div className="absolute -top-6 left-8 w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-2xl flex items-center justify-center text-xl font-bold shadow-lg">
+                        {step.number}
                       </div>
-                    </div>
-                    
-                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">{step.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{step.description}</p>
-                    
-                    {/* Connecting line */}
-                    {index < workSteps.length - 1 && (
-                      <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-emerald-300 to-blue-300"></div>
-                    )}
-                  </CardContent>
-                </Card>
+                      
+                      <div className="flex justify-center mb-8 mt-6">
+                        <div className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-600 rounded-3xl group-hover:scale-110 transition-transform duration-300">
+                          {step.icon}
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">{step.title}</h3>
+                      <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{step.description}</p>
+                      
+                      {/* Connecting line */}
+                      {index < workSteps.length - 1 && (
+                        <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-emerald-300 to-blue-300"></div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </ScrollFloat>
               ))}
             </div>
           </div>
@@ -249,17 +259,14 @@ export default function Homepage() {
         {/* Inspirational Quote Section */}
         <section className="py-20 bg-gradient-to-br from-slate-100 to-blue-100/50 dark:from-slate-800 dark:to-slate-700">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <ScrollReveal
-              baseOpacity={0}
-              enableBlur={true}
-              baseRotation={5}
-              blurStrength={10}
-              containerClassName="mb-8"
-              textClassName="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white leading-relaxed"
-            >
-              When does a man die? When he is hit by a bullet? No! When he suffers a disease? No! When he ate a soup made out of a poisonous mushroom? No! A man dies when he is forgotten!
-            </ScrollReveal>
-            <p className="text-lg text-slate-600 dark:text-slate-300 italic">- Dr. Hiluluk, One Piece</p>
+            <ScrollFloat direction="left" intensity={60} delay={0.3}>
+              <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white leading-relaxed mb-8">
+                When does a man die? When he is hit by a bullet? No! When he suffers a disease? No! When he ate a soup made out of a poisonous mushroom? No! A man dies when he is forgotten!
+              </h2>
+            </ScrollFloat>
+            <ScrollFloat direction="right" intensity={40} delay={0.6}>
+              <p className="text-lg text-slate-600 dark:text-slate-300 italic">- Dr. Hiluluk, One Piece</p>
+            </ScrollFloat>
           </div>
         </section>
 
@@ -267,38 +274,39 @@ export default function Homepage() {
         <section id="team" className={`py-20 bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-900 dark:to-slate-800 transition-all duration-1000 delay-600 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-20">
-              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-4 py-2 rounded-full border border-purple-200 dark:border-purple-800 mb-6">
-                <Users className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Our Team</span>
-              </div>
+              <ScrollFloat direction="down" intensity={30} delay={0.2}>
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-4 py-2 rounded-full border border-purple-200 dark:border-purple-800 mb-6">
+                  <Users className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Our Team</span>
+                </div>
+              </ScrollFloat>
               
-              <ScrollReveal
-                baseOpacity={0.2}
-                enableBlur={true}
-                baseRotation={3}
-                blurStrength={6}
-                containerClassName="mb-6"
-                textClassName="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white"
-              >
-                Meet the Minds Behind Sentinel
-              </ScrollReveal>
+              <ScrollFloat direction="up" intensity={50} delay={0.4}>
+                <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+                  Meet the Minds Behind Sentinel
+                </h2>
+              </ScrollFloat>
               
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                A passionate team of AI researchers, financial experts, and engineers dedicated to democratizing market intelligence.
-              </p>
+              <ScrollFloat direction="up" intensity={30} delay={0.6}>
+                <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                  A passionate team of AI researchers, financial experts, and engineers dedicated to democratizing market intelligence.
+                </p>
+              </ScrollFloat>
             </div>
             
             {/* ChromaGrid Team Display */}
-            <div className="flex justify-center">
-              <ChromaGrid 
-                radius={300}
-                damping={0.45}
-                fadeOut={0.6}
-                ease="power3.out"
-                columns={3}
-                rows={1}
-              />
-            </div>
+            <ScrollFloat direction="up" intensity={40} delay={0.8}>
+              <div className="flex justify-center">
+                <ChromaGrid 
+                  radius={300}
+                  damping={0.45}
+                  fadeOut={0.6}
+                  ease="power3.out"
+                  columns={3}
+                  rows={1}
+                />
+              </div>
+            </ScrollFloat>
           </div>
         </section>
 
@@ -306,51 +314,56 @@ export default function Homepage() {
         <section id="features" className={`py-20 transition-all duration-1000 delay-700 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-20">
-              <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-4 py-2 rounded-full border border-purple-200 dark:border-purple-800 mb-6">
-                <Sparkles className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Powerful Features</span>
-              </div>
+              <ScrollFloat direction="down" intensity={30} delay={0.2}>
+                <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-4 py-2 rounded-full border border-purple-200 dark:border-purple-800 mb-6">
+                  <Sparkles className="w-4 h-4 text-purple-600" />
+                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Powerful Features</span>
+                </div>
+              </ScrollFloat>
               
-              <ScrollReveal
-                baseOpacity={0.2}
-                enableBlur={true}
-                baseRotation={3}
-                blurStrength={6}
-                containerClassName="mb-6"
-                textClassName="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white"
-              >
-                Everything You Need to Win
-              </ScrollReveal>
+              <ScrollFloat direction="up" intensity={50} delay={0.4}>
+                <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+                  Everything You Need to Win
+                </h2>
+              </ScrollFloat>
               
-              <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                Comprehensive tools and insights designed to give you the competitive edge in today's fast-moving markets.
-              </p>
+              <ScrollFloat direction="up" intensity={30} delay={0.6}>
+                <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                  Comprehensive tools and insights designed to give you the competitive edge in today's fast-moving markets.
+                </p>
+              </ScrollFloat>
             </div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <Card 
-                  key={index} 
-                  className="hover:shadow-2xl transition-all duration-500 border-2 hover:border-emerald-200 dark:hover:border-emerald-800 group hover:scale-105 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                <ScrollFloat 
+                  key={index}
+                  direction={index % 2 === 0 ? "left" : "right"} 
+                  intensity={40} 
+                  delay={0.1 * index}
+                  className="scroll-float-card"
                 >
-                  <CardContent className="p-6 relative overflow-hidden">
-                    {/* Background gradient */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
-                    
-                    <div className="flex items-start space-x-4 relative z-10">
-                      <div className="flex-shrink-0 p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                        {feature.icon}
+                  <Card 
+                    className="hover:shadow-2xl transition-all duration-500 border-2 hover:border-emerald-200 dark:hover:border-emerald-800 group hover:scale-105 bg-gradient-to-br from-white to-slate-50 dark:from-slate-800 dark:to-slate-900"
+                  >
+                    <CardContent className="p-6 relative overflow-hidden">
+                      {/* Background gradient */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                      
+                      <div className="flex items-start space-x-4 relative z-10">
+                        <div className="flex-shrink-0 p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                          {feature.icon}
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300">
+                            {feature.title}
+                          </h3>
+                          <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{feature.description}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300">
-                          {feature.title}
-                        </h3>
-                        <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{feature.description}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </ScrollFloat>
               ))}
             </div>
           </div>
@@ -365,35 +378,34 @@ export default function Homepage() {
           </div>
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <ScrollReveal
-              baseOpacity={0.3}
-              enableBlur={true}
-              baseRotation={2}
-              blurStrength={4}
-              containerClassName="mb-6"
-              textClassName="text-4xl lg:text-5xl font-bold text-white"
-            >
-              Ready to Transform Your Trading?
-            </ScrollReveal>
+            <ScrollFloat direction="up" intensity={40} delay={0.3}>
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+                Ready to Transform Your Trading?
+              </h2>
+            </ScrollFloat>
             
-            <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of investors who are already making smarter decisions with AI-powered market insights.
-            </p>
+            <ScrollFloat direction="up" intensity={30} delay={0.5}>
+              <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
+                Join thousands of investors who are already making smarter decisions with AI-powered market insights.
+              </p>
+            </ScrollFloat>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                className="bg-white text-slate-900 hover:bg-emerald-50 font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-                onClick={() => setLoginModalOpen(true)}
-              >
-                Start Free Trial
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <div className="flex items-center space-x-2 text-white/80">
-                <Shield className="w-4 h-4" />
-                <span className="text-sm">No credit card required</span>
+            <ScrollFloat direction="up" intensity={20} delay={0.7}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button 
+                  size="lg" 
+                  className="bg-white text-slate-900 hover:bg-emerald-50 font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                  onClick={() => setLoginModalOpen(true)}
+                >
+                  Start Free Trial
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+                <div className="flex items-center space-x-2 text-white/80">
+                  <Shield className="w-4 h-4" />
+                  <span className="text-sm">No credit card required</span>
+                </div>
               </div>
-            </div>
+            </ScrollFloat>
           </div>
         </section>
 
@@ -404,47 +416,53 @@ export default function Homepage() {
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <div className="flex items-center space-x-3 mb-6">
-                  <SentinelLogo size="sm" showText={true} variant="minimal" className="text-white" />
-                </div>
-                <p className="text-slate-300 mb-6 text-lg">
-                  AI-powered insights for the next generation of investors.
-                </p>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm text-slate-400">System Status: Operational</span>
+              <ScrollFloat direction="left" intensity={40} delay={0.2}>
+                <div>
+                  <div className="flex items-center space-x-3 mb-6">
+                    <SentinelLogo size="sm" showText={true} variant="minimal" className="text-white" />
+                  </div>
+                  <p className="text-slate-300 mb-6 text-lg">
+                    AI-powered insights for the next generation of investors.
+                  </p>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-sm text-slate-400">System Status: Operational</span>
+                    </div>
+                  </div>
+                  <div className="text-sm text-slate-400 mt-4">
+                    <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent font-semibold">
+                      v2.0 Beta
+                    </span>
                   </div>
                 </div>
-                <div className="text-sm text-slate-400 mt-4">
-                  <span className="bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent font-semibold">
-                    v2.0 Beta
-                  </span>
-                </div>
-              </div>
+              </ScrollFloat>
               
-              <div className="md:text-right">
-                <div className="flex flex-col md:flex-row md:justify-end space-y-4 md:space-y-0 md:space-x-8 mb-8">
-                  {['About', 'Contact', 'Terms', 'Privacy'].map((item) => (
-                    <a 
-                      key={item}
-                      href="#" 
-                      className="text-slate-300 hover:text-white transition-colors duration-200 relative group"
-                    >
-                      {item}
-                      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
-                    </a>
-                  ))}
+              <ScrollFloat direction="right" intensity={40} delay={0.4}>
+                <div className="md:text-right">
+                  <div className="flex flex-col md:flex-row md:justify-end space-y-4 md:space-y-0 md:space-x-8 mb-8">
+                    {['About', 'Contact', 'Terms', 'Privacy'].map((item) => (
+                      <a 
+                        key={item}
+                        href="#" 
+                        className="text-slate-300 hover:text-white transition-colors duration-200 relative group"
+                      >
+                        {item}
+                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-blue-400 transition-all duration-300 group-hover:w-full"></span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </ScrollFloat>
             </div>
             
-            <div className="pt-8 border-t border-slate-800">
-              <div className="text-center text-slate-400 text-sm">
-                © 2024 Sentinel. All rights reserved. Built with ❤️ for smarter investing.
+            <ScrollFloat direction="up" intensity={20} delay={0.6}>
+              <div className="pt-8 border-t border-slate-800">
+                <div className="text-center text-slate-400 text-sm">
+                  © 2024 Sentinel. All rights reserved. Built with ❤️ for smarter investing.
+                </div>
               </div>
-            </div>
+            </ScrollFloat>
           </div>
         </footer>
       </div>
