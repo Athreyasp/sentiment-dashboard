@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { SimplePreloader } from '@/components/SimplePreloader'
 import { SentinelLogo } from '@/components/SentinelLogo'
 import { FinancialInsightCards } from '@/components/FinancialInsightCards'
 import { ChromaGrid } from '@/components/ChromaGrid'
+import ScrollReveal from '@/components/ScrollReveal'
 import { usePreloader } from '@/hooks/usePreloader'
 import { 
   Search, 
@@ -123,12 +125,16 @@ export default function Homepage() {
                   <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">AI-Powered Intelligence</span>
                 </div>
                 
-                <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
-                  Turn Real-Time News Into{' '}
-                  <span className="bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
-                    Market Insight
-                  </span>
-                </h1>
+                <ScrollReveal
+                  baseOpacity={0}
+                  enableBlur={true}
+                  baseRotation={5}
+                  blurStrength={10}
+                  containerClassName="mb-6"
+                  textClassName="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight"
+                >
+                  Turn Real-Time News Into Market Insight
+                </ScrollReveal>
                 
                 <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 leading-relaxed max-w-lg">
                   AI-powered financial sentiment platform that transforms market noise into actionable insights for smarter investment decisions.
@@ -190,9 +196,18 @@ export default function Homepage() {
                 <Brain className="w-4 h-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-700 dark:text-blue-300">How It Works</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+              
+              <ScrollReveal
+                baseOpacity={0.2}
+                enableBlur={true}
+                baseRotation={3}
+                blurStrength={6}
+                containerClassName="mb-6"
+                textClassName="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white"
+              >
                 Three Steps to Market Mastery
-              </h2>
+              </ScrollReveal>
+              
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                 Our sophisticated AI pipeline transforms raw financial news into actionable market insights through advanced machine learning.
               </p>
@@ -231,6 +246,23 @@ export default function Homepage() {
           </div>
         </section>
 
+        {/* Inspirational Quote Section */}
+        <section className="py-20 bg-gradient-to-br from-slate-100 to-blue-100/50 dark:from-slate-800 dark:to-slate-700">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <ScrollReveal
+              baseOpacity={0}
+              enableBlur={true}
+              baseRotation={5}
+              blurStrength={10}
+              containerClassName="mb-8"
+              textClassName="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white leading-relaxed"
+            >
+              When does a man die? When he is hit by a bullet? No! When he suffers a disease? No! When he ate a soup made out of a poisonous mushroom? No! A man dies when he is forgotten!
+            </ScrollReveal>
+            <p className="text-lg text-slate-600 dark:text-slate-300 italic">- Dr. Hiluluk, One Piece</p>
+          </div>
+        </section>
+
         {/* Meet Our Team Section */}
         <section id="team" className={`py-20 bg-gradient-to-br from-slate-50 to-blue-50/30 dark:from-slate-900 dark:to-slate-800 transition-all duration-1000 delay-600 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -239,9 +271,18 @@ export default function Homepage() {
                 <Users className="w-4 h-4 text-purple-600" />
                 <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Our Team</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+              
+              <ScrollReveal
+                baseOpacity={0.2}
+                enableBlur={true}
+                baseRotation={3}
+                blurStrength={6}
+                containerClassName="mb-6"
+                textClassName="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white"
+              >
                 Meet the Minds Behind Sentinel
-              </h2>
+              </ScrollReveal>
+              
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                 A passionate team of AI researchers, financial experts, and engineers dedicated to democratizing market intelligence.
               </p>
@@ -269,9 +310,18 @@ export default function Homepage() {
                 <Sparkles className="w-4 h-4 text-purple-600" />
                 <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Powerful Features</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-6">
+              
+              <ScrollReveal
+                baseOpacity={0.2}
+                enableBlur={true}
+                baseRotation={3}
+                blurStrength={6}
+                containerClassName="mb-6"
+                textClassName="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white"
+              >
                 Everything You Need to Win
-              </h2>
+              </ScrollReveal>
+              
               <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
                 Comprehensive tools and insights designed to give you the competitive edge in today's fast-moving markets.
               </p>
@@ -315,9 +365,17 @@ export default function Homepage() {
           </div>
           
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            <ScrollReveal
+              baseOpacity={0.3}
+              enableBlur={true}
+              baseRotation={2}
+              blurStrength={4}
+              containerClassName="mb-6"
+              textClassName="text-4xl lg:text-5xl font-bold text-white"
+            >
               Ready to Transform Your Trading?
-            </h2>
+            </ScrollReveal>
+            
             <p className="text-xl text-emerald-100 mb-8 max-w-2xl mx-auto">
               Join thousands of investors who are already making smarter decisions with AI-powered market insights.
             </p>
