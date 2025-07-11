@@ -9,6 +9,7 @@ import { SentinelLogo } from '@/components/SentinelLogo'
 import { FinancialInsightCards } from '@/components/FinancialInsightCards'
 import { ChromaGrid } from '@/components/ChromaGrid'
 import ScrollFloat from '@/components/ScrollFloat'
+import RotatingText from '@/components/RotatingText'
 import { usePreloader } from '@/hooks/usePreloader'
 import { 
   Search, 
@@ -128,7 +129,19 @@ export default function Homepage() {
                 
                 <ScrollFloat direction="left" intensity={60} delay={0.4}>
                   <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
-                    Turn Real-Time News Into Market Insight
+                    Turn Real-Time News Into{' '}
+                    <RotatingText
+                      texts={['Market Intelligence', 'Smart Insights', 'Trading Edge', 'Investment Power']}
+                      mainClassName="inline-flex px-3 py-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-lg shadow-lg"
+                      staggerFrom="last"
+                      initial={{ y: "100%", opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: "-120%", opacity: 0 }}
+                      staggerDuration={0.02}
+                      splitLevelClassName="overflow-hidden"
+                      transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                      rotationInterval={3000}
+                    />
                   </h1>
                 </ScrollFloat>
                 
