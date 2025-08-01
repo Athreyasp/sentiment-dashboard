@@ -116,7 +116,7 @@ export default function Homepage() {
         <AttractivePremiumHeader onAuthClick={() => setLoginModalOpen(true)} />
 
         {/* Hero Section with enhanced entrance animations - adjusted for fixed header */}
-        <section className={`pt-32 pb-20 lg:pt-40 lg:pb-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        <section className={`main-content pt-16 pb-20 lg:pb-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-in">

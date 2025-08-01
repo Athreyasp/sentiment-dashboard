@@ -81,6 +81,26 @@
       linear-gradient(135deg, transparent 0%, rgba(var(--pixel-purple), 0.02) 100%);
     min-height: 100vh;
   }
+
+  /* Universal header spacing fix - prevents fixed header overlap */
+  .main-content {
+    @apply pt-20; /* 80px to match AttractivePremiumHeader height (h-20) */
+  }
+  
+  /* Dashboard layout header spacing - matches AttractiveHeader height */
+  .dashboard-content {
+    @apply pt-16; /* 64px to match AttractiveHeader height (h-16) */
+  }
+  
+  /* Responsive header spacing for mobile */
+  @media (max-width: 768px) {
+    .main-content {
+      @apply pt-20; /* Same height for consistency with AttractivePremiumHeader */
+    }
+    .dashboard-content {
+      @apply pt-16; /* Same height for consistency with AttractiveHeader */
+    }
+  }
 }
 
 @layer utilities {

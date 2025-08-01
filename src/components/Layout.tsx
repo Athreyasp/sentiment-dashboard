@@ -15,7 +15,7 @@ export function Layout() {
         <Header onMenuClick={() => {}} />
         
         {/* Main dashboard content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto dashboard-content">
           <div className="max-w-7xl mx-auto p-6 space-y-6">
             <Outlet />
           </div>
