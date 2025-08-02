@@ -1,13 +1,13 @@
 
-import { ModernSentinelLogo } from './ModernSentinelLogo'
+import { OfficialSentinelLogo } from './OfficialSentinelLogo'
 
 export function LoginHeader() {
   return (
     <div className="text-center mb-8 md:mb-12 animate-fade-in px-4">
       <div className="mb-6 md:mb-8">
-        <ModernSentinelLogo 
+        <OfficialSentinelLogo 
           size="lg" 
-          variant="hero" 
+          variant="default" 
           showText={true}
           className="mb-4 md:mb-6"
         />

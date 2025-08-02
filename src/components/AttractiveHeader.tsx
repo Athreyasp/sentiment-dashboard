@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { UserButton } from '@clerk/clerk-react'
-import { ModernSentinelLogo } from './ModernSentinelLogo'
+import { OfficialSentinelLogo } from './OfficialSentinelLogo'
 
 export function AttractiveHeader() {
   return (
@@ -10,7 +10,7 @@ export function AttractiveHeader() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-4">
-            <ModernSentinelLogo size="sm" showText={true} variant="default" />
+            <OfficialSentinelLogo size="sm" showText={true} variant="default" />
             <div className="hidden md:flex items-center space-x-2">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Live Market Data</span>

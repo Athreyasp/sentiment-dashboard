@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { X, Shield, TrendingUp, Brain, Activity } from 'lucide-react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { SignIn, SignUp } from '@clerk/clerk-react'
-import { ModernSentinelLogo } from '@/components/ModernSentinelLogo'
+import { OfficialSentinelLogo } from '@/components/OfficialSentinelLogo'
 
 interface LoginModalProps {
   open: boolean
@@ -35,7 +35,7 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
             
             {/* Content */}
             <div className="relative z-10 text-center">
-              <ModernSentinelLogo 
+              <OfficialSentinelLogo 
                 size="lg" 
                 variant="default" 
                 showText={true}

@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { AttractivePremiumHeader } from '@/components/AttractivePremiumHeader'
 import { LoginModal } from '@/components/LoginModal'
 import { SimplePreloader } from '@/components/SimplePreloader'
-import { SentinelLogo } from '@/components/SentinelLogo'
+import { OfficialSentinelLogo } from '@/components/OfficialSentinelLogo'
 import { FinancialInsightCards } from '@/components/FinancialInsightCards'
 import { ChromaGrid } from '@/components/ChromaGrid'
 import ScrollFloat from '@/components/ScrollFloat'
@@ -407,7 +407,7 @@ export default function Homepage() {
               <ScrollFloat direction="left" intensity={40} delay={0.2}>
                 <div>
                   <div className="flex items-center space-x-3 mb-6">
-                    <SentinelLogo size="sm" showText={true} variant="minimal" className="text-white" />
+                    <OfficialSentinelLogo size="sm" showText={true} variant="minimal" className="text-white" />
                   </div>
                   <p className="text-slate-300 mb-6 text-lg">
                     AI-powered insights for the next generation of investors.

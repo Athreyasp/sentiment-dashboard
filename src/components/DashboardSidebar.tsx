@@ -14,7 +14,7 @@ import {
   Moon,
   Monitor
 } from 'lucide-react'
-import { SentinelLogo } from './SentinelLogo'
+import { OfficialSentinelLogo } from './OfficialSentinelLogo'
 import { Button } from './ui/button'
 import { useTheme } from '@/hooks/useTheme'
 import { cn } from '@/lib/utils'
@@ -68,7 +68,7 @@ export function DashboardSidebar() {
       {/* Logo Section */}
       <div className="p-6 border-b border-slate-200 dark:border-slate-700">
         <div className="flex items-center space-x-3 mb-2">
-          <SentinelLogo size="sm" showText={false} variant="icon-only" />
+          <OfficialSentinelLogo size="sm" showText={false} variant="icon-only" />
           <div>
             <h1 className="text-xl font-bold text-slate-900 dark:text-white font-inter tracking-tight">
               SENTINEL

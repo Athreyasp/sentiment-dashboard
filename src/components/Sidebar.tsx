@@ -17,7 +17,7 @@ import {
   User,
   LogOut
 } from 'lucide-react'
-import { SentinelLogo } from './SentinelLogo'
+import { OfficialSentinelLogo } from './OfficialSentinelLogo'
 import { Button } from './ui/button'
 
 interface SidebarProps {
@@ -50,7 +50,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {!collapsed ? (
           <>
             <div className="flex items-center space-x-3 animate-fade-in">
-              <SentinelLogo size="md" showText={true} variant="minimal" />
+              <OfficialSentinelLogo size="md" showText={true} variant="minimal" />
             </div>
             <Button
               onClick={onToggle}
@@ -63,7 +63,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </>
         ) : (
           <div className="flex flex-col items-center space-y-2">
-            <SentinelLogo size="sm" showText={false} variant="icon-only" />
+            <OfficialSentinelLogo size="sm" showText={false} variant="icon-only" />
             <Button
               onClick={onToggle}
               variant="ghost"
