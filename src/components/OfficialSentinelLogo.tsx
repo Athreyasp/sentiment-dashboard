@@ -27,8 +27,21 @@ export function OfficialSentinelLogo({
       <img 
         src="/lovable-uploads/c866df8a-d9d3-42b1-9711-eac0d6acb1ca.png"
         alt="Sentinel - AI Powered Financial Insights"
-        className={`${sizeClasses[size]} w-auto object-contain`}
+        className={`${sizeClasses[size]} w-auto object-contain max-w-none`}
+        onError={(e) => {
+          console.error('Logo failed to load:', e);
+          // Fallback to showing text if image fails
+          e.currentTarget.style.display = 'none';
+        }}
+        onLoad={() => {
+          console.log('Logo loaded successfully');
+        }}
       />
+      {showText && (
+        <span className="font-bold text-lg text-slate-900 dark:text-white">
+          SENTINEL
+        </span>
+      )}
     </div>
   )
 }
