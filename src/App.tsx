@@ -22,6 +22,7 @@ import News from "./pages/News";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const AppContent = () => {
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Homepage />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/login" element={
           <AuthLayout>
             <Login />
