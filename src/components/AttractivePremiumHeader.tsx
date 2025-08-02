@@ -57,7 +57,7 @@ export function AttractivePremiumHeader({ onAuthClick }: HeaderProps) {
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                 <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 font-pixel">
-                  v2.0 BETA
+                  LIVE
                 </span>
               </div>
             </div>

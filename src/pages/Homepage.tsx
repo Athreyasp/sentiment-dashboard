@@ -116,7 +116,7 @@ export default function Homepage() {
         <AttractivePremiumHeader onAuthClick={() => setLoginModalOpen(true)} />
 
         {/* Hero Section with enhanced entrance animations - adjusted for fixed header */}
-        <section className={`main-content pt-16 pb-20 lg:pb-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        <section className={`main-content pb-20 lg:pb-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-in">
@@ -188,16 +188,6 @@ export default function Homepage() {
                   <div className="relative">
                     <FinancialInsightCards />
                     
-                    {/* Floating indicators around the cards */}
-                    <div className="absolute -top-8 -right-8 w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-bounce shadow-lg flex items-center justify-center">
-                      <TrendingUp className="w-8 h-8 text-white" />
-                    </div>
-                    <div className="absolute -bottom-8 -left-8 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse shadow-lg flex items-center justify-center">
-                      <Brain className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="absolute top-1/2 -left-12 w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full animate-ping shadow-lg flex items-center justify-center">
-                      <Zap className="w-5 h-5 text-white" />
-                    </div>
                   </div>
                 </div>
               </ScrollFloat>
