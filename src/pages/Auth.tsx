@@ -2,20 +2,13 @@ import { useState, useEffect, useRef } from 'react'
 import { SignIn, SignUp } from '@clerk/clerk-react'
 import { OfficialSentinelLogo } from '@/components/OfficialSentinelLogo'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { ArrowLeft, Eye, EyeOff, Mail, Lock, User, Shield, Zap, Brain, Activity, Moon, Sun } from 'lucide-react'
+import { ArrowLeft, Moon, Sun } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useTheme } from '@/hooks/useTheme'
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [fullName, setFullName] = useState('')
-  const [captchaVerified, setCaptchaVerified] = useState(false)
   const robotRef = useRef<HTMLDivElement>(null)
   const { theme, setTheme } = useTheme()
 
@@ -40,9 +33,9 @@ export default function Auth() {
     const deltaX = mousePosition.x - centerX
     const deltaY = mousePosition.y - centerY
     
-    const maxDistance = 8
+    const maxDistance = 6
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
-    const clampedDistance = Math.min(distance, 100)
+    const clampedDistance = Math.min(distance, 80)
     
     const normalizedX = (deltaX / clampedDistance) * maxDistance
     const normalizedY = (deltaY / clampedDistance) * maxDistance
@@ -52,95 +45,45 @@ export default function Auth() {
 
   const eyePosition = getRobotEyePosition()
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!captchaVerified) return
-    // Handle form submission
-    console.log('Form submitted:', { email, password, fullName, isSignUp })
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background dark:from-slate-950 dark:via-purple-950/20 dark:to-slate-950 overflow-auto relative">
-      {/* Ambient lighting effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-purple-500/10 dark:bg-purple-400/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 dark:bg-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '4s' }} />
-      </div>
-
-      {/* Floating particles */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-cyan-400/30 dark:bg-cyan-300/50 rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`
-            }}
-          />
-        ))}
-      </div>
-
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-border/50">
+      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity group">
-              <ArrowLeft className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-              <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">Back to Home</span>
+            <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Back to Home</span>
             </Link>
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="w-9 h-9 rounded-full bg-background/50 backdrop-blur-sm hover:bg-accent/50"
-              >
-                {theme === 'dark' ? 
-                  <Sun className="w-4 h-4 text-yellow-400" /> : 
-                  <Moon className="w-4 h-4 text-slate-600" />
-                }
-              </Button>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
-                <span className="text-xs text-muted-foreground font-medium">AI ACTIVE</span>
-              </div>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="w-9 h-9 rounded-full"
+            >
+              {theme === 'dark' ? 
+                <Sun className="w-4 h-4" /> : 
+                <Moon className="w-4 h-4" />
+              }
+            </Button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="pt-16 min-h-screen flex flex-col lg:flex-row">
-        {/* Left Panel - Robot & Branding */}
-        <div className="lg:flex-1 relative overflow-hidden flex flex-col justify-center items-center p-8 lg:p-12">
-          {/* Robot Character */}
-          <div ref={robotRef} className="relative mb-8 lg:mb-12">
-            <div className="relative w-32 h-40 lg:w-48 lg:h-60">
-              {/* Robot Body */}
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-24 lg:w-32 lg:h-36 bg-gradient-to-b from-slate-300 to-slate-400 dark:from-slate-700 dark:to-slate-800 rounded-2xl border-2 border-slate-400 dark:border-slate-600 shadow-xl">
-                {/* Chest Panel */}
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 lg:w-12 lg:h-12 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg shadow-inner animate-pulse">
-                  <div className="absolute inset-1 bg-cyan-300/50 rounded-md animate-pulse" style={{ animationDelay: '0.5s' }} />
-                </div>
-                {/* Status Lights */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                  <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50" />
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse shadow-lg shadow-yellow-400/50" style={{ animationDelay: '0.3s' }} />
-                  <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse shadow-lg shadow-red-400/50" style={{ animationDelay: '0.6s' }} />
-                </div>
-              </div>
-              
+      <div className="flex min-h-[calc(100vh-4rem)]">
+        {/* Left Panel - Robot */}
+        <div className="hidden lg:flex lg:flex-1 flex-col justify-center items-center bg-muted/30 p-12">
+          {/* Simple Robot */}
+          <div ref={robotRef} className="mb-8">
+            <div className="relative w-32 h-36">
               {/* Robot Head */}
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-20 lg:w-36 lg:h-28 bg-gradient-to-b from-slate-200 to-slate-300 dark:from-slate-600 dark:to-slate-700 rounded-2xl border-2 border-slate-400 dark:border-slate-500 shadow-xl">
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-18 bg-card border-2 border-border rounded-2xl shadow-lg">
                 {/* Eyes */}
-                <div className="absolute top-6 left-1/2 transform -translate-x-1/2 flex space-x-4 lg:space-x-6">
-                  <div className="relative w-6 h-6 lg:w-8 lg:h-8 bg-slate-800 dark:bg-slate-900 rounded-full overflow-hidden">
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex space-x-4">
+                  <div className="relative w-6 h-6 bg-muted rounded-full overflow-hidden">
                     <div 
-                      className="absolute w-4 h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full shadow-lg shadow-cyan-400/50 transition-transform duration-150 ease-out"
+                      className="absolute w-4 h-4 bg-primary rounded-full transition-transform duration-150 ease-out"
                       style={{
                         transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)`,
                         left: '50%',
@@ -148,13 +91,11 @@ export default function Auth() {
                         marginLeft: '-8px',
                         marginTop: '-8px'
                       }}
-                    >
-                      <div className="absolute inset-1 bg-cyan-200 rounded-full animate-pulse" />
-                    </div>
+                    />
                   </div>
-                  <div className="relative w-6 h-6 lg:w-8 lg:h-8 bg-slate-800 dark:bg-slate-900 rounded-full overflow-hidden">
+                  <div className="relative w-6 h-6 bg-muted rounded-full overflow-hidden">
                     <div 
-                      className="absolute w-4 h-4 lg:w-6 lg:h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full shadow-lg shadow-cyan-400/50 transition-transform duration-150 ease-out"
+                      className="absolute w-4 h-4 bg-primary rounded-full transition-transform duration-150 ease-out"
                       style={{
                         transform: `translate(${eyePosition.x}px, ${eyePosition.y}px)`,
                         left: '50%',
@@ -162,15 +103,21 @@ export default function Auth() {
                         marginLeft: '-8px',
                         marginTop: '-8px'
                       }}
-                    >
-                      <div className="absolute inset-1 bg-cyan-200 rounded-full animate-pulse" />
-                    </div>
+                    />
                   </div>
                 </div>
                 
                 {/* Antenna */}
-                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-1 h-6 bg-slate-400 dark:bg-slate-500">
-                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-red-400 rounded-full animate-pulse shadow-lg shadow-red-400/50" />
+                <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-0.5 h-4 bg-border">
+                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-primary rounded-full animate-pulse" />
+                </div>
+              </div>
+              
+              {/* Robot Body */}
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-20 bg-card border-2 border-border rounded-xl shadow-lg">
+                {/* Chest Panel */}
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-primary/20 rounded-lg border border-primary/30">
+                  <div className="absolute inset-1 bg-primary/10 rounded animate-pulse" />
                 </div>
               </div>
             </div>
@@ -178,173 +125,91 @@ export default function Auth() {
 
           {/* Branding */}
           <div className="text-center max-w-md">
-            <div className="mb-6">
-              <OfficialSentinelLogo size="lg" showText={true} className="justify-center mb-4" />
-            </div>
-            
-            <h1 className="text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-r from-foreground via-cyan-600 to-purple-600 bg-clip-text text-transparent">
-              Next-Gen AI Authentication
+            <OfficialSentinelLogo size="lg" showText={true} className="justify-center mb-6" />
+            <h1 className="text-2xl font-bold text-foreground mb-3">
+              Welcome to Sentinel
             </h1>
-            
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              Secure access powered by advanced AI with biometric-level security and real-time threat detection.
+            <p className="text-muted-foreground">
+              Your AI-powered financial intelligence platform
             </p>
-            
-            {/* Features */}
-            <div className="hidden lg:block space-y-4 text-left">
-              <div className="flex items-center space-x-3 group">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Activity className="w-5 h-5 text-emerald-500" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">Real-Time Monitoring</h3>
-                  <p className="text-sm text-muted-foreground">Advanced threat detection</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3 group">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Brain className="w-5 h-5 text-blue-500" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">AI-Powered Security</h3>
-                  <p className="text-sm text-muted-foreground">Machine learning authentication</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center space-x-3 group">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Shield className="w-5 h-5 text-purple-500" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-foreground">Zero-Trust Architecture</h3>
-                  <p className="text-sm text-muted-foreground">Enterprise-grade protection</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Right Panel - Auth Form */}
-        <div className="lg:max-w-md xl:max-w-lg flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-8 relative">
-          {/* Glassmorphism Container */}
-          <div className="relative backdrop-blur-xl bg-background/40 dark:bg-slate-900/40 border border-border/50 rounded-3xl p-8 shadow-2xl">
-            {/* Ambient glow */}
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5 dark:from-cyan-400/10 dark:to-purple-400/10 rounded-3xl -z-10" />
-            
+        <div className="flex-1 lg:max-w-md flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+          <div className="w-full max-w-sm mx-auto">
+            {/* Mobile Logo */}
+            <div className="lg:hidden text-center mb-8">
+              <OfficialSentinelLogo size="md" showText={true} className="justify-center mb-4" />
+            </div>
+
             {/* Form Header */}
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-foreground mb-2">
-                {isSignUp ? 'Join Sentinel' : 'Welcome Back'}
+              <h2 className="text-2xl font-bold text-foreground">
+                {isSignUp ? 'Create your account' : 'Welcome back'}
               </h2>
-              <p className="text-muted-foreground">
+              <p className="mt-2 text-sm text-muted-foreground">
                 {isSignUp 
-                  ? 'Create your AI-secured account' 
-                  : 'Access your secure dashboard'
+                  ? 'Join thousands of traders using AI insights' 
+                  : 'Sign in to your account to continue'
                 }
               </p>
             </div>
 
-            {/* Auth Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {isSignUp && (
-                <div className="relative group">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  <Input
-                    type="text"
-                    placeholder="Full Name"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="pl-12 h-12 bg-background/50 dark:bg-slate-800/50 backdrop-blur-sm border-border/50 focus:border-primary/50 focus:bg-background/70 transition-all duration-300 rounded-xl"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                </div>
-              )}
-              
-              <div className="relative group">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                <Input
-                  type="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-12 h-12 bg-background/50 dark:bg-slate-800/50 backdrop-blur-sm border-border/50 focus:border-primary/50 focus:bg-background/70 transition-all duration-300 rounded-xl"
+            {/* Clerk Auth Components */}
+            <div className="space-y-6">
+              {isSignUp ? (
+                <SignUp 
+                  appearance={{
+                    elements: {
+                      rootBox: "w-full",
+                      card: "bg-transparent border-0 shadow-none p-0 w-full",
+                      headerTitle: "hidden",
+                      headerSubtitle: "hidden",
+                      socialButtonsBlockButton: "w-full bg-background border border-border hover:bg-accent text-foreground font-medium py-3 rounded-lg mb-3 transition-colors",
+                      socialButtonsBlockButtonText: "font-medium text-sm",
+                      formButtonPrimary: "w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg transition-colors",
+                      footerActionLink: "text-primary hover:text-primary/80 font-medium text-sm",
+                      formFieldInput: "w-full border border-border bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 transition-colors",
+                      formFieldLabel: "text-foreground font-medium text-sm mb-2",
+                      dividerLine: "bg-border",
+                      dividerText: "text-muted-foreground text-sm bg-background px-4",
+                      footerAction: "hidden",
+                      formFieldErrorText: "text-destructive text-sm mt-1",
+                      identityPreviewText: "text-muted-foreground text-sm",
+                      identityPreviewEditButton: "text-primary hover:text-primary/80 text-sm",
+                      formResendCodeLink: "text-primary hover:text-primary/80 text-sm"
+                    }
+                  }}
+                  fallbackRedirectUrl="/dashboard"
+                  signInFallbackRedirectUrl="/dashboard"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              </div>
-              
-              <div className="relative group">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-12 pr-12 h-12 bg-background/50 dark:bg-slate-800/50 backdrop-blur-sm border-border/50 focus:border-primary/50 focus:bg-background/70 transition-all duration-300 rounded-xl"
+              ) : (
+                <SignIn 
+                  appearance={{
+                    elements: {
+                      rootBox: "w-full",
+                      card: "bg-transparent border-0 shadow-none p-0 w-full",
+                      headerTitle: "hidden",
+                      headerSubtitle: "hidden",
+                      socialButtonsBlockButton: "w-full bg-background border border-border hover:bg-accent text-foreground font-medium py-3 rounded-lg mb-3 transition-colors",
+                      socialButtonsBlockButtonText: "font-medium text-sm",
+                      formButtonPrimary: "w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 rounded-lg transition-colors",
+                      footerActionLink: "text-primary hover:text-primary/80 font-medium text-sm",
+                      formFieldInput: "w-full border border-border bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary rounded-lg py-3 px-4 transition-colors",
+                      formFieldLabel: "text-foreground font-medium text-sm mb-2",
+                      dividerLine: "bg-border",
+                      dividerText: "text-muted-foreground text-sm bg-background px-4",
+                      footerAction: "hidden",
+                      formFieldErrorText: "text-destructive text-sm mt-1",
+                      forgotPasswordLink: "text-primary hover:text-primary/80 text-sm"
+                    }
+                  }}
+                  fallbackRedirectUrl="/dashboard"
+                  signUpFallbackRedirectUrl="/dashboard"
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 p-0 hover:bg-transparent"
-                >
-                  {showPassword ? 
-                    <EyeOff className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" /> : 
-                    <Eye className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" />
-                  }
-                </Button>
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              </div>
-
-              {isSignUp && (
-                <div className="relative group">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  <Input
-                    type="password"
-                    placeholder="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-12 h-12 bg-background/50 dark:bg-slate-800/50 backdrop-blur-sm border-border/50 focus:border-primary/50 focus:bg-background/70 transition-all duration-300 rounded-xl"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                </div>
               )}
-
-              {/* AI CAPTCHA */}
-              <div className="relative group">
-                <div className="p-4 bg-background/30 dark:bg-slate-800/30 backdrop-blur-sm border border-border/50 rounded-xl">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-6 h-6 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded border-2 border-emerald-400 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
-                           onClick={() => setCaptchaVerified(!captchaVerified)}>
-                        {captchaVerified && <div className="w-3 h-3 bg-white rounded-sm" />}
-                      </div>
-                      <span className="text-sm text-foreground">I'm not a robot</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded flex items-center justify-center">
-                        <Brain className="w-4 h-4 text-white" />
-                      </div>
-                      <div>
-                        <div className="text-xs text-muted-foreground">AI CAPTCHA</div>
-                        <div className="text-xs text-primary">Sentinel Secure</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={!captchaVerified}
-                className="w-full h-12 bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 text-white font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                <span className="mr-2">{isSignUp ? 'Create Account' : 'Sign In'}</span>
-                <Zap className="w-4 h-4" />
-              </Button>
-            </form>
+            </div>
 
             {/* Toggle Sign In / Sign Up */}
             <div className="mt-6 text-center">
@@ -353,19 +218,19 @@ export default function Auth() {
                 <Button 
                   variant="link" 
                   onClick={() => setIsSignUp(!isSignUp)}
-                  className="text-primary hover:text-primary/80 font-semibold p-0 h-auto underline-offset-4 hover:underline"
+                  className="text-primary hover:text-primary/80 font-semibold p-0 h-auto text-sm"
                 >
-                  {isSignUp ? 'Sign In' : 'Sign Up'}
+                  {isSignUp ? 'Sign in' : 'Sign up'}
                 </Button>
               </p>
             </div>
 
             {/* Footer */}
-            <div className="mt-6 text-center">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Protected by AI-powered security. By continuing, you agree to our{' '}
+            <div className="mt-8 text-center">
+              <p className="text-xs text-muted-foreground">
+                By continuing, you agree to our{' '}
                 <a href="#" className="text-primary hover:underline">Terms</a> and{' '}
-                <a href="#" className="text-primary hover:underline">Privacy Policy</a>.
+                <a href="#" className="text-primary hover:underline">Privacy Policy</a>
               </p>
             </div>
           </div>
