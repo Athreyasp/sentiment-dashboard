@@ -186,7 +186,7 @@ export default function Homepage() {
               
               <ScrollFloat direction="right" intensity={80} delay={0.4}>
                 <div className="relative animate-fade-in flex justify-center" style={{ animationDelay: '0.2s' }}>
-                  {/* Financial Card Swap Component - centered */}
+                  {/* Financial Card Swap Component - perfectly centered */}
                   <div className="relative">
                     <FinancialInsightCards />
                   </div>
