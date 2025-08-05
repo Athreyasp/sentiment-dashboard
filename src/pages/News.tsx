@@ -19,6 +19,7 @@ import { NewsFilter } from '@/components/NewsFilter'
 export default function News() {
   const [sentimentFilter, setSentimentFilter] = useState<string>('All')
   const [tickerFilter, setTickerFilter] = useState<string>('All')
+  const [regionFilter, setRegionFilter] = useState<string>('Indian') // Default to Indian news
   const [searchQuery, setSearchQuery] = useState('')
   const [isLive, setIsLive] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
@@ -82,11 +83,29 @@ export default function News() {
     }
   }
 
+  // Helper function to determine if news is Indian
+  const isIndianNews = (item: any) => {
+    const indianKeywords = [
+      'NSE', 'BSE', 'India', 'Indian', 'Mumbai', 'Delhi', 'Bangalore', 'Hyderabad',
+      'Reliance', 'TCS', 'Infosys', 'HDFC', 'ICICI', 'SBI', 'Wipro', 'HCL',
+      'Tata', 'Adani', 'Bajaj', 'Axis', 'Kotak', 'Maruti', 'Mahindra',
+      'rupee', 'INR', 'crore', 'lakh', 'SEBI', 'RBI', 'Modi', 'Nifty', 'Sensex'
+    ]
+    const content = `${item.headline} ${item.content || ''} ${item.source || ''}`.toLowerCase()
+    return indianKeywords.some(keyword => content.includes(keyword.toLowerCase()))
+  }
+
   const filteredNews = news.filter(item => {
     if (sentimentFilter !== 'All' && item.sentiment !== sentimentFilter.toLowerCase()) {
       return false
     }
     if (tickerFilter !== 'All' && item.ticker !== tickerFilter) {
+      return false
+    }
+    if (regionFilter === 'Indian' && !isIndianNews(item)) {
+      return false
+    }
+    if (regionFilter === 'Global' && isIndianNews(item)) {
       return false
     }
     return true
@@ -198,8 +217,10 @@ export default function News() {
         <NewsFilter
           sentimentFilter={sentimentFilter}
           tickerFilter={tickerFilter}
+          regionFilter={regionFilter}
           onSentimentChange={setSentimentFilter}
           onTickerChange={setTickerFilter}
+          onRegionChange={setRegionFilter}
           availableTickers={availableTickers}
           totalArticles={news.length}
           filteredArticles={filteredNews.length}

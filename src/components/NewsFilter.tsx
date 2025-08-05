@@ -13,8 +13,10 @@ import { Filter, ChevronDown, X } from 'lucide-react'
 interface NewsFilterProps {
   sentimentFilter: string
   tickerFilter: string
+  regionFilter: string
   onSentimentChange: (sentiment: string) => void
   onTickerChange: (ticker: string) => void
+  onRegionChange: (region: string) => void
   availableTickers: string[]
   totalArticles: number
   filteredArticles: number
@@ -23,8 +25,10 @@ interface NewsFilterProps {
 export function NewsFilter({
   sentimentFilter,
   tickerFilter,
+  regionFilter,
   onSentimentChange,
   onTickerChange,
+  onRegionChange,
   availableTickers,
   totalArticles,
   filteredArticles
@@ -41,9 +45,10 @@ export function NewsFilter({
   const clearFilters = () => {
     onSentimentChange('All')
     onTickerChange('All')
+    onRegionChange('All')
   }
 
-  const hasActiveFilters = sentimentFilter !== 'All' || tickerFilter !== 'All'
+  const hasActiveFilters = sentimentFilter !== 'All' || tickerFilter !== 'All' || regionFilter !== 'All'
 
   return (
     <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-white/30 dark:border-slate-700/50 rounded-xl p-4 shadow-lg">
@@ -103,6 +108,35 @@ export function NewsFilter({
           </DropdownMenuContent>
         </DropdownMenu>
 
+        {/* Region Filter */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="h-8 text-xs border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+            >
+              <span className="mr-2">🇮🇳</span>
+              {regionFilter === 'All' ? 'All Regions' : regionFilter}
+              <ChevronDown className="w-3 h-3 ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl">
+            <DropdownMenuItem onClick={() => onRegionChange('All')}>
+              All Regions
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onRegionChange('Indian')}>
+              <span className="mr-2">🇮🇳</span>
+              Indian News
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onRegionChange('Global')}>
+              <span className="mr-2">🌍</span>
+              Global News
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         {/* Ticker Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -139,6 +173,17 @@ export function NewsFilter({
               onClick={() => onSentimentChange('All')}
             >
               {sentimentFilter}
+              <X className="w-3 h-3 ml-1" />
+            </Badge>
+          )}
+          
+          {regionFilter !== 'All' && (
+            <Badge 
+              variant="outline" 
+              className="text-xs px-2 py-1 bg-orange-50 text-orange-700 border-orange-200 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => onRegionChange('All')}
+            >
+              {regionFilter}
               <X className="w-3 h-3 ml-1" />
             </Badge>
           )}

@@ -8,6 +8,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { TickerSearch } from '@/components/TickerSearch'
 import { useTickerData } from '@/hooks/useTickerData'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { TradingStrategyBuilder } from '@/components/TradingStrategyBuilder'
+import { AdvancedStockTable } from '@/components/AdvancedStockTable'
 
 export default function TickerInsights() {
   const [selectedTicker, setSelectedTicker] = useState('AAPL')
@@ -239,34 +241,11 @@ export default function TickerInsights() {
             </CardContent>
           </Card>
 
-          {/* Related News */}
-          <Card className="pixel-card shadow-xl">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center space-x-3 text-2xl font-pixel">
-                <div className="p-2 bg-gradient-to-r from-pixel-orange/20 to-pixel-pink/20 rounded-lg">
-                  <Eye className="w-6 h-6 text-pixel-orange" />
-                </div>
-                <span className="gradient-text">RELATED NEWS IMPACT</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {data.news.map((news, index) => (
-                  <div key={index} className="p-6 news-card rounded-xl border hover:pixel-glow transition-all duration-300 hover:scale-[1.01]">
-                    <div className="flex items-center justify-between mb-4">
-                      {getSentimentBadge(news.sentiment)}
-                      <div className="text-right">
-                        <div className="text-lg font-bold font-pixel">IMPACT: {(news.impact * 100).toFixed(0)}%</div>
-                        <div className="text-sm text-muted-foreground font-space">{news.time}</div>
-                      </div>
-                    </div>
-                    <h4 className="font-semibold text-lg leading-relaxed mb-2 font-space">{news.headline}</h4>
-                    <div className="text-sm text-muted-foreground font-pixel">{news.source}</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Trading Strategy Builder */}
+          <TradingStrategyBuilder />
+
+          {/* Advanced Stock Data */}
+          <AdvancedStockTable onStockSelect={(stock) => setSelectedTicker(stock.symbol)} />
         </>
       ) : (
         <Card className="pixel-card shadow-xl">

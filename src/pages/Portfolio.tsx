@@ -1,32 +1,33 @@
 
 import { useState } from 'react'
 import { TrendingUp, LineChart, Brain, Activity, Plus } from 'lucide-react'
-import { PortfolioHeader } from '@/components/PortfolioHeader'
-import { TickerUpload } from '@/components/TickerUpload'
 import { SentimentTable } from '@/components/SentimentTable'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export default function Portfolio() {
   const [tickers, setTickers] = useState<string[]>([])
-  const [showUpload, setShowUpload] = useState(false)
+  const [newTicker, setNewTicker] = useState('')
 
-  const handleTickersAdded = (newTickers: string[]) => {
-    setTickers(prev => {
-      const uniqueTickers = [...new Set([...prev, ...newTickers])]
-      return uniqueTickers
-    })
+  const handleAddTicker = () => {
+    if (newTicker.trim()) {
+      const ticker = newTicker.trim().toUpperCase()
+      if (!tickers.includes(ticker)) {
+        setTickers(prev => [...prev, ticker])
+      }
+      setNewTicker('')
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddTicker()
+    }
   }
 
   const handleToggleAlert = (ticker: string) => {
     console.log(`Toggle alert for ${ticker}`)
     // This would typically update the backend
-  }
-
-  const handleUploadCSV = () => {
-    setShowUpload(true)
-  }
-
-  const handleAddTicker = () => {
-    setShowUpload(true)
   }
 
   return (
@@ -55,16 +56,22 @@ export default function Portfolio() {
         </div>
       </div>
 
-      <PortfolioHeader 
-        onUploadCSV={handleUploadCSV}
-        onAddTicker={handleAddTicker}
-      />
-
-      {(showUpload || tickers.length === 0) && (
-        <div className="pixel-card rounded-lg p-6 border">
-          <TickerUpload onTickersAdded={handleTickersAdded} />
+      {/* Add Ticker Section */}
+      <div className="pixel-card rounded-lg p-6 border">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Input
+            placeholder="Enter stock ticker (e.g., RELIANCE, TCS, INFY)"
+            value={newTicker}
+            onChange={(e) => setNewTicker(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="flex-1"
+          />
+          <Button onClick={handleAddTicker} className="pixel-button">
+            <Plus className="w-4 h-4 mr-2" />
+            Add Ticker
+          </Button>
         </div>
-      )}
+      </div>
 
       <div className="pixel-card rounded-lg border">
         <SentimentTable 
