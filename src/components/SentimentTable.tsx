@@ -1,11 +1,12 @@
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { TrendingUp, TrendingDown, Minus, ArrowUpDown, Clock, Bell, BellOff, ChevronDown, ChevronRight } from 'lucide-react'
+import { useFinancialNews, type FinancialNewsItem } from '@/hooks/useFinancialNews'
 
 interface TickerData {
   ticker: string
@@ -33,41 +34,102 @@ export function SentimentTable({ tickers, onToggleAlert }: SentimentTableProps) 
   const [sortBy, setSortBy] = useState<'ticker' | 'sentiment'>('ticker')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [expandedRow, setExpandedRow] = useState<string | null>(null)
+  const [tickerData, setTickerData] = useState<TickerData[]>([])
+  
+  const { news, loading } = useFinancialNews()
 
-  // Mock data generation
-  const generateMockData = (ticker: string): TickerData => {
-    const companies: { [key: string]: string } = {
-      'AAPL': 'Apple Inc.',
-      'TSLA': 'Tesla Inc.',
-      'GOOGL': 'Alphabet Inc.',
-      'AMZN': 'Amazon.com Inc.',
-      'MSFT': 'Microsoft Corporation',
-      'META': 'Meta Platforms Inc.',
-      'NVDA': 'NVIDIA Corporation',
-    }
+  // Process real financial news data for each ticker
+  useEffect(() => {
+    const processedData: TickerData[] = tickers.map(ticker => {
+      // Get news for this ticker
+      const tickerNews = news.filter(item => 
+        item.ticker?.toUpperCase() === ticker.toUpperCase() ||
+        item.headline?.toUpperCase().includes(ticker.toUpperCase()) ||
+        item.content?.toUpperCase().includes(ticker.toUpperCase())
+      ).slice(0, 5) // Limit to 5 most recent
 
-    const sentiment = (Math.random() - 0.5) * 2 // -1 to 1
-    const sentimentLabel = sentiment > 0.2 ? 'positive' : sentiment < -0.2 ? 'negative' : 'neutral'
-    
-    return {
-      ticker,
-      company: companies[ticker] || `${ticker} Corporation`,
-      sentiment,
-      sentimentLabel,
-      lastUpdated: `${Math.floor(Math.random() * 60)}m ago`,
-      alerts: Math.random() > 0.5,
-      price: Math.random() * 500 + 50,
-      change: (Math.random() - 0.5) * 10,
-      news: Array.from({ length: 3 }, (_, i) => ({
-        headline: `${companies[ticker] || ticker} ${['reports strong quarterly earnings', 'announces new product launch', 'faces regulatory challenges'][i]}`,
-        source: ['Reuters', 'Bloomberg', 'CNBC'][i],
-        time: `${i + 1}h ago`,
-        sentiment: ['positive', 'neutral', 'negative'][i] as any
+      // Calculate average sentiment
+      const sentimentScores = tickerNews
+        .filter(item => item.sentiment)
+        .map(item => {
+          switch(item.sentiment) {
+            case 'positive': return 0.7
+            case 'negative': return -0.7
+            case 'neutral': return 0
+            default: return 0
+          }
+        })
+      
+      const avgSentiment = sentimentScores.length > 0 
+        ? sentimentScores.reduce((sum, score) => sum + score, 0) / sentimentScores.length
+        : 0
+
+      const sentimentLabel = avgSentiment > 0.2 ? 'positive' : avgSentiment < -0.2 ? 'negative' : 'neutral'
+      
+      // Get company name mapping (simplified)
+      const companies: { [key: string]: string } = {
+        'RELIANCE': 'Reliance Industries Ltd.',
+        'TCS': 'Tata Consultancy Services',
+        'INFY': 'Infosys Limited',
+        'HDFCBANK': 'HDFC Bank Limited',
+        'ITC': 'ITC Limited',
+        'HINDUNILVR': 'Hindustan Unilever Ltd.',
+        'SBIN': 'State Bank of India',
+        'BHARTIARTL': 'Bharti Airtel Limited',
+        'AAPL': 'Apple Inc.',
+        'TSLA': 'Tesla Inc.',
+        'GOOGL': 'Alphabet Inc.',
+        'AMZN': 'Amazon.com Inc.',
+        'MSFT': 'Microsoft Corporation',
+        'META': 'Meta Platforms Inc.',
+        'NVDA': 'NVIDIA Corporation',
+      }
+
+      // Format news for display
+      const formattedNews = tickerNews.map(item => ({
+        headline: item.headline,
+        source: item.source,
+        time: new Date(item.published_at).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
+        sentiment: item.sentiment || 'neutral' as 'positive' | 'negative' | 'neutral'
       }))
-    }
-  }
 
-  const data = tickers.map(generateMockData)
+      // Get latest news time for "last updated"
+      const lastUpdated = tickerNews.length > 0 
+        ? new Date(tickerNews[0].published_at).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        : 'No recent news'
+
+      return {
+        ticker,
+        company: companies[ticker.toUpperCase()] || `${ticker} Corporation`,
+        sentiment: avgSentiment,
+        sentimentLabel,
+        lastUpdated,
+        alerts: false, // Default to false, could be managed in state
+        price: Math.random() * 500 + 50, // Mock price data
+        change: (Math.random() - 0.5) * 10, // Mock change data
+        news: formattedNews.length > 0 ? formattedNews : [{
+          headline: `No recent news available for ${ticker}`,
+          source: 'N/A',
+          time: 'N/A',
+          sentiment: 'neutral' as const
+        }]
+      }
+    })
+    
+    setTickerData(processedData)
+  }, [tickers, news])
+
+  const data = tickerData
 
   const sortedData = [...data].sort((a, b) => {
     const factor = sortOrder === 'asc' ? 1 : -1
