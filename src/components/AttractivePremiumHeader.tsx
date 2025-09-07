@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { OfficialSentinelLogo } from './OfficialSentinelLogo'
 import { useTheme } from '@/hooks/useTheme'
@@ -23,7 +22,7 @@ interface HeaderProps {
 
 export function AttractivePremiumHeader({ onAuthClick }: HeaderProps) {
   const { theme, setTheme } = useTheme()
-  const navigate = useNavigate()
+  const go = (path: string) => { window.location.href = path }
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -125,13 +124,13 @@ export function AttractivePremiumHeader({ onAuthClick }: HeaderProps) {
               <Button 
                 variant="ghost" 
                 className="font-semibold text-slate-700 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 transition-all duration-300 hover:scale-105 border border-transparent hover:border-emerald-200 dark:hover:border-emerald-800"
-                onClick={() => navigate('/auth')}
+                onClick={() => go('/auth')}
               >
                 Sign In
               </Button>
               <Button 
                 className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-blue-600 hover:from-emerald-700 hover:via-emerald-600 hover:to-blue-700 text-white font-bold shadow-xl hover:shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 relative overflow-hidden group border-0"
-                onClick={() => navigate('/auth')}
+                onClick={() => go('/auth')}
               >
                 {/* Animated background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -214,7 +213,7 @@ export function AttractivePremiumHeader({ onAuthClick }: HeaderProps) {
                     className="w-full justify-center font-semibold border border-slate-200 dark:border-slate-700 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
                     onClick={() => {
                       setMobileMenuOpen(false)
-                      navigate('/auth')
+                      go('/auth')
                     }}
                   >
                     Sign In
@@ -223,7 +222,7 @@ export function AttractivePremiumHeader({ onAuthClick }: HeaderProps) {
                     className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-bold shadow-lg hover:shadow-xl"
                     onClick={() => {
                       setMobileMenuOpen(false)
-                      navigate('/auth')
+                      go('/auth')
                     }}
                   >
                     <Sparkles className="mr-2 w-4 h-4" />
