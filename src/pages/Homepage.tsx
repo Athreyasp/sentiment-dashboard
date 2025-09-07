@@ -156,12 +156,9 @@ export default function Homepage() {
                     <Button 
                       size="lg" 
                       className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-                      onClick={() => {
-                        // Use window.location to avoid router context issues during preloader
-                        window.location.href = '/auth';
-                      }}
+                      onClick={() => window.location.href = '/news-analytics'}
                     >
-                      Get Started Free
+                      View News Analytics
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                     <Button size="lg" variant="outline" className="font-semibold px-8 py-4 text-lg border-2 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-105 transition-all duration-300">

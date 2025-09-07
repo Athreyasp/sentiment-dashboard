@@ -24,6 +24,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import NewsAnalytics from "./pages/NewsAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const AppContent = () => {
         {/* Public routes */}
         <Route path="/" element={<Homepage />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/news-analytics" element={<NewsAnalytics />} />
         <Route path="/login" element={
           <AuthLayout>
             <Login />
