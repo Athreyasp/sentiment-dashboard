@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -50,6 +50,57 @@ export type Database = {
           ticker?: string | null
           updated_at?: string
           url?: string | null
+        }
+        Relationships: []
+      }
+      market_indices: {
+        Row: {
+          change_percent: number | null
+          change_value: number | null
+          created_at: string
+          current_value: number
+          high_value: number | null
+          id: string
+          index_name: string
+          index_symbol: string
+          last_updated: string
+          low_value: number | null
+          market_cap: number | null
+          open_value: number | null
+          previous_close: number | null
+          updated_at: string
+        }
+        Insert: {
+          change_percent?: number | null
+          change_value?: number | null
+          created_at?: string
+          current_value: number
+          high_value?: number | null
+          id?: string
+          index_name: string
+          index_symbol: string
+          last_updated?: string
+          low_value?: number | null
+          market_cap?: number | null
+          open_value?: number | null
+          previous_close?: number | null
+          updated_at?: string
+        }
+        Update: {
+          change_percent?: number | null
+          change_value?: number | null
+          created_at?: string
+          current_value?: number
+          high_value?: number | null
+          id?: string
+          index_name?: string
+          index_symbol?: string
+          last_updated?: string
+          low_value?: number | null
+          market_cap?: number | null
+          open_value?: number | null
+          previous_close?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
