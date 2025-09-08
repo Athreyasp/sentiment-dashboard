@@ -18,35 +18,18 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Starting live news feed processing...')
+    console.log('Starting Inoreader financial news processing...')
     
-    // Use multiple reliable financial news RSS feeds
-    const feeds = [
-      'https://feeds.bloomberg.com/markets/news.rss',
-      'https://rss.cnn.com/rss/money_topstories.rss',
-      'https://feeds.finance.yahoo.com/rss/2.0/headline',
-      'https://www.investing.com/rss/news.rss'
-    ]
+    // Use the specific Inoreader URL for Indian financial news
+    const feedUrl = 'https://www.inoreader.com/stream/user/1003888559/tag/Senitnel/view/html?cs=m'
     
-    let allNewsItems: any[] = []
+    console.log(`Fetching from: ${feedUrl}`)
+    const feedResponse = await fetch(feedUrl)
+    const feedText = await feedResponse.text()
     
-    // Process each feed
-    for (const feedUrl of feeds) {
-      try {
-        console.log(`Fetching from: ${feedUrl}`)
-        const feedResponse = await fetch(feedUrl)
-        const feedText = await feedResponse.text()
-        
-        console.log('Parsing RSS feed...')
-        const newsItems = parseRSSFeed(feedText, feedUrl)
-        allNewsItems = allNewsItems.concat(newsItems)
-        console.log(`Found ${newsItems.length} items from this feed`)
-      } catch (error) {
-        console.error(`Error processing feed ${feedUrl}:`, error)
-      }
-    }
-    
-    console.log(`Total ${allNewsItems.length} news items found`)
+    console.log('Parsing Inoreader HTML...')
+    const allNewsItems = parseInoreaderHtml(feedText)
+    console.log(`Found ${allNewsItems.length} news items from Inoreader`)
     
     let processedCount = 0
     let addedCount = 0
@@ -130,57 +113,134 @@ serve(async (req) => {
   }
 })
 
-function parseRSSFeed(xmlText: string, feedUrl: string) {
+function parseInoreaderHtml(html: string) {
   const items = []
   
   try {
-    // Extract feed source name from URL
-    const sourceMatch = feedUrl.match(/\/\/([^\/]+)/)
-    const source = sourceMatch ? sourceMatch[1].replace('www.', '').replace('.com', '').replace('.rss', '') : 'RSS Feed'
+    console.log('Parsing Inoreader HTML format...')
     
-    // Parse RSS/XML format
-    const itemRegex = /<item[^>]*>(.*?)<\/item>/gs
-    const matches = xmlText.matchAll(itemRegex)
+    // Multiple patterns to try for different HTML structures
+    const patterns = [
+      // Pattern 1: Article tags
+      /<article[^>]*>(.*?)<\/article>/gs,
+      // Pattern 2: Div with specific classes
+      /<div[^>]*class="[^"]*article[^"]*"[^>]*>(.*?)<\/div>/gs,
+      // Pattern 3: Entry divs
+      /<div[^>]*class="[^"]*entry[^"]*"[^>]*>(.*?)<\/div>/gs,
+      // Pattern 4: Item divs  
+      /<div[^>]*class="[^"]*item[^"]*"[^>]*>(.*?)<\/div>/gs
+    ]
     
-    for (const match of matches) {
-      const itemXml = match[1]
+    let allMatches = []
+    
+    for (const pattern of patterns) {
+      const matches = Array.from(html.matchAll(pattern))
+      allMatches = allMatches.concat(matches)
+      console.log(`Pattern found ${matches.length} matches`)
+    }
+    
+    console.log(`Total ${allMatches.length} potential articles found`)
+    
+    for (const match of allMatches) {
+      const articleHtml = match[1]
       
-      // Extract title
-      const titleMatch = itemXml.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]><\/title>|<title[^>]*>(.*?)<\/title>/s)
-      const headline = (titleMatch?.[1] || titleMatch?.[2] || '').replace(/<[^>]*>/g, '').trim()
+      // Extract headline - try multiple selectors
+      let headline = ''
+      const headlinePatterns = [
+        /<h[1-6][^>]*>(.*?)<\/h[1-6]>/s,
+        /<title[^>]*>(.*?)<\/title>/s,
+        /<a[^>]*class="[^"]*title[^"]*"[^>]*>(.*?)<\/a>/s,
+        /<span[^>]*class="[^"]*title[^"]*"[^>]*>(.*?)<\/span>/s,
+        /<div[^>]*class="[^"]*title[^"]*"[^>]*>(.*?)<\/div>/s
+      ]
       
-      // Extract description
-      const descMatch = itemXml.match(/<description[^>]*><!\[CDATA\[(.*?)\]\]><\/description>|<description[^>]*>(.*?)<\/description>/s)
-      const content = (descMatch?.[1] || descMatch?.[2] || '').replace(/<[^>]*>/g, '').trim()
-      
-      // Extract link
-      const linkMatch = itemXml.match(/<link[^>]*>(.*?)<\/link>/s)
-      const url = linkMatch?.[1]?.trim() || ''
-      
-      // Extract publication date
-      const pubDateMatch = itemXml.match(/<pubDate[^>]*>(.*?)<\/pubDate>/s)
-      let publishedAt = new Date().toISOString()
-      
-      if (pubDateMatch) {
-        try {
-          publishedAt = new Date(pubDateMatch[1].trim()).toISOString()
-        } catch (error) {
-          console.error('Date parsing error:', error)
+      for (const pattern of headlinePatterns) {
+        const match = articleHtml.match(pattern)
+        if (match) {
+          headline = match[1].replace(/<[^>]*>/g, '').trim()
+          if (headline.length > 10) break
         }
       }
       
-      if (headline && url && headline.length > 10) {
-        items.push({
-          headline: headline.substring(0, 500), // Limit headline length
-          content: content ? content.substring(0, 1000) : headline, // Limit content length
-          source: source.charAt(0).toUpperCase() + source.slice(1),
-          url,
-          publishedAt
-        })
+      // Extract content/description
+      let content = ''
+      const contentPatterns = [
+        /<p[^>]*>(.*?)<\/p>/s,
+        /<div[^>]*class="[^"]*content[^"]*"[^>]*>(.*?)<\/div>/s,
+        /<div[^>]*class="[^"]*summary[^"]*"[^>]*>(.*?)<\/div>/s,
+        /<span[^>]*class="[^"]*description[^"]*"[^>]*>(.*?)<\/span>/s
+      ]
+      
+      for (const pattern of contentPatterns) {
+        const match = articleHtml.match(pattern)
+        if (match) {
+          content = match[1].replace(/<[^>]*>/g, '').trim()
+          if (content.length > 20) break
+        }
+      }
+      
+      // Extract URL
+      let url = ''
+      const urlPatterns = [
+        /href=["'](https?:\/\/[^"']+)["']/s,
+        /href=["']([^"']+)["']/s
+      ]
+      
+      for (const pattern of urlPatterns) {
+        const match = articleHtml.match(pattern)
+        if (match) {
+          url = match[1]
+          // Make sure it's a full URL
+          if (url && !url.startsWith('http')) {
+            url = 'https://' + url
+          }
+          break
+        }
+      }
+      
+      // Extract date
+      const datePatterns = [
+        /(\d{4}-\d{2}-\d{2}[\sT]\d{2}:\d{2}:\d{2})/s,
+        /(\d{4}-\d{2}-\d{2})/s,
+        /(\d{1,2}\/\d{1,2}\/\d{4})/s,
+        /(\d{1,2}-\d{1,2}-\d{4})/s
+      ]
+      
+      let publishedAt = new Date().toISOString()
+      for (const pattern of datePatterns) {
+        const match = articleHtml.match(pattern)
+        if (match) {
+          try {
+            publishedAt = new Date(match[1]).toISOString()
+            break
+          } catch (error) {
+            console.error('Date parsing error:', error)
+          }
+        }
+      }
+      
+      // Only include if we have a decent headline and URL
+      if (headline && headline.length > 10 && url && url.includes('http')) {
+        
+        // Filter for financial/stock market content
+        const financeKeywords = /(stock|market|share|nifty|sensex|bse|nse|trading|invest|profit|loss|earning|financial|economy|rupee|bank|company|corporate|business|equity|fund|index|portfolio|dividend|ipo|fii|dii)/i
+        
+        if (financeKeywords.test(headline + ' ' + content)) {
+          items.push({
+            headline: headline.substring(0, 500),
+            content: content ? content.substring(0, 1000) : headline,
+            source: 'Indian Financial News',
+            url: url,
+            publishedAt
+          })
+        }
       }
     }
+    
+    console.log(`Filtered ${items.length} financial news items`)
+    
   } catch (error) {
-    console.error('RSS parsing error:', error)
+    console.error('HTML parsing error:', error)
   }
   
   return items
@@ -188,29 +248,29 @@ function parseRSSFeed(xmlText: string, feedUrl: string) {
 
 async function analyzeWithGemini(headline: string, content: string) {
   const prompt = `
-Analyze this financial news headline and content to predict stock market impact:
+Analyze this Indian financial news headline for stock market prediction:
 
 Headline: "${headline}"
 Content: "${content}"
 
-Provide analysis in this JSON format:
+Focus on Indian stock market impact (Nifty 50, Sensex, NSE, BSE). Provide analysis in JSON format:
 {
-  "isFinanceRelated": boolean (true if about stocks, companies, markets, earnings, economy, crypto, trading),
-  "isIndianMarket": boolean (true if mentions Indian companies like TCS, Infosys, Reliance, HDFC, NSE, BSE, INR, Indian economy),
+  "isFinanceRelated": boolean (true if about Indian stocks, markets, Nifty, Sensex, companies, economy),
+  "isIndianMarket": boolean (true if about Indian companies/markets - TCS, Infosys, Reliance, HDFC, Wipro, Tata, NSE, BSE, Indian banks),
   "sentiment": "positive" | "negative" | "neutral",
-  "sentimentScore": number between -1 and 1 (-1 very negative, 0 neutral, 1 very positive),
-  "prediction": "UP" | "DOWN" | "STABLE" (predicted stock movement based on news),
-  "confidenceScore": number between 0 and 1 (confidence in prediction),
-  "companiesMentioned": array of company names found in text,
-  "stockSymbols": array of stock symbols like AAPL, TSLA, MSFT, TCS.NS, INFY.NS etc
+  "sentimentScore": number between -1 and 1,
+  "prediction": "UP" | "DOWN" | "STABLE",
+  "confidenceScore": number between 0 and 1,
+  "companiesMentioned": array of Indian company names,
+  "stockSymbols": array of NSE/BSE symbols like "TCS.NS", "INFY.NS", "RELIANCE.NS"
 }
 
-For prediction logic:
-- UP: Positive earnings, good news, partnerships, growth, buybacks, upgrades
-- DOWN: Bad earnings, layoffs, scandals, downgrades, losses, regulatory issues  
-- STABLE: Neutral news, mixed signals, or unclear impact
+Indian Stock Prediction Rules:
+- UP: Positive earnings, RBI rate cuts, FII inflows, government reforms, good quarterly results, Nifty/Sensex gains
+- DOWN: Rate hikes, FII outflows, inflation worries, poor earnings, regulatory issues, global market crash
+- STABLE: Mixed signals, sideways movement, unclear impact
 
-Extract any stock symbols, company names, and make realistic predictions based on news sentiment and likely market impact.
+Extract Indian company names and NSE symbols. Focus on Nifty 50 and banking stocks impact.
 `
 
   try {
