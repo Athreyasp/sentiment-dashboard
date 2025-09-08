@@ -16,37 +16,58 @@ export type Database = {
     Tables: {
       financial_news: {
         Row: {
+          company_mentioned: string[] | null
+          confidence_score: number | null
           content: string | null
           created_at: string
           headline: string
           id: string
+          is_indian_market: boolean | null
+          prediction: string | null
+          processed_at: string | null
           published_at: string
           sentiment: string | null
+          sentiment_score: number | null
           source: string
+          stock_symbols: string[] | null
           ticker: string | null
           updated_at: string
           url: string | null
         }
         Insert: {
+          company_mentioned?: string[] | null
+          confidence_score?: number | null
           content?: string | null
           created_at?: string
           headline: string
           id?: string
+          is_indian_market?: boolean | null
+          prediction?: string | null
+          processed_at?: string | null
           published_at: string
           sentiment?: string | null
+          sentiment_score?: number | null
           source: string
+          stock_symbols?: string[] | null
           ticker?: string | null
           updated_at?: string
           url?: string | null
         }
         Update: {
+          company_mentioned?: string[] | null
+          confidence_score?: number | null
           content?: string | null
           created_at?: string
           headline?: string
           id?: string
+          is_indian_market?: boolean | null
+          prediction?: string | null
+          processed_at?: string | null
           published_at?: string
           sentiment?: string | null
+          sentiment_score?: number | null
           source?: string
+          stock_symbols?: string[] | null
           ticker?: string | null
           updated_at?: string
           url?: string | null
