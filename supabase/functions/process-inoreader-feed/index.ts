@@ -18,24 +18,40 @@ serve(async (req) => {
   }
 
   try {
-    console.log('Starting Inoreader feed processing...')
+    console.log('Starting live news feed processing...')
     
-    const feedUrl = 'https://www.inoreader.com/stream/user/1003888559/tag/Senitnel/view/html?cs=m'
+    // Use multiple reliable financial news RSS feeds
+    const feeds = [
+      'https://feeds.bloomberg.com/markets/news.rss',
+      'https://rss.cnn.com/rss/money_topstories.rss',
+      'https://feeds.finance.yahoo.com/rss/2.0/headline',
+      'https://www.investing.com/rss/news.rss'
+    ]
     
-    // Fetch the RSS feed
-    const feedResponse = await fetch(feedUrl)
-    const feedText = await feedResponse.text()
+    let allNewsItems: any[] = []
     
-    console.log('Fetched feed, parsing HTML...')
+    // Process each feed
+    for (const feedUrl of feeds) {
+      try {
+        console.log(`Fetching from: ${feedUrl}`)
+        const feedResponse = await fetch(feedUrl)
+        const feedText = await feedResponse.text()
+        
+        console.log('Parsing RSS feed...')
+        const newsItems = parseRSSFeed(feedText, feedUrl)
+        allNewsItems = allNewsItems.concat(newsItems)
+        console.log(`Found ${newsItems.length} items from this feed`)
+      } catch (error) {
+        console.error(`Error processing feed ${feedUrl}:`, error)
+      }
+    }
     
-    // Parse HTML to extract news items
-    const newsItems = parseInoreaderFeed(feedText)
-    console.log(`Found ${newsItems.length} news items`)
+    console.log(`Total ${allNewsItems.length} news items found`)
     
     let processedCount = 0
     let addedCount = 0
     
-    for (const item of newsItems) {
+    for (const item of allNewsItems) {
       try {
         // Check if item already exists
         const { data: existing } = await supabase
@@ -50,10 +66,10 @@ serve(async (req) => {
           continue
         }
         
-        // Analyze with Gemini
+        // Analyze with Gemini for stock prediction
         const analysis = await analyzeWithGemini(item.headline, item.content)
         
-        if (analysis.isFinanceRelated && analysis.isIndianMarket) {
+        if (analysis.isFinanceRelated) {
           // Insert into database
           const { error } = await supabase
             .from('financial_news')
@@ -69,7 +85,7 @@ serve(async (req) => {
               confidence_score: analysis.confidenceScore,
               company_mentioned: analysis.companiesMentioned,
               stock_symbols: analysis.stockSymbols,
-              is_indian_market: true,
+              is_indian_market: analysis.isIndianMarket,
               processed_at: new Date().toISOString()
             })
           
@@ -88,15 +104,7 @@ serve(async (req) => {
       }
     }
     
-    // Log processing results
-    await supabase
-      .from('feed_processing_log')
-      .insert({
-        feed_url: feedUrl,
-        items_processed: processedCount,
-        items_added: addedCount,
-        status: 'success'
-      })
+    console.log(`Processing complete: ${processedCount} processed, ${addedCount} added`)
     
     console.log(`Processing complete: ${processedCount} processed, ${addedCount} added`)
     
@@ -112,14 +120,6 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error processing feed:', error)
     
-    await supabase
-      .from('feed_processing_log')
-      .insert({
-        feed_url: 'https://www.inoreader.com/stream/user/1003888559/tag/Senitnel/view/html?cs=m',
-        status: 'error',
-        error_message: error.message
-      })
-    
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
@@ -130,42 +130,57 @@ serve(async (req) => {
   }
 })
 
-function parseInoreaderFeed(html: string) {
+function parseRSSFeed(xmlText: string, feedUrl: string) {
   const items = []
   
-  // Simple HTML parsing for Inoreader format
-  const articleRegex = /<article[^>]*>(.*?)<\/article>/gs
-  const matches = html.matchAll(articleRegex)
-  
-  for (const match of matches) {
-    const articleHtml = match[1]
+  try {
+    // Extract feed source name from URL
+    const sourceMatch = feedUrl.match(/\/\/([^\/]+)/)
+    const source = sourceMatch ? sourceMatch[1].replace('www.', '').replace('.com', '').replace('.rss', '') : 'RSS Feed'
     
-    // Extract headline
-    const headlineMatch = articleHtml.match(/<h[1-6][^>]*>(.*?)<\/h[1-6]>/s)
-    const headline = headlineMatch ? headlineMatch[1].replace(/<[^>]*>/g, '').trim() : ''
+    // Parse RSS/XML format
+    const itemRegex = /<item[^>]*>(.*?)<\/item>/gs
+    const matches = xmlText.matchAll(itemRegex)
     
-    // Extract content/description
-    const contentMatch = articleHtml.match(/<p[^>]*>(.*?)<\/p>/s)
-    const content = contentMatch ? contentMatch[1].replace(/<[^>]*>/g, '').trim() : ''
-    
-    // Extract URL
-    const urlMatch = articleHtml.match(/href=["'](.*?)["']/s)
-    const url = urlMatch ? urlMatch[1] : ''
-    
-    // Extract date (try different formats)
-    const dateMatch = articleHtml.match(/(\d{4}-\d{2}-\d{2})/s) || 
-                     articleHtml.match(/(\d{1,2}\/\d{1,2}\/\d{4})/s)
-    const publishedAt = dateMatch ? new Date(dateMatch[1]).toISOString() : new Date().toISOString()
-    
-    if (headline && url) {
-      items.push({
-        headline,
-        content: content || headline,
-        source: 'Inoreader',
-        url,
-        publishedAt
-      })
+    for (const match of matches) {
+      const itemXml = match[1]
+      
+      // Extract title
+      const titleMatch = itemXml.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]><\/title>|<title[^>]*>(.*?)<\/title>/s)
+      const headline = (titleMatch?.[1] || titleMatch?.[2] || '').replace(/<[^>]*>/g, '').trim()
+      
+      // Extract description
+      const descMatch = itemXml.match(/<description[^>]*><!\[CDATA\[(.*?)\]\]><\/description>|<description[^>]*>(.*?)<\/description>/s)
+      const content = (descMatch?.[1] || descMatch?.[2] || '').replace(/<[^>]*>/g, '').trim()
+      
+      // Extract link
+      const linkMatch = itemXml.match(/<link[^>]*>(.*?)<\/link>/s)
+      const url = linkMatch?.[1]?.trim() || ''
+      
+      // Extract publication date
+      const pubDateMatch = itemXml.match(/<pubDate[^>]*>(.*?)<\/pubDate>/s)
+      let publishedAt = new Date().toISOString()
+      
+      if (pubDateMatch) {
+        try {
+          publishedAt = new Date(pubDateMatch[1].trim()).toISOString()
+        } catch (error) {
+          console.error('Date parsing error:', error)
+        }
+      }
+      
+      if (headline && url && headline.length > 10) {
+        items.push({
+          headline: headline.substring(0, 500), // Limit headline length
+          content: content ? content.substring(0, 1000) : headline, // Limit content length
+          source: source.charAt(0).toUpperCase() + source.slice(1),
+          url,
+          publishedAt
+        })
+      }
     }
+  } catch (error) {
+    console.error('RSS parsing error:', error)
   }
   
   return items
@@ -173,24 +188,29 @@ function parseInoreaderFeed(html: string) {
 
 async function analyzeWithGemini(headline: string, content: string) {
   const prompt = `
-Analyze this news headline and content for financial relevance and Indian market focus:
+Analyze this financial news headline and content to predict stock market impact:
 
 Headline: "${headline}"
 Content: "${content}"
 
 Provide analysis in this JSON format:
 {
-  "isFinanceRelated": boolean (true if mentions stocks, companies, markets, earnings, finance, economy),
-  "isIndianMarket": boolean (true if mentions Indian companies, NSE, BSE, Indian markets, Indian economy, or Indian stock symbols),
+  "isFinanceRelated": boolean (true if about stocks, companies, markets, earnings, economy, crypto, trading),
+  "isIndianMarket": boolean (true if mentions Indian companies like TCS, Infosys, Reliance, HDFC, NSE, BSE, INR, Indian economy),
   "sentiment": "positive" | "negative" | "neutral",
-  "sentimentScore": number between -1 and 1,
-  "prediction": "UP" | "DOWN" | "STABLE",
-  "confidenceScore": number between 0 and 1,
-  "companiesMentioned": array of company names mentioned,
-  "stockSymbols": array of stock symbols mentioned (if any)
+  "sentimentScore": number between -1 and 1 (-1 very negative, 0 neutral, 1 very positive),
+  "prediction": "UP" | "DOWN" | "STABLE" (predicted stock movement based on news),
+  "confidenceScore": number between 0 and 1 (confidence in prediction),
+  "companiesMentioned": array of company names found in text,
+  "stockSymbols": array of stock symbols like AAPL, TSLA, MSFT, TCS.NS, INFY.NS etc
 }
 
-Focus on Indian stocks and companies. Only return true for isFinanceRelated if it's actually about financial markets, earnings, or business news.
+For prediction logic:
+- UP: Positive earnings, good news, partnerships, growth, buybacks, upgrades
+- DOWN: Bad earnings, layoffs, scandals, downgrades, losses, regulatory issues  
+- STABLE: Neutral news, mixed signals, or unclear impact
+
+Extract any stock symbols, company names, and make realistic predictions based on news sentiment and likely market impact.
 `
 
   try {
@@ -237,14 +257,18 @@ Focus on Indian stocks and companies. Only return true for isFinanceRelated if i
     
   } catch (error) {
     console.error('Gemini analysis error:', error)
-    // Return default values if analysis fails
+    // Return more selective defaults - only process if we're sure it's finance-related
+    const hasFinanceKeywords = (headline + ' ' + content).toLowerCase()
+      .match(/(stock|market|trading|earn|profit|loss|price|share|invest|fund|bank|crypto|bitcoin|nasdaq|nyse|dow|s&p)/i)
+    
     return {
-      isFinanceRelated: true, // Assume finance-related if we can't analyze
-      isIndianMarket: true,   // Assume Indian market for this feed
+      isFinanceRelated: Boolean(hasFinanceKeywords), // Only if has finance keywords
+      isIndianMarket: Boolean((headline + ' ' + content).toLowerCase()
+        .match(/(india|indian|nse|bse|mumbai|delhi|rupee|inr|tcs|infos|reliance|hdfc|sbi)/i)),
       sentiment: 'neutral',
       sentimentScore: 0,
       prediction: 'STABLE',
-      confidenceScore: 0.5,
+      confidenceScore: 0.3,
       companiesMentioned: [],
       stockSymbols: []
     }

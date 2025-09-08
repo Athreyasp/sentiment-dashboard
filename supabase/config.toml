@@ -51,9 +51,6 @@ enable_confirmations = false
 [functions.process-inoreader-feed]
 verify_jwt = false
 
-[functions.fetch-financial-news]
-verify_jwt = false
-
 [functions.fetch-index-data]
 verify_jwt = false
 
