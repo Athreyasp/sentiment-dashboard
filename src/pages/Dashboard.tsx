@@ -1,13 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { TrendingUp, TrendingDown } from 'lucide-react'
-import { NSEStockTable } from '@/components/NSEStockTable'
-import { NSEStockSearch } from '@/components/NSEStockSearch'
-import { useNSEData } from '@/hooks/useNSEData'
 import { IndianFinancialNewsPanel } from '@/components/IndianFinancialNewsPanel'
 
 export default function Dashboard() {
-  const { nifty50Stocks, loading, error, searchStock, refreshData } = useNSEData()
 
   // NSE Market indices data (mock)
   const marketData = [
@@ -97,13 +93,6 @@ export default function Dashboard() {
 
           {/* Main Content */}
           <div className="space-y-6">
-            <NSEStockSearch onSearch={searchStock} />
-            <NSEStockTable 
-              stocks={nifty50Stocks} 
-              loading={loading} 
-              error={error} 
-              onRefresh={refreshData} 
-            />
             <IndianFinancialNewsPanel />
           </div>
         </div>
