@@ -21,28 +21,28 @@ export function useIndianFinancialNews() {
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  // Fetch Indian financial news from API
+  // Fetch live Indian financial news from Inoreader
   const fetchIndianFinancialNews = async () => {
     try {
-      console.log('Triggering Indian financial news fetch...')
-      const { data, error } = await supabase.functions.invoke('fetch-indian-financial-news')
+      console.log('Triggering Inoreader feed processing...')
+      const { data, error } = await supabase.functions.invoke('process-inoreader-feed')
       
       if (error) {
-        console.error('Error fetching Indian financial news:', error)
+        console.error('Error processing Inoreader feed:', error)
         toast({
           title: "Error fetching news",
           description: error.message,
           variant: "destructive"
         })
       } else {
-        console.log('Indian financial news fetch triggered successfully:', data)
+        console.log('Inoreader feed processed successfully:', data)
         toast({
           title: "📈 Indian Financial News Updated",
-          description: `${data.new_articles || 0} new articles added`
+          description: `${data?.added || 0} new articles added`
         })
       }
     } catch (err) {
-      console.error('Error calling Indian financial news function:', err)
+      console.error('Error calling Inoreader processing function:', err)
       toast({
         title: "Error",
         description: "Failed to fetch latest Indian financial news",
