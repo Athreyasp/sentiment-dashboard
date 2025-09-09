@@ -129,9 +129,18 @@ export function useIndianFinancialNews() {
     }
   }
 
-  // Set up real-time subscription
+  // Set up real-time subscription and auto-refresh
   useEffect(() => {
     loadIndianFinancialNews()
+
+    // Auto-refresh news every 5 minutes
+    const refreshInterval = setInterval(() => {
+      console.log('Auto-refreshing Indian financial news...')
+      fetchIndianFinancialNews().then(() => {
+        // Reload the news after processing
+        setTimeout(() => loadIndianFinancialNews(), 2000)
+      })
+    }, 5 * 60 * 1000) // 5 minutes
 
     const channel = supabase
       .channel('indian_financial_news_changes')
@@ -170,6 +179,7 @@ export function useIndianFinancialNews() {
       .subscribe()
 
     return () => {
+      clearInterval(refreshInterval)
       supabase.removeChannel(channel)
     }
   }, [])

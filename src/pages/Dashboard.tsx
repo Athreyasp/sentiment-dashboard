@@ -2,8 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import { IndianFinancialNewsPanel } from '@/components/IndianFinancialNewsPanel'
+import { NewsTickerSummary } from '@/components/NewsTickerSummary'
+import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
 
 export default function Dashboard() {
+  const { news, loading: newsLoading } = useIndianFinancialNews()
 
   // NSE Market indices data (mock)
   const marketData = [
@@ -90,6 +93,9 @@ export default function Dashboard() {
               </Card>
             ))}
           </div>
+
+          {/* Latest News Summary */}
+          <NewsTickerSummary news={news} loading={newsLoading} />
 
           {/* Main Content */}
           <div className="space-y-6">
