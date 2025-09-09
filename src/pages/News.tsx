@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useFinancialNews } from '@/hooks/useFinancialNews'
-import { CompanyNewsSearch } from '@/components/CompanyNewsSearch'
+
 import { NewsFilter } from '@/components/NewsFilter'
 
 export default function News() {
@@ -204,13 +204,6 @@ export default function News() {
         </div>
       </div>
 
-      {/* Company News Search */}
-      <div className="pixel-card rounded-lg p-4 border">
-        <CompanyNewsSearch 
-          onSearch={setSearchQuery}
-          currentSearch={searchQuery}
-        />
-      </div>
 
       {/* News Filter */}
       <div className="pixel-card rounded-lg p-4 border">
