@@ -1,13 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { TrendingUp, TrendingDown, Sparkles, Activity, Globe, Eye, BarChart3, PieChart, Users, Zap } from 'lucide-react'
+import { TrendingUp, TrendingDown, Sparkles, Activity, Globe, Eye, BarChart3, PieChart, Users, Zap, RefreshCw, Bell } from 'lucide-react'
 import { IndianFinancialNewsPanel } from '@/components/IndianFinancialNewsPanel'
 import { NewsTickerSummary } from '@/components/NewsTickerSummary'
+import { EssentialIndianStocks } from '@/components/EssentialIndianStocks'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
 
 export default function Dashboard() {
-  const { news, loading: newsLoading } = useIndianFinancialNews()
+  const { news, loading: newsLoading, fetchIndianFinancialNews } = useIndianFinancialNews()
 
   // NSE Market indices data (mock)
   const marketData = [
@@ -45,19 +46,16 @@ export default function Dashboard() {
     }
   ]
 
-  const quickActions = [
-    { name: 'Portfolio Analysis', icon: PieChart, color: 'from-pixel-green/20 to-pixel-cyan/20', textColor: 'text-pixel-green' },
-    { name: 'Market Sentiment', icon: Activity, color: 'from-pixel-orange/20 to-pixel-pink/20', textColor: 'text-pixel-orange' },
-    { name: 'News Analytics', icon: Globe, color: 'from-pixel-cyan/20 to-pixel-blue/20', textColor: 'text-pixel-cyan' },
-    { name: 'Live Trading', icon: Zap, color: 'from-pixel-pink/20 to-pixel-purple/20', textColor: 'text-pixel-pink' }
+  const liveStats = [
+    { label: 'Live News Updates', value: `${news.length}`, icon: Globe, trend: '+23%', isNews: true },
+    { label: 'Market Predictions', value: '24', icon: Eye, trend: '+45%' },
+    { label: 'Active Alerts', value: '7', icon: Bell, trend: '+12%' },
+    { label: 'Inoreader Feed', value: 'Active', icon: RefreshCw, trend: 'Live', isLive: true }
   ]
 
-  const stats = [
-    { label: 'Active Traders', value: '12.5K+', icon: Users, trend: '+15%' },
-    { label: 'Total Volume', value: '₹2.3B', icon: BarChart3, trend: '+8%' },
-    { label: 'Market Cap', value: '₹45.2T', icon: Globe, trend: '+12%' },
-    { label: 'News Updates', value: '1,240', icon: Eye, trend: '+23%' }
-  ]
+  const handleRefreshNews = async () => {
+    await fetchIndianFinancialNews()
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-accent/10">
@@ -132,21 +130,25 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Quick Stats */}
+        {/* Live Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, index) => (
-            <Card key={index} className="bg-card/60 backdrop-blur-sm border-border/50 hover:border-pixel-green/30 transition-colors duration-300">
+          {liveStats.map((stat, index) => (
+            <Card key={index} className={`bg-card/60 backdrop-blur-sm border-border/50 hover:border-pixel-green/30 transition-colors duration-300 ${stat.isNews ? 'border-pixel-cyan/30 hover:border-pixel-cyan/50' : ''}`}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                    <p className={`text-2xl font-bold text-foreground ${stat.isLive ? 'animate-pulse' : ''}`}>
+                      {stat.value}
+                    </p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <div className="p-2 rounded-lg bg-pixel-green/10 border border-pixel-green/20">
-                      <stat.icon className="w-4 h-4 text-pixel-green" />
+                    <div className={`p-2 rounded-lg ${stat.isNews ? 'bg-pixel-cyan/10 border border-pixel-cyan/20' : 'bg-pixel-green/10 border border-pixel-green/20'}`}>
+                      <stat.icon className={`w-4 h-4 ${stat.isNews ? 'text-pixel-cyan' : 'text-pixel-green'} ${stat.isLive ? 'animate-spin' : ''}`} />
                     </div>
-                    <span className="text-xs text-pixel-green font-medium">{stat.trend}</span>
+                    <span className={`text-xs font-medium ${stat.isNews ? 'text-pixel-cyan' : 'text-pixel-green'}`}>
+                      {stat.trend}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -154,25 +156,69 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickActions.map((action, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className={`h-auto p-6 bg-gradient-to-br ${action.color} border-border/50 hover:border-pixel-green/30 group transition-all duration-300 hover:shadow-lg`}
-            >
-              <div className="flex flex-col items-center gap-3 w-full">
-                <div className="p-3 rounded-xl bg-background/80 group-hover:bg-background transition-colors duration-300">
-                  <action.icon className={`w-6 h-6 ${action.textColor} group-hover:scale-110 transition-transform duration-300`} />
-                </div>
-                <span className="font-semibold text-foreground group-hover:text-pixel-green transition-colors duration-300">
-                  {action.name}
-                </span>
-              </div>
-            </Button>
-          ))}
+        {/* News Control Center */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <Card className="bg-gradient-to-r from-pixel-green/5 to-pixel-cyan/5 border-pixel-green/20">
+            <CardContent className="p-6 text-center">
+              <RefreshCw className="w-8 h-8 text-pixel-green mx-auto mb-3" />
+              <h3 className="font-semibold text-foreground mb-2">Refresh News Feed</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Fetch latest updates from Inoreader
+              </p>
+              <Button 
+                onClick={handleRefreshNews}
+                className="bg-gradient-to-r from-pixel-green to-pixel-cyan text-white hover:from-pixel-green/80 hover:to-pixel-cyan/80"
+                disabled={newsLoading}
+              >
+                {newsLoading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Refresh Now
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-pixel-blue/5 to-pixel-cyan/5 border-pixel-blue/20">
+            <CardContent className="p-6 text-center">
+              <Activity className="w-8 h-8 text-pixel-blue mx-auto mb-3" />
+              <h3 className="font-semibold text-foreground mb-2">Live Feed Status</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Inoreader integration active
+              </p>
+              <Badge variant="outline" className="border-pixel-blue/30 text-pixel-blue">
+                <div className="w-2 h-2 bg-pixel-blue rounded-full animate-pulse mr-2"></div>
+                Connected
+              </Badge>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-pixel-orange/5 to-pixel-pink/5 border-pixel-orange/20">
+            <CardContent className="p-6 text-center">
+              <Bell className="w-8 h-8 text-pixel-orange mx-auto mb-3" />
+              <h3 className="font-semibold text-foreground mb-2">Smart Alerts</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                AI-powered market notifications
+              </p>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="border-pixel-orange/30 text-pixel-orange hover:bg-pixel-orange/10"
+              >
+                Configure
+              </Button>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Essential Indian Stocks - Main Focus */}
+        <EssentialIndianStocks />
 
         {/* Latest News Summary with Enhanced Design */}
         <div className="relative">
