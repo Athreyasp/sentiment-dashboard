@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button'
 import { TrendingUp, TrendingDown, Sparkles, Activity, Globe, Eye, BarChart3, PieChart, Users, Zap, RefreshCw, Bell } from 'lucide-react'
 import { IndianFinancialNewsPanel } from '@/components/IndianFinancialNewsPanel'
 import { NewsTickerSummary } from '@/components/NewsTickerSummary'
+import { LiveMarketIndicator } from '@/components/LiveMarketIndicator'
 import { EssentialIndianStocks } from '@/components/EssentialIndianStocks'
+import { EnhancedNewsPanel } from '@/components/EnhancedNewsPanel'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
 
 export default function Dashboard() {
@@ -201,14 +203,14 @@ export default function Dashboard() {
           </Card>
         </div>
 
+        {/* Live Market Indicator */}
+        <LiveMarketIndicator />
+
         {/* Essential Indian Stocks - Main Focus */}
         <EssentialIndianStocks />
 
-        {/* News Summary */}
-        <NewsTickerSummary news={news} loading={newsLoading} />
-
-        {/* News Panel */}
-        <IndianFinancialNewsPanel />
+        {/* Enhanced News Panel */}
+        <EnhancedNewsPanel />
       </div>
     </div>
   )

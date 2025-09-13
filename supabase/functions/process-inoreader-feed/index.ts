@@ -70,6 +70,9 @@ serve(async (req) => {
               company_mentioned: analysis.companiesMentioned,
               stock_symbols: analysis.stockSymbols,
               is_indian_market: analysis.isIndianMarket,
+              target_price: analysis.targetPrice,
+              timeframe: analysis.timeframe,
+              key_factors: analysis.keyFactors,
               processed_at: new Date().toISOString()
             })
           
