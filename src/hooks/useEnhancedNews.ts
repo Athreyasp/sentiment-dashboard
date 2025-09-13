@@ -86,7 +86,12 @@ export function useEnhancedNews() {
     }
   }, [])
 
-  const refreshNews = useCallback(() => {
+  const refreshNews = useCallback(async () => {
+    try {
+      await supabase.functions.invoke('process-inoreader-feed')
+    } catch (e) {
+      console.warn('Inoreader refresh failed (continuing with cached data):', e)
+    }
     return fetchEnhancedNews({ includePredictions: true })
   }, [fetchEnhancedNews])
 

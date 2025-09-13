@@ -60,6 +60,14 @@ export function EnhancedNewsPanel() {
   const fetchNewsWithPredictions = async () => {
     setLoading(true)
     try {
+      // First, fetch fresh items from Inoreader into DB
+      try {
+        await supabase.functions.invoke('process-inoreader-feed')
+      } catch (e) {
+        console.warn('Inoreader refresh failed (continuing with cached data):', e)
+      }
+
+      // Then, fetch enhanced news with predictions
       const { data } = await supabase.functions.invoke('get-news-with-predictions', {
         body: { predictions: true, limit: 15 }
       })

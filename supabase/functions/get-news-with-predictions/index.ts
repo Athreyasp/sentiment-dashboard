@@ -20,8 +20,16 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url)
-    const limit = parseInt(url.searchParams.get('limit') || '20')
-    const includeStockPredictions = url.searchParams.get('predictions') === 'true'
+    // Defaults from query string
+    let limit = parseInt(url.searchParams.get('limit') || '20')
+    let includeStockPredictions = url.searchParams.get('predictions') === 'true'
+
+    // Also accept JSON body options
+    try {
+      const body = await req.json()
+      if (typeof body?.limit === 'number') limit = body.limit
+      if (typeof body?.predictions === 'boolean') includeStockPredictions = body.predictions
+    } catch (_) {/* no body provided */}
     
     console.log(`Fetching ${limit} news items with predictions: ${includeStockPredictions}`)
     
