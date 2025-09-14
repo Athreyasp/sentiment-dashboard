@@ -33,6 +33,27 @@ serve(async (req) => {
     
     console.log(`Fetching ${limit} news items with predictions: ${includeStockPredictions}`)
     
+    // Check if we need to refresh from Inoreader (if latest news is older than 10 minutes)
+    const { data: latestNews } = await supabase
+      .from('financial_news')
+      .select('published_at')
+      .eq('is_indian_market', true)
+      .order('published_at', { ascending: false })
+      .limit(1)
+    
+    const shouldRefreshInoreader = !latestNews?.[0] || 
+      (new Date().getTime() - new Date(latestNews[0].published_at).getTime()) > 10 * 60 * 1000
+    
+    if (shouldRefreshInoreader) {
+      console.log('Triggering Inoreader refresh for live news updates...')
+      try {
+        await supabase.functions.invoke('process-inoreader-feed')
+        console.log('Inoreader refresh completed')
+      } catch (error) {
+        console.warn('Inoreader refresh failed:', error)
+      }
+    }
+    
     // Get recent Indian financial news
     let query = supabase
       .from('financial_news')

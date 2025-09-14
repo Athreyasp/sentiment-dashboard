@@ -99,14 +99,14 @@ export function useEnhancedNews() {
     fetchEnhancedNews({ includePredictions: true })
   }, [fetchEnhancedNews])
 
-  // Auto-refresh every 5 minutes
+  // Auto-refresh every 2 minutes with live Inoreader processing
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchEnhancedNews({ includePredictions: true })
-    }, 5 * 60 * 1000)
+      refreshNews() // This processes Inoreader feed first, then gets enhanced news
+    }, 2 * 60 * 1000)
 
     return () => clearInterval(interval)
-  }, [fetchEnhancedNews])
+  }, [refreshNews])
 
   return {
     news: data?.news || [],
