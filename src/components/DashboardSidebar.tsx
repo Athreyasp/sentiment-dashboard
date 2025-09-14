@@ -64,47 +64,47 @@ export function DashboardSidebar() {
   const ThemeIcon = getThemeIcon()
 
   return (
-    <div className="fixed left-0 top-0 h-screen w-64 bg-background/95 backdrop-blur-sm border-r border-border/20 flex flex-col z-40">
-      
+    <div className="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col shadow-lg z-40">
       {/* Logo Section */}
-      <div className="p-6 border-b border-border/10">
-        <div className="flex items-center space-x-3">
+      <div className="p-6 border-b border-slate-200 dark:border-slate-700">
+        <div className="flex items-center space-x-3 mb-2">
           <OfficialSentinelLogo size="sm" showText={false} variant="icon-only" />
           <div>
-            <h1 className="text-xl font-semibold text-foreground font-inter">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white font-inter tracking-tight">
               SENTINEL
             </h1>
-            <p className="text-xs text-muted-foreground">
-              Finance Dashboard
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              Insight Beyond Headlines
             </p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6">
-        <div className="space-y-1">
+      <nav className="flex-1 px-4 py-6">
+        <div className="space-y-2">
           {navigation.map((item) => (
             <NavLink
               key={item.name}
               to={item.href}
               className={({ isActive }) =>
                 cn(
-                  "group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200",
+                  "group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 relative",
                   isActive
-                    ? "text-foreground bg-muted font-semibold"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-800 font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
                 )
               }
             >
               {({ isActive }) => (
                 <>
+                  {/* Active indicator */}
                   {isActive && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-primary rounded-r-full" />
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#00C49F] rounded-r-full" />
                   )}
                   
-                  <item.icon className="mr-3 h-4 w-4 flex-shrink-0" />
-                  <span>{item.name}</span>
+                  <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                  <span className="font-inter">{item.name}</span>
                 </>
               )}
             </NavLink>
@@ -113,17 +113,17 @@ export function DashboardSidebar() {
       </nav>
 
       {/* Bottom Section */}
-      <div className="p-3 border-t border-border/10 space-y-2">
+      <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-3">
         {/* Theme Toggle */}
         <Button
           onClick={cycleTheme}
           variant="ghost"
           size="sm"
-          className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg"
+          className="w-full justify-start text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800"
         >
           <ThemeIcon className="mr-3 h-4 w-4" />
-          <span className="text-sm">
-            {theme === 'light' ? 'Light Mode' : theme === 'dark' ? 'Dark Mode' : 'System Mode'}
+          <span className="font-inter text-sm">
+            {theme === 'light' ? 'Light' : theme === 'dark' ? 'Dark' : 'System'}
           </span>
         </Button>
 
@@ -132,11 +132,18 @@ export function DashboardSidebar() {
           onClick={handleLogout}
           variant="ghost"
           size="sm"
-          className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-lg"
+          className="w-full justify-start text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
         >
           <LogOut className="mr-3 h-4 w-4" />
-          <span className="text-sm">Logout</span>
+          <span className="font-inter text-sm">Logout</span>
         </Button>
+
+        {/* Version */}
+        <div className="text-center pt-2">
+          <span className="text-xs text-slate-400 dark:text-slate-500 font-inter">
+            vBeta
+          </span>
+        </div>
       </div>
     </div>
   )

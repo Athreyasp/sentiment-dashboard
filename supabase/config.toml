@@ -60,9 +60,6 @@ verify_jwt = false
 [functions.stock-analysis]
 verify_jwt = false
 
-[functions.get-news-with-predictions]
-verify_jwt = false
-
 [edge_runtime]
 ip_version = "ipv4"
 policy = "per_worker"
