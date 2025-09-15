@@ -1,6 +1,6 @@
 
-import ModernToggleAuth from '@/components/ModernToggleAuth'
+import SlideAuth from '@/components/SlideAuth'
 
 export default function Login() {
-  return <ModernToggleAuth defaultView="login" />
+  return <SlideAuth defaultView="login" />
 }
