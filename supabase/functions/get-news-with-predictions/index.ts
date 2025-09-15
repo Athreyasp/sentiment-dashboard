@@ -23,15 +23,17 @@ serve(async (req) => {
     // Defaults from query string
     let limit = parseInt(url.searchParams.get('limit') || '20')
     let includeStockPredictions = url.searchParams.get('predictions') === 'true'
+    let sinceHours = parseInt(url.searchParams.get('since_hours') || '24')
 
     // Also accept JSON body options
     try {
       const body = await req.json()
       if (typeof body?.limit === 'number') limit = body.limit
       if (typeof body?.predictions === 'boolean') includeStockPredictions = body.predictions
+      if (typeof body?.since_hours === 'number') sinceHours = body.since_hours
     } catch (_) {/* no body provided */}
     
-    console.log(`Fetching ${limit} news items with predictions: ${includeStockPredictions}`)
+    console.log(`Fetching ${limit} news items with predictions: ${includeStockPredictions}, since last ${sinceHours}h`)
     
     // Check if we need to refresh from Inoreader (if latest news is older than 10 minutes)
     const { data: latestNews } = await supabase
@@ -55,10 +57,12 @@ serve(async (req) => {
     }
     
     // Get recent Indian financial news
+    const sinceISO = new Date(Date.now() - sinceHours * 60 * 60 * 1000).toISOString()
     let query = supabase
       .from('financial_news')
       .select('*')
       .eq('is_indian_market', true)
+      .gte('published_at', sinceISO)
       .order('published_at', { ascending: false })
       .limit(limit)
 
