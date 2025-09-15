@@ -7,25 +7,23 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { RefreshCw, Search, TrendingUp, Activity, Calendar, ExternalLink } from 'lucide-react'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { StockPredictionModal } from '@/components/StockPredictionModal'
+import { useExtendedStockData } from '@/hooks/useExtendedStockData'
+import type { ExtendedStock } from '@/hooks/useExtendedStockData'
+import { useToast } from '@/hooks/use-toast'
 
 export const IndianFinancialNewsPanel = () => {
-  const { 
-    news, 
-    loading, 
-    error, 
-    fetchIndianFinancialNews, 
-    searchNews 
-  } = useIndianFinancialNews()
-  
+  const { news, loading, error, fetchIndianFinancialNews, searchNews } = useIndianFinancialNews()
+  const { searchStock } = useExtendedStockData()
+  const { toast } = useToast()
+
   const [searchQuery, setSearchQuery] = useState('')
   const [sentimentFilter, setSentimentFilter] = useState('all')
   const [tickerFilter, setTickerFilter] = useState('')
   const [refreshing, setRefreshing] = useState(false)
-  const [selectedNews, setSelectedNews] = useState<{
-    headline: string
-    sentiment: string
-    ticker: string | null
-  } | null>(null)
+  const [isPredictOpen, setIsPredictOpen] = useState(false)
+  const [selectedStock, setSelectedStock] = useState<ExtendedStock | null>(null)
+  const [selectedHeadline, setSelectedHeadline] = useState('')
 
   const handleRefresh = async () => {
     setRefreshing(true)
@@ -67,22 +65,21 @@ export const IndianFinancialNewsPanel = () => {
     return 'Just now'
   }
 
-  const handlePredictStock = (headline: string, sentiment: string | null, ticker: string | null) => {
-    if (!ticker) {
-      // Extract potential tickers from headline
-      const possibleTickers = headline.match(/\b[A-Z]{2,}\b/g) || []
-      setSelectedNews({
-        headline,
-        sentiment: sentiment || 'neutral',
-        ticker: possibleTickers[0] || null
-      })
-    } else {
-      setSelectedNews({
-        headline,
-        sentiment: sentiment || 'neutral',
-        ticker
-      })
+  const handlePredictStock = async (headline: string, sentiment: string | null, ticker: string | null) => {
+    const token = (ticker || (headline.match(/\b[A-Z]{2,}\b/g) || [])[0] || '').toUpperCase()
+    if (!token) {
+      toast({ title: 'No stock detected', description: 'Could not infer a ticker from this headline.', variant: 'destructive' })
+      return
     }
+    const symbol = token.endsWith('.NS') || token.endsWith('.BO') ? token : `${token}.NS`
+    const stock = await searchStock(symbol)
+    if (!stock) {
+      toast({ title: 'Stock not found', description: `No live data for ${symbol}.`, variant: 'destructive' })
+      return
+    }
+    setSelectedStock(stock)
+    setSelectedHeadline(headline)
+    setIsPredictOpen(true)
   }
 
   if (error) {

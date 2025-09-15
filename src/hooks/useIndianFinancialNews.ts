@@ -21,6 +21,23 @@ export function useIndianFinancialNews() {
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
+  // Dedupe helper: prefer unique by URL, else by normalized headline; keep latest published_at
+  const dedupeNews = (items: IndianFinancialNewsItem[]) => {
+    const map = new Map<string, IndianFinancialNewsItem>()
+    for (const item of items) {
+      const key = (item.url || item.headline || '').trim().toLowerCase()
+      const existing = map.get(key)
+      if (!existing) {
+        map.set(key, item)
+      } else {
+        // Keep the latest by published_at
+        map.set(key, new Date(item.published_at) > new Date(existing.published_at) ? item : existing)
+      }
+    }
+    // Preserve ordering by date desc
+    return Array.from(map.values()).sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
+  }
+
   // Fetch live Indian financial news from Inoreader
   const fetchIndianFinancialNews = async () => {
     try {
@@ -97,7 +114,7 @@ export function useIndianFinancialNews() {
           sentiment: item.sentiment as 'positive' | 'neutral' | 'negative' | null
         }))
 
-      setNews(indianNews)
+      setNews(dedupeNews(indianNews))
       console.log(`Loaded ${indianNews.length} Indian financial news articles`)
     } catch (err) {
       console.error('Error loading Indian financial news:', err)
@@ -166,7 +183,7 @@ export function useIndianFinancialNews() {
             const isIndianNews = indianKeywords.some(keyword => content.includes(keyword))
             
             if (isIndianNews) {
-              setNews(prev => [newItem, ...prev])
+              setNews(prev => dedupeNews([newItem, ...prev]))
               toast({
                 title: "📈 Indian Market News",
                 description: newItem.headline.substring(0, 60) + "...",
