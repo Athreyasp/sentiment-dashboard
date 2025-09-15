@@ -1,3 +1,4 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts"
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1'
 
@@ -8,7 +9,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const geminiApiKey = Deno.env.get('GEMINI_API_KEY')!
+const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -49,8 +50,8 @@ serve(async (req) => {
           continue
         }
         
-        // Analyze with Gemini for stock prediction
-        const analysis = await analyzeWithGemini(item.headline, item.content)
+        // Analyze with OpenAI for stock prediction
+        const analysis = await analyzeWithOpenAI(item.headline, item.content)
         
         if (analysis.isFinanceRelated) {
           // Insert into database
@@ -69,6 +70,9 @@ serve(async (req) => {
               company_mentioned: analysis.companiesMentioned,
               stock_symbols: analysis.stockSymbols,
               is_indian_market: analysis.isIndianMarket,
+              target_price: analysis.targetPrice,
+              timeframe: analysis.timeframe,
+              key_factors: analysis.keyFactors,
               processed_at: new Date().toISOString()
             })
           
@@ -246,59 +250,71 @@ function parseInoreaderHtml(html: string) {
   return items
 }
 
-async function analyzeWithGemini(headline: string, content: string) {
+async function analyzeWithOpenAI(headline: string, content: string) {
   const prompt = `
-Analyze this Indian financial news headline for stock market prediction:
+Analyze this Indian financial news for stock market prediction. Focus ONLY on Indian markets (NSE, BSE, Nifty 50, Sensex).
 
 Headline: "${headline}"
 Content: "${content}"
 
-Focus on Indian stock market impact (Nifty 50, Sensex, NSE, BSE). Provide analysis in JSON format:
+Return a JSON object with this exact structure:
 {
-  "isFinanceRelated": boolean (true if about Indian stocks, markets, Nifty, Sensex, companies, economy),
-  "isIndianMarket": boolean (true if about Indian companies/markets - TCS, Infosys, Reliance, HDFC, Wipro, Tata, NSE, BSE, Indian banks),
-  "sentiment": "positive" | "negative" | "neutral",
+  "isFinanceRelated": true/false (only true for Indian stocks, markets, Nifty, Sensex, RBI, Indian companies),
+  "isIndianMarket": true/false (true for Indian companies like TCS, Infosys, Reliance, HDFC, etc.),
+  "sentiment": "positive"/"negative"/"neutral",
   "sentimentScore": number between -1 and 1,
-  "prediction": "UP" | "DOWN" | "STABLE",
+  "prediction": "UP"/"DOWN"/"STABLE",
   "confidenceScore": number between 0 and 1,
-  "companiesMentioned": array of Indian company names,
-  "stockSymbols": array of NSE/BSE symbols like "TCS.NS", "INFY.NS", "RELIANCE.NS"
+  "companiesMentioned": [array of Indian company names],
+  "stockSymbols": [array like "TCS.NS", "INFY.NS", "RELIANCE.NS"],
+  "targetPrice": number (predicted stock price movement %),
+  "timeframe": "1D"/"1W"/"1M",
+  "keyFactors": [array of key factors affecting prediction]
 }
 
-Indian Stock Prediction Rules:
-- UP: Positive earnings, RBI rate cuts, FII inflows, government reforms, good quarterly results, Nifty/Sensex gains
-- DOWN: Rate hikes, FII outflows, inflation worries, poor earnings, regulatory issues, global market crash
-- STABLE: Mixed signals, sideways movement, unclear impact
-
-Extract Indian company names and NSE symbols. Focus on Nifty 50 and banking stocks impact.
+Indian Stock Rules:
+- UP: Earnings beat, RBI rate cuts, FII buying, reforms, good results
+- DOWN: Rate hikes, FII selling, inflation, poor earnings, regulations
+- Only focus on NSE/BSE listed Indian companies
 `
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }]
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: 'You are an expert Indian stock market analyst. Always return valid JSON.' },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 800,
+        temperature: 0.3
       })
     })
 
     const data = await response.json()
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text
+    const text = data.choices?.[0]?.message?.content
     
     if (!text) {
-      throw new Error('No response from Gemini')
+      throw new Error('No response from OpenAI')
     }
     
     // Extract JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    let jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      throw new Error('No JSON found in Gemini response')
+      // Try to find JSON in code blocks
+      jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/)
+      if (jsonMatch) {
+        jsonMatch = [jsonMatch[1]]
+      }
+    }
+    
+    if (!jsonMatch) {
+      throw new Error('No JSON found in OpenAI response')
     }
     
     const analysis = JSON.parse(jsonMatch[0])
@@ -312,25 +328,32 @@ Extract Indian company names and NSE symbols. Focus on Nifty 50 and banking stoc
       prediction: analysis.prediction || 'STABLE',
       confidenceScore: Number(analysis.confidenceScore) || 0.5,
       companiesMentioned: Array.isArray(analysis.companiesMentioned) ? analysis.companiesMentioned : [],
-      stockSymbols: Array.isArray(analysis.stockSymbols) ? analysis.stockSymbols : []
+      stockSymbols: Array.isArray(analysis.stockSymbols) ? analysis.stockSymbols : [],
+      targetPrice: Number(analysis.targetPrice) || 0,
+      timeframe: analysis.timeframe || '1D',
+      keyFactors: Array.isArray(analysis.keyFactors) ? analysis.keyFactors : []
     }
     
   } catch (error) {
-    console.error('Gemini analysis error:', error)
-    // Return more selective defaults - only process if we're sure it's finance-related
-    const hasFinanceKeywords = (headline + ' ' + content).toLowerCase()
-      .match(/(stock|market|trading|earn|profit|loss|price|share|invest|fund|bank|crypto|bitcoin|nasdaq|nyse|dow|s&p)/i)
+    console.error('OpenAI analysis error:', error)
+    
+    // Smart fallback based on keywords
+    const text = (headline + ' ' + content).toLowerCase()
+    const hasFinanceKeywords = text.match(/(stock|market|trading|earn|profit|loss|price|share|invest|fund|bank|nse|bse|nifty|sensex)/i)
+    const hasIndianKeywords = text.match(/(india|indian|nse|bse|mumbai|delhi|rupee|inr|tcs|infos|reliance|hdfc|sbi|rbi|sebi)/i)
     
     return {
-      isFinanceRelated: Boolean(hasFinanceKeywords), // Only if has finance keywords
-      isIndianMarket: Boolean((headline + ' ' + content).toLowerCase()
-        .match(/(india|indian|nse|bse|mumbai|delhi|rupee|inr|tcs|infos|reliance|hdfc|sbi)/i)),
+      isFinanceRelated: Boolean(hasFinanceKeywords),
+      isIndianMarket: Boolean(hasIndianKeywords),
       sentiment: 'neutral',
       sentimentScore: 0,
       prediction: 'STABLE',
       confidenceScore: 0.3,
       companiesMentioned: [],
-      stockSymbols: []
+      stockSymbols: [],
+      targetPrice: 0,
+      timeframe: '1D',
+      keyFactors: ['Analysis unavailable']
     }
   }
 }

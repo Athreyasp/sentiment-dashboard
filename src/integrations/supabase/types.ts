@@ -23,6 +23,7 @@ export type Database = {
           headline: string
           id: string
           is_indian_market: boolean | null
+          key_factors: string[] | null
           prediction: string | null
           processed_at: string | null
           published_at: string
@@ -30,7 +31,9 @@ export type Database = {
           sentiment_score: number | null
           source: string
           stock_symbols: string[] | null
+          target_price: number | null
           ticker: string | null
+          timeframe: string | null
           updated_at: string
           url: string | null
         }
@@ -42,6 +45,7 @@ export type Database = {
           headline: string
           id?: string
           is_indian_market?: boolean | null
+          key_factors?: string[] | null
           prediction?: string | null
           processed_at?: string | null
           published_at: string
@@ -49,7 +53,9 @@ export type Database = {
           sentiment_score?: number | null
           source: string
           stock_symbols?: string[] | null
+          target_price?: number | null
           ticker?: string | null
+          timeframe?: string | null
           updated_at?: string
           url?: string | null
         }
@@ -61,6 +67,7 @@ export type Database = {
           headline?: string
           id?: string
           is_indian_market?: boolean | null
+          key_factors?: string[] | null
           prediction?: string | null
           processed_at?: string | null
           published_at?: string
@@ -68,7 +75,9 @@ export type Database = {
           sentiment_score?: number | null
           source?: string
           stock_symbols?: string[] | null
+          target_price?: number | null
           ticker?: string | null
+          timeframe?: string | null
           updated_at?: string
           url?: string | null
         }

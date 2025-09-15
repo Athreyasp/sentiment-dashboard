@@ -5,22 +5,22 @@ import { OfficialSentinelLogo } from './OfficialSentinelLogo'
 
 export function AttractiveHeader() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-slate-50/95 via-white/95 to-slate-50/95 dark:from-slate-900/95 dark:via-slate-800/95 dark:to-slate-900/95 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-4">
             <OfficialSentinelLogo size="sm" showText={true} variant="default" />
             <div className="hidden md:flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Live Market Data</span>
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+              <span className="text-sm text-muted-foreground font-medium">Live Market Data</span>
             </div>
           </div>
 
           {/* User Profile */}
           <div className="flex items-center space-x-4">
-            <div className="hidden lg:flex items-center space-x-2 text-sm text-slate-600 dark:text-slate-300">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <div className="hidden lg:flex items-center space-x-2 text-sm text-muted-foreground">
+              <div className="w-2 h-2 bg-accent rounded-full animate-pulse"></div>
               <span>Real-time Updates</span>
             </div>
             

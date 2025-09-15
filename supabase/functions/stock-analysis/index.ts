@@ -26,9 +26,13 @@ Deno.serve(async (req) => {
   try {
     const { symbol, news_headline, sentiment } = await req.json()
     
-    console.log(`Analyzing stock: ${symbol} with news: ${news_headline}`)
+    // Handle undefined news_headline
+    const safeNewsHeadline = news_headline || 'No news provided'
+    const safeSentiment = sentiment || 'neutral'
+    
+    console.log(`Analyzing stock: ${symbol} with news: ${safeNewsHeadline}`)
 
-    // Fetch stock data from Yahoo Finance API (alternative to yfinance)
+    // Fetch stock data from Yahoo Finance API
     const stockData = await fetchStockData(symbol)
     
     if (!stockData) {
@@ -36,7 +40,7 @@ Deno.serve(async (req) => {
     }
 
     // Generate prediction based on technical analysis and sentiment
-    const prediction = await generateStockPrediction(stockData, news_headline, sentiment)
+    const prediction = await generateStockPrediction(stockData, safeNewsHeadline, safeSentiment)
 
     return new Response(
       JSON.stringify({
@@ -235,7 +239,7 @@ async function fetchIndianStockDataAlternative(symbol: string) {
   }
 }
 
-async function generateStockPrediction(stockData: any, newsHeadline: string, sentiment: string): Promise<StockPrediction> {
+async function generateStockPrediction(stockData: any, newsHeadline: string = '', sentiment: string = 'neutral'): Promise<StockPrediction> {
   const currentPrice = stockData.current_price
   const previousClose = stockData.previous_close
   const dayChange = ((currentPrice - previousClose) / previousClose) * 100
