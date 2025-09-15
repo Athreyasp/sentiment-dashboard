@@ -1,5 +1,6 @@
 
 import { useState, useCallback } from 'react'
+import { supabase } from '@/integrations/supabase/client'
 
 interface TickerData {
   ticker: string
@@ -42,54 +43,34 @@ export function useTickerData(): UseTickerDataReturn {
     setError(null)
 
     try {
-      // Fetch real Yahoo Finance data for Indian stocks
+      // Use Supabase edge function to fetch Yahoo Finance data
       const yahooSymbol = ticker.endsWith('.NS') ? ticker : `${ticker}.NS`
       
-      const response = await fetch(
-        `https://query1.finance.yahoo.com/v8/finance/chart/${yahooSymbol}?interval=1d&range=7d&includePrePost=false`,
+      const { data: response, error: functionError } = await supabase.functions.invoke(
+        'fetch-yahoo-finance',
         {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-          }
+          body: { symbol: yahooSymbol }
         }
       )
       
-      if (!response.ok) {
-        throw new Error(`Failed to fetch data for ${ticker}`)
+      if (functionError) {
+        throw new Error(functionError.message)
       }
-
-      const yahooData = await response.json()
-      const result = yahooData.chart?.result?.[0]
       
-      if (!result) {
-        throw new Error('No data available for this stock')
+      if (!response?.success) {
+        throw new Error(response?.error || 'Failed to fetch data')
       }
 
-      const meta = result.meta
-      const timestamps = result.timestamp || []
-      const quotes = result.indicators?.quote?.[0] || {}
-      const closes = quotes.close || []
-
-      const currentPrice = meta.regularMarketPrice || meta.previousClose || 0
-      const previousClose = meta.previousClose || 0
-      const change = currentPrice - previousClose
-      const changePercent = previousClose > 0 ? (change / previousClose) * 100 : 0
-
-      // Generate trend data from historical prices
-      const trendData = timestamps.slice(-7).map((timestamp: number, index: number) => ({
-        date: new Date(timestamp * 1000).toISOString().split('T')[0],
-        sentiment: Math.random() * 100, // Mock sentiment data
-        price: closes[closes.length - 7 + index] || currentPrice
-      }))
-
+      const yahooData = response.data
+      
       const mockData: TickerData = {
         ticker: ticker.replace('.NS', ''),
         company: getIndianCompanyName(ticker),
         current_sentiment: Math.random() * 100, // Mock sentiment
-        price: currentPrice,
-        change: change,
-        changePercent: changePercent,
-        trend: trendData,
+        price: yahooData.currentPrice,
+        change: yahooData.change,
+        changePercent: yahooData.changePercent,
+        trend: yahooData.trend,
         news: generateIndianNewsData(ticker)
       }
 
