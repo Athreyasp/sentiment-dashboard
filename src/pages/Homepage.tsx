@@ -116,23 +116,23 @@ export default function Homepage() {
         <AttractivePremiumHeader onAuthClick={() => setLoginModalOpen(true)} />
 
         {/* Hero Section with enhanced entrance animations - adjusted for fixed header */}
-        <section className={`main-content pb-20 lg:pb-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+        <section className={`pt-32 pb-20 lg:pb-32 relative transition-all duration-1000 delay-300 ${pageLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               <div className="animate-fade-in">
                 <ScrollFloat direction="up" intensity={40} delay={0.2}>
-                  <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/20 dark:to-blue-950/20 px-4 py-2 rounded-full border border-emerald-200 dark:border-emerald-800 mb-6">
-                    <Zap className="w-4 h-4 text-emerald-600" />
-                    <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">AI-Powered Intelligence</span>
+                  <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950/20 dark:to-blue-950/20 px-6 py-3 rounded-full border border-emerald-200 dark:border-emerald-800 mb-8">
+                    <Zap className="w-5 h-5 text-emerald-600" />
+                    <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300 font-pixel tracking-wider">AI-POWERED INTELLIGENCE</span>
                   </div>
                 </ScrollFloat>
                 
                 <ScrollFloat direction="left" intensity={60} delay={0.4}>
-                  <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                  <h1 className="text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white leading-tight mb-8">
                     Turn Real-Time News Into{' '}
                     <RotatingText
                       texts={['Market Intelligence', 'Smart Insights', 'Trading Edge', 'Investment Power']}
-                      mainClassName="inline-flex px-3 py-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-lg shadow-lg"
+                      mainClassName="inline-flex px-4 py-2 bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500 text-white rounded-2xl shadow-2xl"
                       staggerFrom="last"
                       initial={{ y: "100%", opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
@@ -146,47 +146,51 @@ export default function Homepage() {
                 </ScrollFloat>
                 
                 <ScrollFloat direction="right" intensity={40} delay={0.6}>
-                  <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 leading-relaxed max-w-lg">
+                  <p className="text-xl lg:text-2xl text-slate-600 dark:text-slate-300 mb-10 leading-relaxed max-w-2xl">
                     AI-powered financial sentiment platform that transforms market noise into actionable insights for smarter investment decisions.
                   </p>
                 </ScrollFloat>
                 
                 <ScrollFloat direction="up" intensity={30} delay={0.8}>
-                  <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                  <div className="flex flex-col sm:flex-row gap-6 mb-10">
                     <Button 
                       size="lg" 
-                      className="bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold px-8 py-4 text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
+                      className="bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 hover:from-emerald-700 hover:via-cyan-700 hover:to-blue-700 text-white font-bold px-10 py-6 text-lg shadow-2xl hover:shadow-emerald-500/25 hover:scale-105 transition-all duration-300 rounded-2xl"
                       onClick={() => window.location.href = '/news-analytics'}
                     >
+                      <Sparkles className="mr-3 w-6 h-6" />
                       View News Analytics
-                      <ArrowRight className="ml-2 w-5 h-5" />
+                      <ArrowRight className="ml-3 w-6 h-6" />
                     </Button>
-                    <Button size="lg" variant="outline" className="font-semibold px-8 py-4 text-lg border-2 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-105 transition-all duration-300">
-                      <Play className="mr-2 w-5 h-5" />
+                    <Button size="lg" variant="outline" className="font-semibold px-10 py-6 text-lg border-2 hover:bg-slate-50 dark:hover:bg-slate-800 hover:scale-105 transition-all duration-300 rounded-2xl">
+                      <Play className="mr-3 w-6 h-6" />
                       Watch Demo
                     </Button>
                   </div>
                 </ScrollFloat>
                 
                 <ScrollFloat direction="up" intensity={20} delay={1.0}>
-                  <div className="flex items-center space-x-6 text-sm text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center space-x-8 text-sm text-slate-500 dark:text-slate-400">
                     <div className="flex items-center space-x-2">
-                      <Shield className="w-4 h-4 text-green-500" />
-                      <span>Enterprise Security</span>
+                      <Shield className="w-5 h-5 text-green-500" />
+                      <span className="font-medium">Enterprise Security</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-xs text-slate-500">Real-time Data</span>
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="font-medium text-green-600">Real-time Data</span>
                     </div>
                   </div>
                 </ScrollFloat>
               </div>
               
               <ScrollFloat direction="right" intensity={80} delay={0.4}>
-                <div className="relative animate-fade-in flex justify-center" style={{ animationDelay: '0.2s' }}>
-                  {/* Financial Card Swap Component - perfectly centered */}
+                <div className="relative animate-fade-in flex justify-center mt-16 lg:mt-0" style={{ animationDelay: '0.2s' }}>
+                  {/* Financial Card Swap Component - with proper spacing */}
                   <div className="relative">
                     <FinancialInsightCards />
+                    {/* Decorative elements */}
+                    <div className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-r from-emerald-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
                   </div>
                 </div>
               </ScrollFloat>

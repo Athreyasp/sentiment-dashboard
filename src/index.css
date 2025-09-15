@@ -84,7 +84,7 @@
 
   /* Universal header spacing fix - prevents fixed header overlap */
   .main-content {
-    @apply pt-20; /* 80px to match AttractivePremiumHeader height (h-20) */
+    @apply pt-32; /* Increased from 80px to 128px for better spacing */
   }
   
   /* Dashboard layout header spacing - matches AttractiveHeader height */
@@ -95,7 +95,7 @@
   /* Responsive header spacing for mobile */
   @media (max-width: 768px) {
     .main-content {
-      @apply pt-20; /* Same height for consistency with AttractivePremiumHeader */
+      @apply pt-28; /* Slightly less padding on mobile */
     }
     .dashboard-content {
       @apply pt-16; /* Same height for consistency with AttractiveHeader */
