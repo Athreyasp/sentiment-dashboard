@@ -248,7 +248,14 @@ export const IndianFinancialNewsPanel = () => {
         </CardContent>
       </Card>
 
-      {/* Remove the old StockPredictionModal usage since it doesn't match the new interface */}
+      {selectedStock && (
+        <StockPredictionModal
+          isOpen={isPredictOpen}
+          onClose={() => setIsPredictOpen(false)}
+          stock={selectedStock}
+          newsHeadline={selectedHeadline}
+        />
+      )}
     </>
   )
 }

@@ -21,21 +21,31 @@ export function useIndianFinancialNews() {
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  // Dedupe helper: prefer unique by URL, else by normalized headline; keep latest published_at
+  // Dedupe helper: remove duplicates by headline similarity and URL
   const dedupeNews = (items: IndianFinancialNewsItem[]) => {
-    const map = new Map<string, IndianFinancialNewsItem>()
-    for (const item of items) {
-      const key = (item.url || item.headline || '').trim().toLowerCase()
-      const existing = map.get(key)
-      if (!existing) {
-        map.set(key, item)
-      } else {
-        // Keep the latest by published_at
-        map.set(key, new Date(item.published_at) > new Date(existing.published_at) ? item : existing)
+    const seen = new Set<string>()
+    const deduped: IndianFinancialNewsItem[] = []
+    
+    // Sort by published_at desc first to keep the latest
+    const sortedItems = items.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
+    
+    for (const item of sortedItems) {
+      // Create dedup key from normalized headline (remove extra spaces, punctuation differences)
+      const normalizedHeadline = item.headline
+        .toLowerCase()
+        .replace(/[^\w\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+      
+      const key = item.url ? `url:${item.url}` : `headline:${normalizedHeadline}`
+      
+      if (!seen.has(key)) {
+        seen.add(key)
+        deduped.push(item)
       }
     }
-    // Preserve ordering by date desc
-    return Array.from(map.values()).sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
+    
+    return deduped
   }
 
   // Fetch live Indian financial news from Inoreader
