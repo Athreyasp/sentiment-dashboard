@@ -2,19 +2,20 @@ import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { TrendingUp, TrendingDown, Zap, Activity, Target, ArrowUpRight } from 'lucide-react'
+import { TrendingUp, TrendingDown, Zap, Activity, Target, ArrowUpRight, RefreshCw } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
+import { useExtendedStockData } from '@/hooks/useExtendedStockData'
 
 interface StockData {
   symbol: string
   name: string
-  price: string
-  change: string
-  changePercent: string
+  price: number
+  change: number
+  changePercent: number
   trend: 'up' | 'down'
   sector: string
-  marketCap: string
+  marketCap?: number
   isNifty50: boolean
 }
 
@@ -22,98 +23,33 @@ export function EssentialIndianStocks() {
   const [loadingPrediction, setLoadingPrediction] = useState<string | null>(null)
   const [predictions, setPredictions] = useState<Record<string, any>>({})
   const { toast } = useToast()
+  const { allStocks, loading, error, refreshData } = useExtendedStockData()
 
-  // Essential Indian stocks - Major Nifty 50 components
-  const essentialStocks: StockData[] = [
-    {
-      symbol: 'RELIANCE',
-      name: 'Reliance Industries',
-      price: '₹2,847.65',
-      change: '+42.30',
-      changePercent: '+1.51%',
-      trend: 'up',
-      sector: 'Oil & Gas',
-      marketCap: '₹19.2L Cr',
-      isNifty50: true
-    },
-    {
-      symbol: 'TCS',
-      name: 'Tata Consultancy Services',
-      price: '₹4,156.80',
-      change: '-23.45',
-      changePercent: '-0.56%',
-      trend: 'down',
-      sector: 'IT Services',
-      marketCap: '₹15.1L Cr',
-      isNifty50: true
-    },
-    {
-      symbol: 'HDFCBANK',
-      name: 'HDFC Bank',
-      price: '₹1,672.90',
-      change: '+18.75',
-      changePercent: '+1.13%',
-      trend: 'up',
-      sector: 'Banking',
-      marketCap: '₹12.7L Cr',
-      isNifty50: true
-    },
-    {
-      symbol: 'INFY',
-      name: 'Infosys',
-      price: '₹1,834.25',
-      change: '-15.60',
-      changePercent: '-0.84%',
-      trend: 'down',
-      sector: 'IT Services',
-      marketCap: '₹7.6L Cr',
-      isNifty50: true
-    },
-    {
-      symbol: 'ICICIBANK',
-      name: 'ICICI Bank',
-      price: '₹1,267.45',
-      change: '+25.80',
-      changePercent: '+2.08%',
-      trend: 'up',
-      sector: 'Banking',
-      marketCap: '₹8.9L Cr',
-      isNifty50: true
-    },
-    {
-      symbol: 'HINDUNILVR',
-      name: 'Hindustan Unilever',
-      price: '₹2,445.30',
-      change: '+12.90',
-      changePercent: '+0.53%',
-      trend: 'up',
-      sector: 'FMCG',
-      marketCap: '₹5.8L Cr',
-      isNifty50: true
-    },
-    {
-      symbol: 'LT',
-      name: 'Larsen & Toubro',
-      price: '₹3,789.60',
-      change: '-45.20',
-      changePercent: '-1.18%',
-      trend: 'down',
-      sector: 'Construction',
-      marketCap: '₹5.2L Cr',
-      isNifty50: true
-    },
-    {
-      symbol: 'BHARTIARTL',
-      name: 'Bharti Airtel',
-      price: '₹1,634.80',
-      change: '+28.40',
-      changePercent: '+1.77%',
-      trend: 'up',
-      sector: 'Telecom',
-      marketCap: '₹9.4L Cr',
-      isNifty50: true
-    }
+  // Essential Indian stock symbols to focus on
+  const essentialSymbols = [
+    'RELIANCE', 'TCS', 'HDFCBANK', 'INFY', 'ICICIBANK', 
+    'HINDUNILVR', 'LT', 'BHARTIARTL'
   ]
+
+  // Filter and format essential stocks from live data
+  const essentialStocks: StockData[] = essentialSymbols
+    .map(symbol => {
+      const liveStock = allStocks.find(stock => stock.symbol === symbol)
+      if (!liveStock) return null
+
+      return {
+        symbol: liveStock.symbol,
+        name: liveStock.name,
+        price: liveStock.price,
+        change: liveStock.change,
+        changePercent: liveStock.changePercent,
+        trend: liveStock.change >= 0 ? 'up' as const : 'down' as const,
+        sector: liveStock.sector || 'General',
+        marketCap: liveStock.marketCap,
+        isNifty50: true
+      }
+    })
+    .filter((stock) => stock !== null) as StockData[]
 
   const handlePredictStock = async (stock: StockData) => {
     setLoadingPrediction(stock.symbol)
@@ -121,7 +57,7 @@ export function EssentialIndianStocks() {
     try {
       const { data, error } = await supabase.functions.invoke('stock-analysis', {
         body: {
-          symbol: stock.symbol,
+          symbol: `${stock.symbol}.NS`,
           newsHeadline: `${stock.name} market analysis and prediction for Indian stock market`
         }
       })
@@ -149,6 +85,26 @@ export function EssentialIndianStocks() {
     }
   }
 
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(price)
+  }
+
+  const formatMarketCap = (marketCap?: number) => {
+    if (!marketCap) return 'N/A'
+    
+    if (marketCap >= 1e12) {
+      return `₹${(marketCap / 1e12).toFixed(1)}L Cr`
+    } else if (marketCap >= 1e9) {
+      return `₹${(marketCap / 1e9).toFixed(1)}K Cr`
+    }
+    return `₹${(marketCap / 1e7).toFixed(1)} Cr`
+  }
+
   const getSectorColor = (sector: string) => {
     const colors = {
       'Banking': 'from-pixel-blue/20 to-pixel-cyan/20 border-pixel-blue/30',
@@ -173,11 +129,49 @@ export function EssentialIndianStocks() {
             Top Nifty 50 stocks with AI-powered predictions
           </p>
         </div>
-        <Badge variant="outline" className="border-pixel-green/30 text-pixel-green">
-          <Activity className="w-3 h-3 mr-1" />
-          Live Market Data
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="border-pixel-green/30 text-pixel-green">
+            <Activity className="w-3 h-3 mr-1" />
+            Live Market Data
+          </Badge>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={refreshData}
+            disabled={loading}
+            className="border-pixel-blue/30 text-pixel-blue hover:bg-pixel-blue/10"
+          >
+            {loading ? (
+              <Activity className="w-3 h-3 animate-spin" />
+            ) : (
+              <RefreshCw className="w-3 h-3" />
+            )}
+          </Button>
+        </div>
       </div>
+
+      {/* Loading State */}
+      {loading && essentialStocks.length === 0 && (
+        <div className="flex items-center justify-center py-12">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Activity className="w-5 h-5 animate-spin" />
+            <span>Loading live stock data...</span>
+          </div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <p className="text-destructive mb-2">Failed to load stock data</p>
+            <Button variant="outline" onClick={refreshData}>
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Retry
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Essential Stocks Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -208,7 +202,7 @@ export function EssentialIndianStocks() {
               {/* Price & Change */}
               <div className="space-y-2">
                 <div className="text-xl font-bold text-foreground">
-                  {stock.price}
+                  {formatPrice(stock.price)}
                 </div>
                 <div className={`flex items-center space-x-2 ${
                   stock.trend === 'up' ? 'text-pixel-green' : 'text-pixel-orange'
@@ -218,7 +212,9 @@ export function EssentialIndianStocks() {
                   ) : (
                     <TrendingDown className="w-3 h-3" />
                   )}
-                  <span className="text-sm font-medium">{stock.change}</span>
+                  <span className="text-sm font-medium">
+                    {stock.trend === 'up' ? '+' : ''}{stock.change.toFixed(2)}
+                  </span>
                   <Badge 
                     variant="secondary" 
                     className={`text-xs ${
@@ -227,7 +223,7 @@ export function EssentialIndianStocks() {
                         : 'bg-pixel-orange/10 text-pixel-orange border-pixel-orange/20'
                     }`}
                   >
-                    {stock.changePercent}
+                    {stock.trend === 'up' ? '+' : ''}{stock.changePercent.toFixed(2)}%
                   </Badge>
                 </div>
               </div>
@@ -240,7 +236,7 @@ export function EssentialIndianStocks() {
                 </div>
                 <div className="flex justify-between">
                   <span>Market Cap:</span>
-                  <span className="text-foreground font-medium">{stock.marketCap}</span>
+                  <span className="text-foreground font-medium">{formatMarketCap(stock.marketCap)}</span>
                 </div>
               </div>
 
