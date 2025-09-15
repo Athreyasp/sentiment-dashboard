@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { RefreshCw, Search, TrendingUp, Activity, Calendar, ExternalLink } from 'lucide-react'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
-import { StockPredictionModal } from './StockPredictionModal'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export const IndianFinancialNewsPanel = () => {
@@ -252,15 +251,7 @@ export const IndianFinancialNewsPanel = () => {
         </CardContent>
       </Card>
 
-      {selectedNews && (
-        <StockPredictionModal
-          isOpen={!!selectedNews}
-          onClose={() => setSelectedNews(null)}
-          newsHeadline={selectedNews.headline}
-          sentiment={selectedNews.sentiment}
-          potentialStocks={selectedNews.ticker ? [selectedNews.ticker] : []}
-        />
-      )}
+      {/* Remove the old StockPredictionModal usage since it doesn't match the new interface */}
     </>
   )
 }

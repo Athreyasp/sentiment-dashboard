@@ -6,6 +6,7 @@ import { IndianFinancialNewsPanel } from '@/components/IndianFinancialNewsPanel'
 import { NewsTickerSummary } from '@/components/NewsTickerSummary'
 import { LiveMarketIndicator } from '@/components/LiveMarketIndicator'
 import { EssentialIndianStocks } from '@/components/EssentialIndianStocks'
+import { ComprehensiveIndianStocks } from '@/components/ComprehensiveIndianStocks'
 import { EnhancedNewsPanel } from '@/components/EnhancedNewsPanel'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
 
@@ -206,7 +207,10 @@ export default function Dashboard() {
         {/* Live Market Indicator */}
         <LiveMarketIndicator />
 
-        {/* Essential Indian Stocks - Main Focus */}
+        {/* Comprehensive Indian Stocks - Main Feature */}
+        <ComprehensiveIndianStocks />
+
+        {/* Essential Indian Stocks - Featured Picks */}
         <EssentialIndianStocks />
 
         {/* Enhanced News Panel */}
