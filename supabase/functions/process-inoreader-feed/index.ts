@@ -250,35 +250,114 @@ function parseInoreaderHtml(html: string) {
   return items
 }
 
+// Smart Indian stock symbol extraction
+function extractIndianStockSymbols(headline: string, content: string): string[] {
+  const text = (headline + ' ' + content).toLowerCase()
+  const symbols = []
+  
+  // Major Indian stocks mapping
+  const stockMap = {
+    'reliance': 'RELIANCE.NS',
+    'tcs': 'TCS.NS', 
+    'infosys': 'INFY.NS',
+    'hdfc bank': 'HDFCBANK.NS',
+    'hdfc': 'HDFC.NS',
+    'icici bank': 'ICICIBANK.NS',
+    'icici': 'ICICIBANK.NS',
+    'sbi': 'SBIN.NS',
+    'state bank': 'SBIN.NS',
+    'wipro': 'WIPRO.NS',
+    'bharti airtel': 'BHARTIARTL.NS',
+    'airtel': 'BHARTIARTL.NS',
+    'itc': 'ITC.NS',
+    'kotak mahindra': 'KOTAKBANK.NS',
+    'kotak': 'KOTAKBANK.NS',
+    'axis bank': 'AXISBANK.NS',
+    'axis': 'AXISBANK.NS',
+    'hul': 'HINDUNILVR.NS',
+    'hindustan unilever': 'HINDUNILVR.NS',
+    'maruti': 'MARUTI.NS',
+    'asian paints': 'ASIANPAINT.NS',
+    'bajaj finance': 'BAJFINANCE.NS',
+    'bajaj': 'BAJFINANCE.NS',
+    'titan': 'TITAN.NS',
+    'nestlé': 'NESTLEIND.NS',
+    'nestle': 'NESTLEIND.NS',
+    'ultratech cement': 'ULTRACEMCO.NS',
+    'ultratech': 'ULTRACEMCO.NS'
+  }
+  
+  // Check for company mentions
+  for (const [company, symbol] of Object.entries(stockMap)) {
+    if (text.includes(company)) {
+      symbols.push(symbol)
+    }
+  }
+  
+  // Extract direct NSE symbols (e.g., INFY.NS, TCS.NS)
+  const nsePattern = /([A-Z]{2,10})\.NS/gi
+  const matches = text.match(nsePattern)
+  if (matches) {
+    symbols.push(...matches)
+  }
+  
+  return [...new Set(symbols)] // Remove duplicates
+}
+
 async function analyzeWithOpenAI(headline: string, content: string) {
-  const prompt = `
-Analyze this Indian financial news for stock market prediction. Focus ONLY on Indian markets (NSE, BSE, Nifty 50, Sensex).
+  // First, try smart extraction as fallback
+  const extractedSymbols = extractIndianStockSymbols(headline, content)
+  const text = (headline + ' ' + content).toLowerCase()
+  
+  // Check if it's finance-related
+  const hasFinanceKeywords = text.match(/(stock|market|trading|earn|profit|loss|price|share|invest|fund|bank|nse|bse|nifty|sensex|financial|rupee|economy)/i)
+  const hasIndianKeywords = text.match(/(india|indian|nse|bse|mumbai|delhi|rupee|inr|tcs|infos|reliance|hdfc|sbi|rbi|sebi|nifty|sensex)/i)
+  
+  if (!hasFinanceKeywords) {
+    return {
+      isFinanceRelated: false,
+      isIndianMarket: false,
+      sentiment: 'neutral',
+      sentimentScore: 0,
+      prediction: 'STABLE',
+      confidenceScore: 0,
+      companiesMentioned: [],
+      stockSymbols: [],
+      targetPrice: 0,
+      timeframe: '1D',
+      keyFactors: []
+    }
+  }
+  
+  // Try OpenAI analysis with better error handling
+  try {
+    if (!openaiApiKey) {
+      throw new Error('OpenAI API key not available')
+    }
+
+    const prompt = `Analyze this Indian financial news for stock predictions:
 
 Headline: "${headline}"
 Content: "${content}"
 
-Return a JSON object with this exact structure:
+Extract Indian stock symbols and provide analysis. Return JSON:
 {
-  "isFinanceRelated": true/false (only true for Indian stocks, markets, Nifty, Sensex, RBI, Indian companies),
-  "isIndianMarket": true/false (true for Indian companies like TCS, Infosys, Reliance, HDFC, etc.),
   "sentiment": "positive"/"negative"/"neutral",
   "sentimentScore": number between -1 and 1,
-  "prediction": "UP"/"DOWN"/"STABLE",
+  "prediction": "UP"/"DOWN"/"STABLE", 
   "confidenceScore": number between 0 and 1,
-  "companiesMentioned": [array of Indian company names],
-  "stockSymbols": [array like "TCS.NS", "INFY.NS", "RELIANCE.NS"],
-  "targetPrice": number (predicted stock price movement %),
+  "companiesMentioned": [Indian company names],
+  "stockSymbols": [NSE symbols like "TCS.NS", "INFY.NS"],
+  "targetPrice": number (% change expected),
   "timeframe": "1D"/"1W"/"1M",
-  "keyFactors": [array of key factors affecting prediction]
+  "keyFactors": [key market factors]
 }
 
-Indian Stock Rules:
-- UP: Earnings beat, RBI rate cuts, FII buying, reforms, good results
-- DOWN: Rate hikes, FII selling, inflation, poor earnings, regulations
-- Only focus on NSE/BSE listed Indian companies
-`
+Focus only on NSE/BSE listed Indian companies.`
 
-  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+    
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -288,47 +367,65 @@ Indian Stock Rules:
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are an expert Indian stock market analyst. Always return valid JSON.' },
+          { role: 'system', content: 'You are an expert Indian stock analyst. Return only valid JSON.' },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 800,
-        temperature: 0.3
-      })
+        max_tokens: 600,
+        temperature: 0.2
+      }),
+      signal: controller.signal
     })
+    
+    clearTimeout(timeoutId)
+    
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
 
     const data = await response.json()
-    const text = data.choices?.[0]?.message?.content
-    
-    if (!text) {
-      throw new Error('No response from OpenAI')
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('No content in OpenAI response')
     }
     
-    // Extract JSON from response
-    let jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      // Try to find JSON in code blocks
-      jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/)
-      if (jsonMatch) {
-        jsonMatch = [jsonMatch[1]]
+    const text = data.choices[0].message.content
+    
+    // Extract JSON more reliably
+    let analysis = null
+    try {
+      // Try direct parse first
+      analysis = JSON.parse(text)
+    } catch {
+      // Try to extract from code blocks or find JSON pattern
+      const jsonMatches = text.match(/\{[\s\S]*\}/g)
+      if (jsonMatches) {
+        for (const match of jsonMatches) {
+          try {
+            analysis = JSON.parse(match)
+            break
+          } catch { continue }
+        }
       }
     }
     
-    if (!jsonMatch) {
-      throw new Error('No JSON found in OpenAI response')
+    if (!analysis) {
+      throw new Error('Failed to parse OpenAI JSON response')
     }
     
-    const analysis = JSON.parse(jsonMatch[0])
+    // Merge OpenAI results with extracted symbols
+    const allSymbols = [...new Set([
+      ...(Array.isArray(analysis.stockSymbols) ? analysis.stockSymbols : []),
+      ...extractedSymbols
+    ])]
     
-    // Validate and set defaults
     return {
-      isFinanceRelated: Boolean(analysis.isFinanceRelated),
-      isIndianMarket: Boolean(analysis.isIndianMarket),
+      isFinanceRelated: true,
+      isIndianMarket: Boolean(hasIndianKeywords),
       sentiment: analysis.sentiment || 'neutral',
       sentimentScore: Number(analysis.sentimentScore) || 0,
       prediction: analysis.prediction || 'STABLE',
       confidenceScore: Number(analysis.confidenceScore) || 0.5,
       companiesMentioned: Array.isArray(analysis.companiesMentioned) ? analysis.companiesMentioned : [],
-      stockSymbols: Array.isArray(analysis.stockSymbols) ? analysis.stockSymbols : [],
+      stockSymbols: allSymbols,
       targetPrice: Number(analysis.targetPrice) || 0,
       timeframe: analysis.timeframe || '1D',
       keyFactors: Array.isArray(analysis.keyFactors) ? analysis.keyFactors : []
@@ -337,23 +434,24 @@ Indian Stock Rules:
   } catch (error) {
     console.error('OpenAI analysis error:', error)
     
-    // Smart fallback based on keywords
-    const text = (headline + ' ' + content).toLowerCase()
-    const hasFinanceKeywords = text.match(/(stock|market|trading|earn|profit|loss|price|share|invest|fund|bank|nse|bse|nifty|sensex)/i)
-    const hasIndianKeywords = text.match(/(india|indian|nse|bse|mumbai|delhi|rupee|inr|tcs|infos|reliance|hdfc|sbi|rbi|sebi)/i)
+    // Enhanced fallback with smart analysis
+    const sentiment = text.match(/(positive|bullish|gain|profit|rise|up|boost|growth|increase)/i) ? 'positive' :
+                     text.match(/(negative|bearish|loss|fall|down|drop|decline|crash)/i) ? 'negative' : 'neutral'
+    
+    const prediction = sentiment === 'positive' ? 'UP' : sentiment === 'negative' ? 'DOWN' : 'STABLE'
     
     return {
       isFinanceRelated: Boolean(hasFinanceKeywords),
       isIndianMarket: Boolean(hasIndianKeywords),
-      sentiment: 'neutral',
-      sentimentScore: 0,
-      prediction: 'STABLE',
-      confidenceScore: 0.3,
+      sentiment,
+      sentimentScore: sentiment === 'positive' ? 0.3 : sentiment === 'negative' ? -0.3 : 0,
+      prediction,
+      confidenceScore: extractedSymbols.length > 0 ? 0.6 : 0.3,
       companiesMentioned: [],
-      stockSymbols: [],
+      stockSymbols: extractedSymbols,
       targetPrice: 0,
       timeframe: '1D',
-      keyFactors: ['Analysis unavailable']
+      keyFactors: ['Fallback analysis - OpenAI unavailable']
     }
   }
 }
