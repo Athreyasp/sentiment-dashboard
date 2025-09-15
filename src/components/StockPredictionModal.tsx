@@ -42,39 +42,45 @@ export function StockPredictionModal({ isOpen, onClose, stock, newsHeadline }: S
       const { data, error } = await supabase.functions.invoke('stock-analysis', {
         body: {
           symbol: `${stock.symbol}.NS`,
-          newsHeadline: newsHeadline || `${stock.name} market analysis and prediction`
+          news_headline: newsHeadline || `${stock.name} market analysis and prediction`,
+          sentiment: 'neutral'
         }
       })
 
       if (error) throw error
 
-      // Format the prediction data
+      console.log('Stock analysis response:', data)
+
+      // Handle the response from the Gemini-enhanced analysis
+      const responseData = data.data || data
+      
+      // Format the prediction data to match our interface
       const formattedPrediction: StockPrediction = {
         symbol: stock.symbol,
-        prediction: data.prediction || 'STABLE',
-        confidence: data.confidence || Math.round(Math.random() * 30 + 70),
-        target_price_change: data.target_price_change || (Math.random() - 0.5) * 4,
-        timeframe: data.timeframe || '1-3 days',
-        reasoning: data.reasoning || 'Analysis based on market sentiment and news impact',
-        risk_level: data.risk_level || 'MEDIUM',
-        key_factors: data.key_factors || ['Market sentiment', 'News impact', 'Technical indicators'],
-        recommendation: data.recommendation || 'HOLD',
+        prediction: responseData.predicted_change > 0 ? 'UP' : responseData.predicted_change < 0 ? 'DOWN' : 'STABLE',
+        confidence: Math.round(responseData.confidence || 75),
+        target_price_change: responseData.predicted_change || 0,
+        timeframe: '1-3 days',
+        reasoning: responseData.reasoning || 'AI analysis based on technical indicators and news sentiment',
+        risk_level: responseData.confidence > 80 ? 'LOW' : responseData.confidence > 65 ? 'MEDIUM' : 'HIGH',
+        key_factors: responseData.factors || ['Technical analysis', 'News sentiment', 'Market conditions'],
+        recommendation: responseData.recommendation || 'HOLD',
         current_price: stock.price,
-        predicted_price: stock.price * (1 + (data.target_price_change || 0) / 100),
-        news_impact: data.target_price_change || (Math.random() - 0.5) * 2,
-        technical_factors: [
-          'SMA5 below SMA20',
-          `RSI: ${Math.round(Math.random() * 40 + 30)} (Neutral)`,
-          'Volume: Above average'
+        predicted_price: responseData.predicted_price || stock.price,
+        news_impact: responseData.sentiment_impact || 0,
+        technical_factors: responseData.factors?.slice(0, 3) || [
+          `Technical: Price analysis`,
+          `RSI: Market momentum indicators`,
+          `Sentiment: News impact assessment`
         ],
-        rsi: Math.round(Math.random() * 40 + 30)
+        rsi: 50 // Default RSI if not provided
       }
 
       setPrediction(formattedPrediction)
       
       toast({
-        title: "🎯 Analysis Complete",
-        description: `AI prediction generated for ${stock.name}`,
+        title: "🎯 AI Analysis Complete",
+        description: `Gemini AI analyzed ${stock.name} with ${formattedPrediction.confidence}% confidence`,
       })
     } catch (err) {
       console.error('Prediction error:', err)
