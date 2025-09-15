@@ -99,13 +99,25 @@ export function useEnhancedNews() {
     fetchEnhancedNews({ includePredictions: true })
   }, [fetchEnhancedNews])
 
-  // Auto-refresh every 2 minutes with live Inoreader processing
+  // Auto-refresh every 2 minutes with live Inoreader processing + realtime updates
   useEffect(() => {
     const interval = setInterval(() => {
-      refreshNews() // This processes Inoreader feed first, then gets enhanced news
+      refreshNews()
     }, 2 * 60 * 1000)
 
-    return () => clearInterval(interval)
+    // Subscribe to realtime inserts on financial_news (Indian market)
+    const channel = supabase
+      .channel('financial-news-updates')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'financial_news', filter: 'is_indian_market=eq.true' }, () => {
+        // Fetch latest immediately when new news arrives
+        refreshNews()
+      })
+      .subscribe()
+
+    return () => {
+      clearInterval(interval)
+      supabase.removeChannel(channel)
+    }
   }, [refreshNews])
 
   return {

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
-import { TrendingUp, TrendingDown, Activity, Zap } from 'lucide-react'
+import { TrendingUp, TrendingDown, Activity, Zap, Clock } from 'lucide-react'
 import { useEnhancedNews } from '@/hooks/useEnhancedNews'
 
 export function LiveMarketIndicator() {
-  const { marketSummary, news, loading } = useEnhancedNews()
+  const { marketSummary, news, loading, generatedAt } = useEnhancedNews()
   const [isLive, setIsLive] = useState(true)
 
   useEffect(() => {
@@ -102,6 +102,13 @@ export function LiveMarketIndicator() {
                 </Badge>
               ))}
             </div>
+          </div>
+        )}
+
+        {generatedAt && (
+          <div className="mt-3 text-xs text-muted-foreground flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            <span>Updated {new Date(generatedAt).toLocaleTimeString()}</span>
           </div>
         )}
       </CardContent>

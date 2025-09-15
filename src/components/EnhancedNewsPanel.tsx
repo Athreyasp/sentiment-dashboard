@@ -56,7 +56,7 @@ export function EnhancedNewsPanel() {
   const [marketSummary, setMarketSummary] = useState<MarketSummary | null>(null)
   const [loading, setLoading] = useState(false)
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null)
-
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null)
   const fetchNewsWithPredictions = async () => {
     setLoading(true)
     try {
@@ -75,6 +75,7 @@ export function EnhancedNewsPanel() {
       if (data?.success) {
         setNews(data.data.news || [])
         setMarketSummary(data.data.market_summary)
+        setLastUpdated(data.data.generated_at || new Date().toISOString())
       }
     } catch (error) {
       console.error('Error fetching enhanced news:', error)
@@ -85,6 +86,18 @@ export function EnhancedNewsPanel() {
 
   useEffect(() => {
     fetchNewsWithPredictions()
+
+    // Realtime: refresh when new Indian market news is inserted
+    const channel = supabase
+      .channel('enhanced-news-panel-updates')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'financial_news', filter: 'is_indian_market=eq.true' }, () => {
+        fetchNewsWithPredictions()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   const getPredictionColor = (prediction: string) => {
@@ -170,6 +183,12 @@ export function EnhancedNewsPanel() {
         <div>
           <h2 className="text-2xl font-semibold text-foreground">Live Market News</h2>
           <p className="text-muted-foreground">Real-time Indian market news with AI predictions</p>
+          {lastUpdated && (
+            <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
+              <Clock className="w-3 h-3" />
+              <span>Updated {new Date(lastUpdated).toLocaleTimeString()}</span>
+            </div>
+          )}
         </div>
         <Button 
           onClick={fetchNewsWithPredictions}
