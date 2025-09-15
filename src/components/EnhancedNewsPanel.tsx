@@ -25,6 +25,9 @@ interface StockPrediction {
   risk_level: 'LOW' | 'MEDIUM' | 'HIGH'
   key_factors: string[]
   recommendation: 'BUY' | 'SELL' | 'HOLD'
+  current_price?: number
+  price_change?: number
+  price_change_percent?: number
 }
 
 interface NewsItem {
@@ -90,7 +93,8 @@ export function EnhancedNewsPanel() {
     // Realtime: refresh when new Indian market news is inserted
     const channel = supabase
       .channel('enhanced-news-panel-updates')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'financial_news', filter: 'is_indian_market=eq.true' }, () => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'financial_news', filter: 'is_indian_market=eq.true' }, (payload) => {
+        console.log('New Indian financial news received:', payload.new?.headline)
         fetchNewsWithPredictions()
       })
       .subscribe()
@@ -273,14 +277,21 @@ export function EnhancedNewsPanel() {
                             {pred.prediction}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Target className="w-3 h-3 text-muted-foreground" />
-                          <span className={`text-xs font-medium ${
-                            pred.target_price_change > 0 ? 'text-green-600' : 
-                            pred.target_price_change < 0 ? 'text-red-600' : 'text-gray-600'
-                          }`}>
-                            {pred.target_price_change > 0 ? '+' : ''}{pred.target_price_change.toFixed(1)}%
-                          </span>
+                        <div className="flex items-center gap-2">
+                          {pred.current_price && (
+                            <span className="text-xs text-muted-foreground">
+                              ₹{pred.current_price.toFixed(0)}
+                            </span>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <Target className="w-3 h-3 text-muted-foreground" />
+                            <span className={`text-xs font-medium ${
+                              pred.target_price_change > 0 ? 'text-green-600' : 
+                              pred.target_price_change < 0 ? 'text-red-600' : 'text-gray-600'
+                            }`}>
+                              {pred.target_price_change > 0 ? '+' : ''}{pred.target_price_change.toFixed(1)}%
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -347,6 +358,23 @@ export function EnhancedNewsPanel() {
                           </div>
                           
                           <div className="space-y-2 text-sm">
+                            {pred.current_price && (
+                              <div className="flex justify-between">
+                                <span>Current Price:</span>
+                                <span className="font-medium">₹{pred.current_price.toFixed(2)}</span>
+                              </div>
+                            )}
+                            {pred.price_change !== undefined && (
+                              <div className="flex justify-between">
+                                <span>Today's Change:</span>
+                                <span className={`font-medium ${
+                                  pred.price_change > 0 ? 'text-green-600' : 
+                                  pred.price_change < 0 ? 'text-red-600' : 'text-gray-600'
+                                }`}>
+                                  {pred.price_change > 0 ? '+' : ''}₹{pred.price_change.toFixed(2)} ({pred.price_change_percent?.toFixed(2)}%)
+                                </span>
+                              </div>
+                            )}
                             <div className="flex justify-between">
                               <span>Target Change:</span>
                               <span className={`font-medium ${

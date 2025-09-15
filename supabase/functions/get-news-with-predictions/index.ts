@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
+const geminiApiKey = Deno.env.get('GEMINI_API_KEY')!
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -127,44 +127,48 @@ serve(async (req) => {
   }
 })
 
-async function generateStockPredictions(newsItem: any) {
-  if (!newsItem.stock_symbols || newsItem.stock_symbols.length === 0) {
-    return []
-  }
-
-  const predictions = []
-  
-  // Generate predictions for each mentioned stock
-  for (const symbol of newsItem.stock_symbols.slice(0, 3)) { // Limit to 3 stocks
-    try {
-      console.log(`Generating prediction for ${symbol} based on: ${newsItem.headline}`)
-      
-      const prediction = await generateAIStockPrediction(
-        symbol,
-        newsItem.headline,
-        newsItem.content || '',
-        newsItem.sentiment
-      )
-      
-      if (prediction) {
-        predictions.push(prediction)
-      }
-    } catch (error) {
-      console.error(`Error predicting ${symbol}:`, error)
+// Fetch current stock price from Yahoo Finance
+async function getStockPrice(symbol: string): Promise<{price: number, change: number, changePercent: number} | null> {
+  try {
+    const response = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`)
+    if (!response.ok) {
+      return null
     }
+    
+    const data = await response.json()
+    const result = data.chart?.result?.[0]
+    
+    if (!result) {
+      return null
+    }
+    
+    const meta = result.meta
+    const currentPrice = meta.regularMarketPrice || meta.previousClose
+    const previousClose = meta.previousClose
+    const change = currentPrice - previousClose
+    const changePercent = (change / previousClose) * 100
+    
+    return {
+      price: currentPrice,
+      change: change,
+      changePercent: changePercent
+    }
+  } catch (error) {
+    console.error(`Error fetching price for ${symbol}:`, error)
+    return null
   }
-
-  return predictions
 }
 
-async function generateAIStockPrediction(symbol: string, headline: string, content: string, sentiment: string) {
+async function generateGeminiStockPrediction(symbol: string, headline: string, content: string, sentiment: string, currentPrice?: number) {
   try {
-    if (!openaiApiKey) {
-      return generateFallbackPrediction(symbol, headline, sentiment)
+    if (!geminiApiKey) {
+      return generateFallbackPrediction(symbol, headline, sentiment, currentPrice)
     }
 
+    const priceInfo = currentPrice ? `Current Price: ₹${currentPrice.toFixed(2)}` : 'Current Price: Not available'
     const prompt = `Indian stock analysis for ${symbol}:
 
+${priceInfo}
 News: "${headline}"
 Content: "${content.substring(0, 500)}"
 Sentiment: ${sentiment}
@@ -187,20 +191,18 @@ Base on Indian market dynamics, RBI policies, FII/DII flows, sector trends.`
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 8000)
     
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'Expert Indian stock analyst. Return only JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 400,
-        temperature: 0.1
+        contents: [{
+          parts: [{text: prompt}]
+        }],
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
       }),
       signal: controller.signal
     })
@@ -208,22 +210,22 @@ Base on Indian market dynamics, RBI policies, FII/DII flows, sector trends.`
     clearTimeout(timeoutId)
 
     if (!response.ok) {
-      throw new Error(`OpenAI API ${response.status}`)
+      throw new Error(`Gemini API ${response.status}`)
     }
 
     const data = await response.json()
-    const text = data.choices?.[0]?.message?.content
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text
 
     if (!text) {
-      throw new Error('No OpenAI response content')
+      throw new Error('No Gemini response content')
     }
 
-    // Parse JSON more reliably
+    // Parse JSON response
     let prediction = null
     try {
       prediction = JSON.parse(text)
     } catch {
-      // Extract JSON pattern
+      // Extract JSON pattern if direct parse fails
       const jsonMatches = text.match(/\{[\s\S]*?\}/g)
       if (jsonMatches) {
         for (const match of jsonMatches) {
@@ -236,7 +238,7 @@ Base on Indian market dynamics, RBI policies, FII/DII flows, sector trends.`
     }
 
     if (!prediction) {
-      return generateFallbackPrediction(symbol, headline, sentiment)
+      return generateFallbackPrediction(symbol, headline, sentiment, currentPrice)
     }
     
     return {
@@ -245,20 +247,21 @@ Base on Indian market dynamics, RBI policies, FII/DII flows, sector trends.`
       confidence: Math.min(100, Math.max(10, prediction.confidence || 50)),
       target_price_change: Math.min(20, Math.max(-20, prediction.target_price_change || 0)),
       timeframe: prediction.timeframe || '1D',
-      reasoning: (prediction.reasoning || 'AI analysis based on news sentiment').substring(0, 200),
+      reasoning: (prediction.reasoning || 'Gemini analysis based on news sentiment').substring(0, 200),
       risk_level: prediction.risk_level || 'MEDIUM',
       key_factors: Array.isArray(prediction.key_factors) ? 
         prediction.key_factors.slice(0, 4) : ['Market sentiment', 'News impact'],
-      recommendation: prediction.recommendation || 'HOLD'
+      recommendation: prediction.recommendation || 'HOLD',
+      current_price: currentPrice || null
     }
 
   } catch (error) {
-    console.error(`AI prediction error for ${symbol}:`, error)
-    return generateFallbackPrediction(symbol, headline, sentiment)
+    console.error(`Gemini prediction error for ${symbol}:`, error)
+    return generateFallbackPrediction(symbol, headline, sentiment, currentPrice)
   }
 }
 
-function generateFallbackPrediction(symbol: string, headline: string, sentiment: string) {
+function generateFallbackPrediction(symbol: string, headline: string, sentiment: string, currentPrice?: number) {
   const text = headline.toLowerCase()
   
   // Smart fallback analysis
@@ -303,13 +306,52 @@ function generateFallbackPrediction(symbol: string, headline: string, sentiment:
       `${sector} sector impact`,
       'Market volatility'
     ],
-    recommendation: prediction === 'UP' ? 'BUY' : prediction === 'DOWN' ? 'SELL' : 'HOLD'
+    recommendation: prediction === 'UP' ? 'BUY' : prediction === 'DOWN' ? 'SELL' : 'HOLD',
+    current_price: currentPrice || null
   }
 }
 
+async function generateStockPredictions(newsItem: any) {
+  if (!newsItem.stock_symbols || newsItem.stock_symbols.length === 0) {
+    return []
+  }
+
+  const predictions = []
+  
+  // Generate predictions for each mentioned stock
+  for (const symbol of newsItem.stock_symbols.slice(0, 3)) { // Limit to 3 stocks
+    try {
+      console.log(`Generating prediction for ${symbol} based on: ${newsItem.headline}`)
+      
+      // Get current stock price from Yahoo Finance
+      const priceData = await getStockPrice(symbol)
+      
+      const prediction = await generateGeminiStockPrediction(
+        symbol,
+        newsItem.headline,
+        newsItem.content || '',
+        newsItem.sentiment,
+        priceData?.price
+      )
+      
+      if (prediction) {
+        // Add price change info if available
+        if (priceData) {
+          prediction.price_change = priceData.change
+          prediction.price_change_percent = priceData.changePercent
+        }
+        predictions.push(prediction)
+      }
+    } catch (error) {
+      console.error(`Error predicting ${symbol}:`, error)
+    }
+  }
+
+  return predictions
+}
+
 async function generateMarketSummary(newsItems: any[]) {
-  const prompt = `
-Analyze these Indian market news headlines and provide a market summary:
+  const prompt = `Analyze these Indian market news headlines and provide a market summary:
 
 ${newsItems.map(item => `- ${item.headline} (Sentiment: ${item.sentiment})`).join('\n')}
 
@@ -325,48 +367,79 @@ Provide summary in JSON format:
   },
   "nifty_prediction": "UP"/"DOWN"/"STABLE",
   "confidence": number (0-100)
-}
-`
+}`
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    if (!geminiApiKey) {
+      return generateFallbackMarketSummary(newsItems)
+    }
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'You are an expert Indian stock market analyst. Always return valid JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 400,
-        temperature: 0.3
+        contents: [{
+          parts: [{text: prompt}]
+        }],
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
       })
     })
 
     const data = await response.json()
-    const text = data.choices?.[0]?.message?.content
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text
 
     if (!text) {
-      return null
+      return generateFallbackMarketSummary(newsItems)
     }
 
-    let jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      jsonMatch = text.match(/```json\s*([\s\S]*?)\s*```/)
-      if (jsonMatch) jsonMatch = [jsonMatch[1]]
+    try {
+      return JSON.parse(text)
+    } catch {
+      // Try to extract JSON pattern
+      const jsonMatches = text.match(/\{[\s\S]*\}/g)
+      if (jsonMatches) {
+        for (const match of jsonMatches) {
+          try {
+            return JSON.parse(match)
+          } catch { continue }
+        }
+      }
     }
-
-    if (!jsonMatch) {
-      return null
-    }
-
-    return JSON.parse(jsonMatch[0])
+    
+    return generateFallbackMarketSummary(newsItems)
 
   } catch (error) {
     console.error('Market summary error:', error)
-    return null
+    return generateFallbackMarketSummary(newsItems)
+  }
+}
+
+function generateFallbackMarketSummary(newsItems: any[]) {
+  const positiveCount = newsItems.filter(item => item.sentiment === 'positive').length
+  const negativeCount = newsItems.filter(item => item.sentiment === 'negative').length
+  const totalCount = newsItems.length
+  
+  let overall_sentiment = 'NEUTRAL'
+  if (positiveCount > negativeCount * 1.5) overall_sentiment = 'BULLISH'
+  else if (negativeCount > positiveCount * 1.5) overall_sentiment = 'BEARISH'
+  
+  const nifty_prediction = overall_sentiment === 'BULLISH' ? 'UP' : 
+                          overall_sentiment === 'BEARISH' ? 'DOWN' : 'STABLE'
+  
+  return {
+    overall_sentiment,
+    market_outlook: `Market showing ${overall_sentiment.toLowerCase()} sentiment based on ${totalCount} recent news items`,
+    key_themes: ['Market Sentiment', 'Corporate Earnings', 'Economic Indicators'],
+    sector_impact: {
+      'IT': overall_sentiment === 'BULLISH' ? 'POSITIVE' : 'NEUTRAL',
+      'Banking': overall_sentiment === 'BEARISH' ? 'NEGATIVE' : 'NEUTRAL', 
+      'Auto': 'NEUTRAL'
+    },
+    nifty_prediction,
+    confidence: Math.min(80, Math.max(30, (Math.abs(positiveCount - negativeCount) / totalCount) * 100))
   }
 }

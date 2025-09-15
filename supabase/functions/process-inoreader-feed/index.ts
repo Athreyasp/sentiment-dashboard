@@ -9,7 +9,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!
+const geminiApiKey = Deno.env.get('GEMINI_API_KEY')!
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -50,8 +50,8 @@ serve(async (req) => {
           continue
         }
         
-        // Analyze with OpenAI for stock prediction
-        const analysis = await analyzeWithOpenAI(item.headline, item.content)
+        // Analyze with Gemini for stock prediction
+        const analysis = await analyzeWithGemini(item.headline, item.content)
         
         if (analysis.isFinanceRelated) {
           // Insert into database
@@ -258,10 +258,13 @@ function extractIndianStockSymbols(headline: string, content: string): string[] 
   // Major Indian stocks mapping
   const stockMap = {
     'reliance': 'RELIANCE.NS',
+    'ril': 'RELIANCE.NS',
     'tcs': 'TCS.NS', 
+    'tata consultancy': 'TCS.NS',
     'infosys': 'INFY.NS',
+    'infy': 'INFY.NS',
     'hdfc bank': 'HDFCBANK.NS',
-    'hdfc': 'HDFC.NS',
+    'hdfc': 'HDFCBANK.NS',
     'icici bank': 'ICICIBANK.NS',
     'icici': 'ICICIBANK.NS',
     'sbi': 'SBIN.NS',
@@ -284,7 +287,12 @@ function extractIndianStockSymbols(headline: string, content: string): string[] 
     'nestlé': 'NESTLEIND.NS',
     'nestle': 'NESTLEIND.NS',
     'ultratech cement': 'ULTRACEMCO.NS',
-    'ultratech': 'ULTRACEMCO.NS'
+    'ultratech': 'ULTRACEMCO.NS',
+    'larsen & toubro': 'LT.NS',
+    'l&t': 'LT.NS',
+    'mahindra': 'M&M.NS',
+    'adani enterprises': 'ADANIENT.NS',
+    'adani': 'ADANIENT.NS'
   }
   
   // Check for company mentions
@@ -304,7 +312,7 @@ function extractIndianStockSymbols(headline: string, content: string): string[] 
   return [...new Set(symbols)] // Remove duplicates
 }
 
-async function analyzeWithOpenAI(headline: string, content: string) {
+async function analyzeWithGemini(headline: string, content: string) {
   // First, try smart extraction as fallback
   const extractedSymbols = extractIndianStockSymbols(headline, content)
   const text = (headline + ' ' + content).toLowerCase()
@@ -329,18 +337,17 @@ async function analyzeWithOpenAI(headline: string, content: string) {
     }
   }
   
-  // Try OpenAI analysis with better error handling
+  // Try Gemini analysis with error handling
   try {
-    if (!openaiApiKey) {
-      throw new Error('OpenAI API key not available')
+    if (!geminiApiKey) {
+      throw new Error('Gemini API key not available')
     }
 
-    const prompt = `Analyze this Indian financial news for stock predictions:
+    const prompt = `Analyze this Indian financial news for stock predictions. Return JSON only:
 
 Headline: "${headline}"
 Content: "${content}"
 
-Extract Indian stock symbols and provide analysis. Return JSON:
 {
   "sentiment": "positive"/"negative"/"neutral",
   "sentimentScore": number between -1 and 1,
@@ -358,20 +365,18 @@ Focus only on NSE/BSE listed Indian companies.`
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
     
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'You are an expert Indian stock analyst. Return only valid JSON.' },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 600,
-        temperature: 0.2
+        contents: [{
+          parts: [{text: prompt}]
+        }],
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
       }),
       signal: controller.signal
     })
@@ -379,23 +384,22 @@ Focus only on NSE/BSE listed Indian companies.`
     clearTimeout(timeoutId)
     
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`)
+      throw new Error(`Gemini API error: ${response.status}`)
     }
 
     const data = await response.json()
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('No content in OpenAI response')
+    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      throw new Error('No content in Gemini response')
     }
     
-    const text = data.choices[0].message.content
+    const text = data.candidates[0].content.parts[0].text
     
-    // Extract JSON more reliably
+    // Parse JSON response
     let analysis = null
     try {
-      // Try direct parse first
       analysis = JSON.parse(text)
     } catch {
-      // Try to extract from code blocks or find JSON pattern
+      // Try to extract JSON pattern if direct parse fails
       const jsonMatches = text.match(/\{[\s\S]*\}/g)
       if (jsonMatches) {
         for (const match of jsonMatches) {
@@ -408,10 +412,10 @@ Focus only on NSE/BSE listed Indian companies.`
     }
     
     if (!analysis) {
-      throw new Error('Failed to parse OpenAI JSON response')
+      throw new Error('Failed to parse Gemini JSON response')
     }
     
-    // Merge OpenAI results with extracted symbols
+    // Merge Gemini results with extracted symbols
     const allSymbols = [...new Set([
       ...(Array.isArray(analysis.stockSymbols) ? analysis.stockSymbols : []),
       ...extractedSymbols
@@ -432,7 +436,7 @@ Focus only on NSE/BSE listed Indian companies.`
     }
     
   } catch (error) {
-    console.error('OpenAI analysis error:', error)
+    console.error('Gemini analysis error:', error)
     
     // Enhanced fallback with smart analysis
     const sentiment = text.match(/(positive|bullish|gain|profit|rise|up|boost|growth|increase)/i) ? 'positive' :
@@ -451,7 +455,7 @@ Focus only on NSE/BSE listed Indian companies.`
       stockSymbols: extractedSymbols,
       targetPrice: 0,
       timeframe: '1D',
-      keyFactors: ['Fallback analysis - OpenAI unavailable']
+      keyFactors: ['Fallback analysis - Gemini unavailable']
     }
   }
 }

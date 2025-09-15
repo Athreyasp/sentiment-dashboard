@@ -11,6 +11,9 @@ interface StockPrediction {
   risk_level: 'LOW' | 'MEDIUM' | 'HIGH'
   key_factors: string[]
   recommendation: 'BUY' | 'SELL' | 'HOLD'
+  current_price?: number
+  price_change?: number
+  price_change_percent?: number
 }
 
 interface NewsItem {
