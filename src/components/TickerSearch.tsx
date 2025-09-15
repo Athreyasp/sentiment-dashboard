@@ -25,16 +25,16 @@ interface TickerSearchProps {
 }
 
 const popularTickers = [
-  { symbol: 'AAPL', name: 'Apple Inc.' },
-  { symbol: 'TSLA', name: 'Tesla Inc.' },
-  { symbol: 'MSFT', name: 'Microsoft Corporation' },
-  { symbol: 'GOOGL', name: 'Alphabet Inc.' },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.' },
-  { symbol: 'NVDA', name: 'NVIDIA Corporation' },
-  { symbol: 'META', name: 'Meta Platforms Inc.' },
-  { symbol: 'NFLX', name: 'Netflix Inc.' },
-  { symbol: 'UBER', name: 'Uber Technologies Inc.' },
-  { symbol: 'SPOT', name: 'Spotify Technology SA' },
+  { symbol: 'RELIANCE.NS', name: 'Reliance Industries' },
+  { symbol: 'TCS.NS', name: 'Tata Consultancy Services' },
+  { symbol: 'HDFCBANK.NS', name: 'HDFC Bank' },
+  { symbol: 'INFY.NS', name: 'Infosys' },
+  { symbol: 'HINDUNILVR.NS', name: 'Hindustan Unilever' },
+  { symbol: 'ICICIBANK.NS', name: 'ICICI Bank' },
+  { symbol: 'BHARTIARTL.NS', name: 'Bharti Airtel' },
+  { symbol: 'LT.NS', name: 'Larsen & Toubro' },
+  { symbol: 'SBIN.NS', name: 'State Bank of India' },
+  { symbol: 'WIPRO.NS', name: 'Wipro' },
 ]
 
 export function TickerSearch({ onTickerSelect, currentTicker, isLoading }: TickerSearchProps) {
@@ -71,7 +71,7 @@ export function TickerSearch({ onTickerSelect, currentTicker, isLoading }: Ticke
                   <span className="font-mono font-semibold text-sm sm:text-base">{currentTicker}</span>
                 ) : (
                   <span className="text-slate-500 text-xs sm:text-sm">
-                    {isMobile ? 'Search ticker...' : 'Search ticker (e.g., AAPL, TSLA)...'}
+                    {isMobile ? 'Search Indian stocks...' : 'Search Indian stocks (e.g., RELIANCE.NS, TCS.NS)...'}
                   </span>
                 )}
               </span>
@@ -94,11 +94,11 @@ export function TickerSearch({ onTickerSelect, currentTicker, isLoading }: Ticke
                     No ticker found for "{searchValue}"
                   </p>
                   <p className="text-xs text-slate-400 dark:text-slate-500">
-                    Try searching for popular stocks like AAPL, TSLA, or MSFT
+                    Try searching for Indian stocks like RELIANCE.NS, TCS.NS, or HDFCBANK.NS
                   </p>
                 </div>
               </CommandEmpty>
-              <CommandGroup heading="Popular Tickers">
+              <CommandGroup heading="Popular Indian Stocks">
                 {filteredTickers.map((ticker) => (
                   <CommandItem
                     key={ticker.symbol}

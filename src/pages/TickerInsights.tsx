@@ -12,7 +12,7 @@ import { TradingStrategyBuilder } from '@/components/TradingStrategyBuilder'
 import { AdvancedStockTable } from '@/components/AdvancedStockTable'
 
 export default function TickerInsights() {
-  const [selectedTicker, setSelectedTicker] = useState('AAPL')
+  const [selectedTicker, setSelectedTicker] = useState('RELIANCE.NS')
   const { data, loading, error, fetchTickerData } = useTickerData()
   const isMobile = useIsMobile()
 
@@ -50,10 +50,18 @@ export default function TickerInsights() {
     }
   }
 
-  const formatPrice = (price: number) => `$${price.toFixed(2)}`
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(price)
+  }
+  
   const formatChange = (change: number, changePercent: number) => {
     const sign = change >= 0 ? '+' : ''
-    return `${sign}${changePercent.toFixed(2)}% (${sign}$${change.toFixed(2)})`
+    return `${sign}${changePercent.toFixed(2)}% (${sign}₹${change.toFixed(2)})`
   }
 
   if (error) {
@@ -91,10 +99,10 @@ export default function TickerInsights() {
             </div>
             <div>
               <h1 className="text-2xl font-bold font-pixel gradient-text">
-                TICKER INSIGHTS
+                INDIAN STOCK INSIGHTS
               </h1>
               <p className="text-muted-foreground font-space">
-                AI-powered deep dive into individual stock sentiment
+                AI-powered analysis of Indian stock sentiment with live Yahoo Finance data
               </p>
             </div>
           </div>
@@ -244,8 +252,37 @@ export default function TickerInsights() {
           {/* Trading Strategy Builder */}
           <TradingStrategyBuilder />
 
-          {/* Advanced Stock Data */}
-          <AdvancedStockTable onStockSelect={(stock) => setSelectedTicker(stock.symbol)} />
+          {/* Indian Stock Table instead of AdvancedStockTable */}
+          <Card className="pixel-card shadow-xl">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-3 text-2xl font-pixel">
+                <div className="p-2 bg-gradient-to-r from-pixel-green/20 to-pixel-cyan/20 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-pixel-green" />
+                </div>
+                <span className="gradient-text">OTHER INDIAN STOCKS</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {['TCS.NS', 'HDFCBANK.NS', 'INFY.NS', 'ICICIBANK.NS', 'BHARTIARTL.NS', 'LT.NS'].map((stock) => (
+                  <Card 
+                    key={stock}
+                    className="p-4 border hover:border-pixel-green/30 cursor-pointer transition-all duration-200 hover:bg-pixel-green/5"
+                    onClick={() => setSelectedTicker(stock)}
+                  >
+                    <div className="text-center">
+                      <div className="font-mono font-bold text-lg text-pixel-green mb-1">
+                        {stock.replace('.NS', '')}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Click to analyze
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </>
       ) : (
         <Card className="pixel-card shadow-xl">

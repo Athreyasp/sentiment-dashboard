@@ -42,28 +42,60 @@ export function useTickerData(): UseTickerDataReturn {
     setError(null)
 
     try {
-      // For now, we'll use mock data since the backend API isn't implemented yet
-      // In a real implementation, this would be: 
-      // const response = await fetch(`/api/ticker/${ticker}`)
-      // const result = await response.json()
+      // Fetch real Yahoo Finance data for Indian stocks
+      const yahooSymbol = ticker.endsWith('.NS') ? ticker : `${ticker}.NS`
+      
+      const response = await fetch(
+        `https://query1.finance.yahoo.com/v8/finance/chart/${yahooSymbol}?interval=1d&range=7d&includePrePost=false`,
+        {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        }
+      )
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data for ${ticker}`)
+      }
 
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const yahooData = await response.json()
+      const result = yahooData.chart?.result?.[0]
+      
+      if (!result) {
+        throw new Error('No data available for this stock')
+      }
 
-      // Mock data generator based on ticker
+      const meta = result.meta
+      const timestamps = result.timestamp || []
+      const quotes = result.indicators?.quote?.[0] || {}
+      const closes = quotes.close || []
+
+      const currentPrice = meta.regularMarketPrice || meta.previousClose || 0
+      const previousClose = meta.previousClose || 0
+      const change = currentPrice - previousClose
+      const changePercent = previousClose > 0 ? (change / previousClose) * 100 : 0
+
+      // Generate trend data from historical prices
+      const trendData = timestamps.slice(-7).map((timestamp: number, index: number) => ({
+        date: new Date(timestamp * 1000).toISOString().split('T')[0],
+        sentiment: Math.random() * 100, // Mock sentiment data
+        price: closes[closes.length - 7 + index] || currentPrice
+      }))
+
       const mockData: TickerData = {
-        ticker: ticker,
-        company: getCompanyName(ticker),
-        current_sentiment: Math.random() * 100,
-        price: Math.random() * 500 + 50,
-        change: (Math.random() - 0.5) * 20,
-        changePercent: (Math.random() - 0.5) * 10,
-        trend: generateTrendData(),
-        news: generateNewsData(ticker)
+        ticker: ticker.replace('.NS', ''),
+        company: getIndianCompanyName(ticker),
+        current_sentiment: Math.random() * 100, // Mock sentiment
+        price: currentPrice,
+        change: change,
+        changePercent: changePercent,
+        trend: trendData,
+        news: generateIndianNewsData(ticker)
       }
 
       setData(mockData)
     } catch (err) {
+      console.error('Error fetching ticker data:', err)
       setError(err instanceof Error ? err.message : 'Failed to fetch ticker data')
     } finally {
       setLoading(false)
@@ -73,44 +105,36 @@ export function useTickerData(): UseTickerDataReturn {
   return { data, loading, error, fetchTickerData }
 }
 
-function getCompanyName(ticker: string): string {
+function getIndianCompanyName(ticker: string): string {
+  const cleanTicker = ticker.replace('.NS', '').toUpperCase()
   const companyMap: Record<string, string> = {
-    'AAPL': 'Apple Inc.',
-    'TSLA': 'Tesla Inc.',
-    'MSFT': 'Microsoft Corporation',
-    'GOOGL': 'Alphabet Inc.',
-    'AMZN': 'Amazon.com Inc.',
-    'NVDA': 'NVIDIA Corporation',
-    'META': 'Meta Platforms Inc.',
-    'NFLX': 'Netflix Inc.',
-    'UBER': 'Uber Technologies Inc.',
-    'SPOT': 'Spotify Technology SA',
+    'RELIANCE': 'Reliance Industries Limited',
+    'TCS': 'Tata Consultancy Services',
+    'HDFCBANK': 'HDFC Bank Limited',
+    'INFY': 'Infosys Limited',
+    'HINDUNILVR': 'Hindustan Unilever Limited',
+    'ICICIBANK': 'ICICI Bank Limited',
+    'BHARTIARTL': 'Bharti Airtel Limited',
+    'LT': 'Larsen & Toubro Limited',
+    'SBIN': 'State Bank of India',
+    'WIPRO': 'Wipro Limited',
+    'MARUTI': 'Maruti Suzuki India Limited',
+    'KOTAKBANK': 'Kotak Mahindra Bank Limited',
+    'ASIANPAINT': 'Asian Paints Limited',
+    'BAJFINANCE': 'Bajaj Finance Limited',
+    'ADANIPORTS': 'Adani Ports and SEZ Limited'
   }
-  return companyMap[ticker] || `${ticker} Corp.`
+  return companyMap[cleanTicker] || `${cleanTicker} Limited`
 }
 
-function generateTrendData() {
-  const data = []
-  const now = new Date()
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(now)
-    date.setDate(date.getDate() - i)
-    data.push({
-      date: date.toISOString().split('T')[0],
-      sentiment: Math.random() * 100,
-      price: Math.random() * 500 + 50
-    })
-  }
-  return data
-}
-
-function generateNewsData(ticker: string) {
+function generateIndianNewsData(ticker: string) {
   const sentiments = ['positive', 'negative', 'neutral']
-  const sources = ['Reuters', 'Bloomberg', 'CNBC', 'MarketWatch', 'Yahoo Finance']
+  const sources = ['Economic Times', 'Moneycontrol', 'Business Standard', 'Livemint', 'CNBC TV18']
   const times = ['1h ago', '2h ago', '4h ago', '6h ago', '1d ago']
+  const cleanTicker = ticker.replace('.NS', '').toUpperCase()
   
-  return Array.from({ length: 3 }, (_, i) => ({
-    headline: `${getCompanyName(ticker)} ${getRandomHeadline()}`,
+  return Array.from({ length: 5 }, (_, i) => ({
+    headline: `${getIndianCompanyName(ticker)} ${getRandomIndianHeadline()}`,
     sentiment: sentiments[Math.floor(Math.random() * sentiments.length)],
     source: sources[Math.floor(Math.random() * sources.length)],
     time: times[Math.floor(Math.random() * times.length)],
@@ -118,14 +142,18 @@ function generateNewsData(ticker: string) {
   }))
 }
 
-function getRandomHeadline(): string {
+function getRandomIndianHeadline(): string {
   const headlines = [
-    'announces breakthrough in AI technology',
-    'quarterly earnings exceed analyst expectations',
-    'faces regulatory concerns in European markets',
-    'launches new product line with strong preorders',
-    'reports record revenue for the quarter',
-    'stock price surges on positive outlook'
+    'reports strong quarterly results',
+    'announces major expansion plans',
+    'faces regulatory challenges in new sector',
+    'launches innovative product in Indian market',
+    'stock surges on positive analyst upgrade',
+    'declares dividend for shareholders',
+    'enters strategic partnership agreement',
+    'posts record revenue growth',
+    'plans to increase manufacturing capacity',
+    'receives major government contract'
   ]
   return headlines[Math.floor(Math.random() * headlines.length)]
 }
