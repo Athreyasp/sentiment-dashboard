@@ -115,98 +115,106 @@ export function StockPredictionModal({ isOpen, onClose, stock, newsHeadline }: S
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background via-background to-muted/20">
-        <DialogHeader className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-gradient-to-r from-pixel-green/20 to-pixel-cyan/20 rounded-xl">
-                <Brain className="w-8 h-8 text-pixel-green" />
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold font-pixel gradient-text">
-                  AI STOCK PREDICTION ANALYSIS
-                </h2>
-                <p className="text-muted-foreground font-space">
-                  Educational predictions based on news sentiment and technical analysis
-                </p>
-              </div>
+      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto bg-black/95 border-2 border-primary/30">
+        <DialogHeader className="space-y-6 pb-6">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-primary/20 rounded-lg">
+              <Brain className="w-8 h-8 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold font-pixel text-primary tracking-wider">
+                AI STOCK PREDICTION ANALYSIS
+              </h2>
+              <p className="text-muted-foreground font-space text-sm mt-1">
+                Educational predictions based on news sentiment and technical analysis
+              </p>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           {/* News Analysis Section */}
           {newsHeadline && (
-            <div className="pixel-card rounded-xl p-6 border-2 border-pixel-cyan/30">
-              <h3 className="text-xl font-bold text-pixel-cyan mb-4 font-pixel flex items-center">
-                <BarChart3 className="w-5 h-5 mr-2" />
+            <div className="bg-card/50 rounded-lg p-6 border border-primary/20">
+              <h3 className="text-lg font-bold text-primary mb-4 font-pixel tracking-wider">
                 ANALYZING NEWS IMPACT
               </h3>
-              <div className="bg-muted/50 rounded-lg p-4 mb-4">
-                <p className="text-foreground font-medium">{newsHeadline}</p>
+              <div className="bg-muted/30 rounded-lg p-4 mb-4">
+                <p className="text-foreground text-sm leading-relaxed">{newsHeadline}</p>
               </div>
-              <Badge className="bg-pixel-orange/20 text-pixel-orange border-pixel-orange/30 font-pixel">
+              <Badge className="bg-accent/20 text-accent border-accent/30 font-pixel text-sm px-3 py-1">
                 NEUTRAL SENTIMENT
               </Badge>
             </div>
           )}
 
-          {/* Stock Info & Prediction */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Stock Info */}
-            <div className="pixel-card rounded-xl p-6 border-2 border-pixel-green/30">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="p-3 bg-pixel-green/20 rounded-xl">
-                  <span className="text-2xl font-bold text-pixel-green font-pixel">₹</span>
+          {/* Main Prediction Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Stock Info - Left Side */}
+            <div className="lg:col-span-1">
+              <div className="bg-card/50 rounded-lg p-6 border border-primary/20 h-full">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-primary/20 rounded-lg">
+                    <span className="text-xl font-bold text-primary font-pixel">₹</span>
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold font-pixel text-primary tracking-wider">
+                      {stock.symbol}.NS
+                    </h3>
+                    <p className="text-muted-foreground text-sm mt-1">
+                      Current: <span className="font-semibold">{formatPrice(stock.price)}</span>
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-2xl font-bold font-pixel text-pixel-green">{stock.symbol}.NS</h3>
-                  <p className="text-muted-foreground">Current: {formatPrice(stock.price)}</p>
-                </div>
-              </div>
 
-              {prediction && (
-                <Badge className={`${getRecommendationColor(prediction.recommendation)} font-pixel text-lg px-4 py-2`}>
-                  {prediction.recommendation}
-                </Badge>
-              )}
+                {prediction && (
+                  <div className="mt-8">
+                    <Badge className={`${getRecommendationColor(prediction.recommendation)} font-pixel text-base px-4 py-2 tracking-wider`}>
+                      {prediction.recommendation}
+                    </Badge>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Analysis Results */}
+            {/* Prediction Metrics - Right Side */}
             {prediction && (
-              <div className="pixel-card rounded-xl p-6 border-2 border-pixel-purple/30">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">PREDICTED PRICE</p>
-                    <p className="text-2xl font-bold text-pixel-green font-pixel">
+              <div className="lg:col-span-2">
+                <div className="grid grid-cols-2 gap-6 h-full">
+                  <div className="bg-card/50 rounded-lg p-6 border border-primary/20">
+                    <p className="text-xs text-muted-foreground mb-2 font-pixel tracking-widest">PREDICTED PRICE</p>
+                    <p className="text-3xl font-bold text-primary font-pixel">
                       {formatPrice(prediction.predicted_price || stock.price)}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">EXPECTED CHANGE</p>
+                  
+                  <div className="bg-card/50 rounded-lg p-6 border border-primary/20">
+                    <p className="text-xs text-muted-foreground mb-2 font-pixel tracking-widest">EXPECTED CHANGE</p>
                     <div className="flex items-center space-x-2">
                       {prediction.target_price_change >= 0 ? (
-                        <TrendingUp className="w-4 h-4 text-pixel-green" />
+                        <TrendingUp className="w-5 h-5 text-primary" />
                       ) : (
-                        <TrendingDown className="w-4 h-4 text-red-400" />
+                        <TrendingDown className="w-5 h-5 text-destructive" />
                       )}
-                      <span className={`text-lg font-bold font-pixel ${
-                        prediction.target_price_change >= 0 ? 'text-pixel-green' : 'text-red-400'
+                      <span className={`text-2xl font-bold font-pixel ${
+                        prediction.target_price_change >= 0 ? 'text-primary' : 'text-destructive'
                       }`}>
                         {prediction.target_price_change >= 0 ? '+' : ''}{prediction.target_price_change.toFixed(2)}%
                       </span>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">CONFIDENCE</p>
-                    <p className="text-2xl font-bold text-pixel-cyan font-pixel">{prediction.confidence}%</p>
+                  
+                  <div className="bg-card/50 rounded-lg p-6 border border-primary/20">
+                    <p className="text-xs text-muted-foreground mb-2 font-pixel tracking-widest">CONFIDENCE</p>
+                    <p className="text-3xl font-bold text-primary font-pixel">{prediction.confidence}%</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">NEWS IMPACT</p>
-                    <p className={`text-lg font-bold font-pixel ${
-                      prediction.news_impact && prediction.news_impact >= 0 ? 'text-pixel-green' : 'text-red-400'
+                  
+                  <div className="bg-card/50 rounded-lg p-6 border border-primary/20">
+                    <p className="text-xs text-muted-foreground mb-2 font-pixel tracking-widest">NEWS IMPACT</p>
+                    <p className={`text-2xl font-bold font-pixel ${
+                      prediction.news_impact && prediction.news_impact >= 0 ? 'text-primary' : 'text-destructive'
                     }`}>
-                      {prediction.news_impact?.toFixed(2)}%
+                      {prediction.news_impact && prediction.news_impact >= 0 ? '+' : ''}{prediction.news_impact?.toFixed(2)}%
                     </p>
                   </div>
                 </div>
@@ -216,16 +224,20 @@ export function StockPredictionModal({ isOpen, onClose, stock, newsHeadline }: S
 
           {/* Analysis Factors */}
           {prediction && (
-            <div className="pixel-card rounded-xl p-6 border-2 border-pixel-orange/30">
-              <h3 className="text-xl font-bold text-pixel-orange mb-4 font-pixel flex items-center">
+            <div className="bg-card/50 rounded-lg p-6 border border-primary/20">
+              <h3 className="text-lg font-bold text-primary mb-6 font-pixel tracking-wider flex items-center">
                 <Target className="w-5 h-5 mr-2" />
                 ANALYSIS FACTORS
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {prediction.technical_factors?.map((factor, index) => (
-                  <div key={index} className="bg-muted/50 rounded-lg p-3">
-                    <p className="text-sm font-medium">{factor.split(':')[0]}:</p>
-                    <p className="text-muted-foreground text-sm">{factor.split(':')[1] || factor}</p>
+                  <div key={index} className="bg-muted/20 rounded-lg p-4 border border-primary/10">
+                    <p className="text-sm font-semibold text-primary mb-1 font-pixel">
+                      {factor.includes(':') ? factor.split(':')[0] : 'Technical'}:
+                    </p>
+                    <p className="text-muted-foreground text-sm">
+                      {factor.includes(':') ? factor.split(':')[1]?.trim() : factor}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -233,12 +245,12 @@ export function StockPredictionModal({ isOpen, onClose, stock, newsHeadline }: S
           )}
 
           {/* Action Button */}
-          <div className="flex justify-center">
+          <div className="flex justify-center py-4">
             {!prediction ? (
               <Button
                 onClick={analyzStock}
                 disabled={loading}
-                className="bg-gradient-to-r from-pixel-green to-pixel-cyan text-white hover:from-pixel-green/80 hover:to-pixel-cyan/80 font-pixel text-lg px-8 py-4 h-auto"
+                className="bg-primary hover:bg-primary/80 text-primary-foreground font-pixel text-base px-8 py-6 h-auto tracking-wider"
               >
                 {loading ? (
                   <>
@@ -256,7 +268,7 @@ export function StockPredictionModal({ isOpen, onClose, stock, newsHeadline }: S
               <Button
                 onClick={() => setPrediction(null)}
                 variant="outline"
-                className="border-pixel-green/30 text-pixel-green hover:bg-pixel-green/10 font-pixel"
+                className="border-primary/30 text-primary hover:bg-primary/10 font-pixel tracking-wider"
               >
                 ANALYZE AGAIN
               </Button>
@@ -264,12 +276,12 @@ export function StockPredictionModal({ isOpen, onClose, stock, newsHeadline }: S
           </div>
 
           {/* Educational Disclaimer */}
-          <div className="pixel-card rounded-xl p-4 border-2 border-pixel-orange/30 bg-pixel-orange/5">
+          <div className="bg-accent/10 rounded-lg p-4 border border-accent/30">
             <div className="flex items-start space-x-3">
-              <AlertTriangle className="w-5 h-5 text-pixel-orange mt-1" />
+              <AlertTriangle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
               <div>
-                <h4 className="font-bold text-pixel-orange font-pixel mb-2">EDUCATIONAL DISCLAIMER</h4>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="font-bold text-accent font-pixel mb-2 tracking-wider">EDUCATIONAL DISCLAIMER</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   These predictions are for educational purposes only and should not be considered as financial advice. 
                   Stock market investments are subject to market risks. Always consult with a qualified financial advisor 
                   before making investment decisions.
