@@ -21,28 +21,33 @@ export function useIndianFinancialNews() {
   const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  // Dedupe helper: remove duplicates by headline similarity and URL
+  // Enhanced dedupe helper: remove duplicates by exact headline match and URL
   const dedupeNews = (items: IndianFinancialNewsItem[]) => {
-    const seen = new Set<string>()
+    const seenHeadlines = new Set<string>()
+    const seenUrls = new Set<string>()
     const deduped: IndianFinancialNewsItem[] = []
     
     // Sort by published_at desc first to keep the latest
     const sortedItems = items.sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
     
     for (const item of sortedItems) {
-      // Create dedup key from normalized headline (remove extra spaces, punctuation differences)
-      const normalizedHeadline = item.headline
-        .toLowerCase()
-        .replace(/[^\w\s]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-      
-      const key = item.url ? `url:${item.url}` : `headline:${normalizedHeadline}`
-      
-      if (!seen.has(key)) {
-        seen.add(key)
-        deduped.push(item)
+      // Skip if we've seen this exact headline before
+      if (seenHeadlines.has(item.headline)) {
+        continue
       }
+      
+      // Skip if we've seen this exact URL before (and URL exists)
+      if (item.url && seenUrls.has(item.url)) {
+        continue
+      }
+      
+      // Add to our tracking sets
+      seenHeadlines.add(item.headline)
+      if (item.url) {
+        seenUrls.add(item.url)
+      }
+      
+      deduped.push(item)
     }
     
     return deduped
