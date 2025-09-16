@@ -10,9 +10,11 @@ import { ComprehensiveIndianStocks } from '@/components/ComprehensiveIndianStock
 import { EnhancedNewsPanel } from '@/components/EnhancedNewsPanel'
 import { MarketIndicesPanel } from '@/components/MarketIndicesPanel'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
+import { useMarketIndices } from '@/hooks/useMarketIndices'
 
 export default function Dashboard() {
   const { news, loading: newsLoading, fetchIndianFinancialNews } = useIndianFinancialNews()
+  const { refreshData: refreshMarketData } = useMarketIndices()
 
   const liveStats = [
     { label: 'Live News Updates', value: `${news.length}`, icon: Globe, trend: '+23%', isNews: true },
@@ -21,8 +23,11 @@ export default function Dashboard() {
     { label: 'Inoreader Feed', value: 'Active', icon: RefreshCw, trend: 'Live', isLive: true }
   ]
 
-  const handleRefreshNews = async () => {
-    await fetchIndianFinancialNews()
+  const handleRefreshAllData = async () => {
+    await Promise.all([
+      fetchIndianFinancialNews(),
+      refreshMarketData()
+    ])
   }
 
   return (
@@ -38,7 +43,7 @@ export default function Dashboard() {
               Live insights from Indian stock markets with AI-powered analytics
             </p>
           </div>
-          <Button variant="outline" className="font-medium">
+          <Button onClick={handleRefreshAllData} variant="outline" className="font-medium">
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh Data
           </Button>
@@ -81,7 +86,7 @@ export default function Dashboard() {
                 Latest updates from Inoreader
               </p>
               <Button 
-                onClick={handleRefreshNews}
+                onClick={fetchIndianFinancialNews}
                 variant="outline"
                 className="w-full"
                 disabled={newsLoading}

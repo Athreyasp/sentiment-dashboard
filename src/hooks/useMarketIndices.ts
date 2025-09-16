@@ -50,6 +50,8 @@ export function useMarketIndices(): UseMarketIndicesReturn {
 
   const fetchIndexData = async (symbol: string, name: string, icon?: string): Promise<MarketIndex | null> => {
     try {
+      console.log(`Fetching data for ${symbol} (${name})...`)
+      
       const { data, error: supabaseError } = await supabase.functions.invoke('fetch-yahoo-finance', {
         body: { symbol }
       })
@@ -60,11 +62,16 @@ export function useMarketIndices(): UseMarketIndicesReturn {
       }
 
       if (!data?.success || !data?.data) {
-        console.error(`No data returned for ${symbol}`)
+        console.error(`No data returned for ${symbol}:`, data)
         return null
       }
 
       const indexData = data.data
+      console.log(`Successfully fetched ${symbol}:`, {
+        price: indexData.currentPrice,
+        change: indexData.change,
+        changePercent: indexData.changePercent
+      })
       
       return {
         symbol: symbol,
@@ -113,13 +120,13 @@ export function useMarketIndices(): UseMarketIndicesReturn {
     }
   }, [])
 
-  // Auto-refresh data every 2 minutes for indices
+  // Auto-refresh data every 5 minutes for indices (reduced frequency)
   useEffect(() => {
     refreshData()
     
     const interval = setInterval(() => {
       refreshData()
-    }, 120000) // 2 minutes
+    }, 300000) // 5 minutes
     
     return () => clearInterval(interval)
   }, [refreshData])
