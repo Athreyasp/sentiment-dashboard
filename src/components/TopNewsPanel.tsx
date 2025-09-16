@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Calendar, ExternalLink } from 'lucide-react'
-import { useFinancialNews } from '@/hooks/useFinancialNews'
+import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
 
 export function TopNewsPanel() {
-  const { news, loading } = useFinancialNews()
+  const { news, loading } = useIndianFinancialNews()
 
   // Get top 5 most recent news items
   const topNews = news.slice(0, 5)
@@ -39,7 +39,7 @@ export function TopNewsPanel() {
             <Calendar className="w-5 h-5 text-white" />
           </div>
           <CardTitle className="text-xl font-bold text-slate-800 dark:text-white">
-            📰 Live Financial News
+            📈 Indian Market News
           </CardTitle>
         </div>
       </CardHeader>

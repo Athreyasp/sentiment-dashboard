@@ -13,6 +13,7 @@ export interface IndianFinancialNewsItem {
   published_at: string
   created_at: string
   updated_at: string
+  is_indian_market?: boolean
 }
 
 export function useIndianFinancialNews() {
@@ -97,6 +98,7 @@ export function useIndianFinancialNews() {
       let query = supabase
         .from('financial_news')
         .select('*')
+        .eq('is_indian_market', true)
         .gte('published_at', twoDaysAgo.toISOString())
         .order('published_at', { ascending: false })
         .limit(50)
@@ -123,17 +125,11 @@ export function useIndianFinancialNews() {
         throw error
       }
 
-      // Filter for Indian context
-      const indianNews = (data || [])
-        .filter(item => {
-          const content = `${item.headline} ${item.content || ''}`.toLowerCase()
-          const indianKeywords = ['india', 'indian', 'nse', 'bse', 'nifty', 'sensex', 'rupee', 'rbi', 'mumbai']
-          return indianKeywords.some(keyword => content.includes(keyword))
-        })
-        .map(item => ({
-          ...item,
-          sentiment: item.sentiment as 'positive' | 'neutral' | 'negative' | null
-        }))
+      // Map data since we're already filtering by is_indian_market in query
+      const indianNews = (data || []).map(item => ({
+        ...item,
+        sentiment: item.sentiment as 'positive' | 'neutral' | 'negative' | null
+      }))
 
       setNews(dedupeNews(indianNews))
       console.log(`Loaded ${indianNews.length} Indian financial news articles`)
@@ -198,12 +194,8 @@ export function useIndianFinancialNews() {
               sentiment: (payload.new as any).sentiment as 'positive' | 'neutral' | 'negative' | null
             }
             
-            // Check if it's Indian financial news
-            const content = `${newItem.headline} ${newItem.content || ''}`.toLowerCase()
-            const indianKeywords = ['india', 'indian', 'nse', 'bse', 'nifty', 'sensex', 'rupee', 'rbi']
-            const isIndianNews = indianKeywords.some(keyword => content.includes(keyword))
-            
-            if (isIndianNews) {
+            // Only process if it's marked as Indian market news
+            if ((payload.new as any).is_indian_market) {
               // Check if news is recent (within 2 days)
               const newsDate = new Date(newItem.published_at)
               const twoDaysAgo = new Date()
