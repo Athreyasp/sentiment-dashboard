@@ -14,6 +14,7 @@ import {
   Zap
 } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
+import { NewsPredictionModal } from '@/components/NewsPredictionModal'
 
 interface StockPrediction {
   symbol: string
@@ -60,6 +61,8 @@ export function EnhancedNewsPanel() {
   const [loading, setLoading] = useState(false)
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null)
   const [lastUpdated, setLastUpdated] = useState<string | null>(null)
+  const [predictionNews, setPredictionNews] = useState<NewsItem | null>(null)
+  const [isPredictionModalOpen, setIsPredictionModalOpen] = useState(false)
   const fetchNewsWithPredictions = async () => {
     setLoading(true)
     try {
@@ -306,9 +309,26 @@ export function EnhancedNewsPanel() {
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
-            </CardContent>
+                 </div>
+               )}
+               
+               {/* Predict Button */}
+               <div className="flex justify-end pt-3 border-t border-border/50">
+                 <Button
+                   size="sm"
+                   variant="outline"
+                   className="h-7 px-3 text-xs bg-gradient-to-r from-green-500/10 to-emerald-600/10 hover:from-green-500/20 hover:to-emerald-600/20 border-green-500/30 text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"
+                   onClick={(e) => {
+                     e.stopPropagation()
+                     setPredictionNews(item)
+                     setIsPredictionModalOpen(true)
+                   }}
+                 >
+                   <Target className="w-3 h-3 mr-1" />
+                   Predict
+                 </Button>
+               </div>
+             </CardContent>
           </Card>
         ))}
       </div>
@@ -473,6 +493,28 @@ export function EnhancedNewsPanel() {
           <h3 className="text-lg font-medium text-foreground mb-2">No News Available</h3>
           <p className="text-muted-foreground">Check back later for the latest market updates.</p>
         </div>
+      )}
+
+      {/* News Prediction Modal */}  
+      {predictionNews && (
+        <NewsPredictionModal
+          isOpen={isPredictionModalOpen}
+          onClose={() => {
+            setIsPredictionModalOpen(false)
+            setPredictionNews(null)
+          }}
+          news={{
+            id: predictionNews.id,
+            headline: predictionNews.headline,
+            content: predictionNews.content,
+            source: predictionNews.source,
+            published_at: predictionNews.published_at,
+            sentiment: (predictionNews.sentiment === 'positive' || predictionNews.sentiment === 'negative' || predictionNews.sentiment === 'neutral') 
+              ? predictionNews.sentiment 
+              : 'neutral',
+            stock_symbols: predictionNews.stock_symbols
+          }}
+        />
       )}
     </div>
   )
