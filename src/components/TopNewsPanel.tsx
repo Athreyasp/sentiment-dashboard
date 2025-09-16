@@ -1,12 +1,17 @@
 
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Calendar, ExternalLink } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Calendar, ExternalLink, Target } from 'lucide-react'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
+import { NewsPredictionModal } from '@/components/NewsPredictionModal'
 
 export function TopNewsPanel() {
   const { news, loading } = useIndianFinancialNews()
+  const [selectedNews, setSelectedNews] = useState<typeof news[0] | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Get top 5 most recent news items
   const topNews = news.slice(0, 5)
@@ -56,37 +61,65 @@ export function TopNewsPanel() {
               </div>
             ) : (
               topNews.map((news, index) => (
-                <div
-                  key={news.id}
-                  className="group p-4 bg-white/70 dark:bg-slate-700/50 rounded-xl border border-white/50 dark:border-slate-600/50 hover:bg-white/90 dark:hover:bg-slate-700/70 transition-all duration-200 cursor-pointer"
-                  onClick={() => news.url && window.open(news.url, '_blank')}
-                >
-                  <div className="flex items-start justify-between space-x-3">
-                    <div className="flex-1 space-y-2">
-                      <h3 className="font-semibold text-sm text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-                        {news.headline}
-                      </h3>
-                      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                        <span>{news.source}</span>
-                        <span>•</span>
-                        <span>{formatTime(news.published_at)}</span>
+                  <div
+                    key={news.id}
+                    className="group p-4 bg-white/70 dark:bg-slate-700/50 rounded-xl border border-white/50 dark:border-slate-600/50 hover:bg-white/90 dark:hover:bg-slate-700/70 transition-all duration-200"
+                  >
+                    <div className="flex items-start justify-between space-x-3">
+                      <div 
+                        className="flex-1 space-y-2 cursor-pointer"
+                        onClick={() => news.url && window.open(news.url, '_blank')}
+                      >
+                        <h3 className="font-semibold text-sm text-slate-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                          {news.headline}
+                        </h3>
+                        <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                          <span>{news.source}</span>
+                          <span>•</span>
+                          <span>{formatTime(news.published_at)}</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end space-y-2">
+                        <Badge className={`text-xs px-2 py-0.5 ${getSentimentBadge(news.sentiment)}`}>
+                          {news.sentiment?.toUpperCase() || 'NEUT'}
+                        </Badge>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 px-2 text-xs bg-gradient-to-r from-green-500/10 to-emerald-600/10 hover:from-green-500/20 hover:to-emerald-600/20 border-green-500/30 text-green-600 dark:text-green-400"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setSelectedNews(news)
+                              setIsModalOpen(true)
+                            }}
+                          >
+                            <Target className="w-3 h-3 mr-1" />
+                            Predict
+                          </Button>
+                          {news.url && (
+                            <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex flex-col items-end space-y-2">
-                      <Badge className={`text-xs px-2 py-0.5 ${getSentimentBadge(news.sentiment)}`}>
-                        {news.sentiment?.toUpperCase() || 'NEUT'}
-                      </Badge>
-                      {news.url && (
-                        <ExternalLink className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                      )}
-                    </div>
                   </div>
-                </div>
               ))
             )}
           </div>
         </ScrollArea>
       </CardContent>
+      
+      {selectedNews && (
+        <NewsPredictionModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false)
+            setSelectedNews(null)
+          }}
+          news={selectedNews}
+        />
+      )}
     </Card>
   )
 }
