@@ -48,15 +48,30 @@ export function SearchResults({ searchTerm, isVisible, onClose }: SearchResultsP
   const fetchSearchResults = async (query: string) => {
     setLoading(true)
     try {
-      // Mock API call - replace with actual endpoint
-      // const response = await fetch(`/api/search?q=${query}`)
-      // const data = await response.json()
+      // Search for Indian stocks based on query
+      const indianStocks = getIndianStocksList()
+      const filteredResults = indianStocks
+        .filter(stock => 
+          stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
+          stock.name.toLowerCase().includes(query.toLowerCase())
+        )
+        .slice(0, 5)
+        .map(stock => ({
+          ticker: stock.symbol,
+          company: stock.name,
+          sentiment: {
+            score: 0,
+            label: 'neutral' as const
+          },
+          news: [{
+            headline: `${stock.name} - Latest market updates`,
+            sentiment: 'neutral' as const,
+            source: 'Live Data',
+            time: 'Live'
+          }]
+        }))
       
-      // Mock data for demonstration
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      const mockResults = generateMockResults(query)
-      setResults(mockResults)
+      setResults(filteredResults)
     } catch (error) {
       console.error('Search failed:', error)
       setResults([])
@@ -65,37 +80,27 @@ export function SearchResults({ searchTerm, isVisible, onClose }: SearchResultsP
     }
   }
 
-  const generateMockResults = (query: string): SearchResult[] => {
-    const companies = [
-      { ticker: 'AAPL', company: 'Apple Inc.' },
-      { ticker: 'AMZN', company: 'Amazon.com Inc.' },
-      { ticker: 'TSLA', company: 'Tesla Inc.' },
-      { ticker: 'GOOGL', company: 'Alphabet Inc.' },
-      { ticker: 'MSFT', company: 'Microsoft Corporation' },
-      { ticker: 'META', company: 'Meta Platforms Inc.' },
-      { ticker: 'NVDA', company: 'NVIDIA Corporation' },
+  const getIndianStocksList = () => {
+    return [
+      { symbol: 'RELIANCE', name: 'Reliance Industries Limited' },
+      { symbol: 'TCS', name: 'Tata Consultancy Services' },
+      { symbol: 'HDFCBANK', name: 'HDFC Bank Limited' },
+      { symbol: 'INFY', name: 'Infosys Limited' },
+      { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Limited' },
+      { symbol: 'ICICIBANK', name: 'ICICI Bank Limited' },
+      { symbol: 'BHARTIARTL', name: 'Bharti Airtel Limited' },
+      { symbol: 'LT', name: 'Larsen & Toubro Limited' },
+      { symbol: 'SBIN', name: 'State Bank of India' },
+      { symbol: 'WIPRO', name: 'Wipro Limited' },
+      { symbol: 'MARUTI', name: 'Maruti Suzuki India Limited' },
+      { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank Limited' },
+      { symbol: 'ASIANPAINT', name: 'Asian Paints Limited' },
+      { symbol: 'BAJFINANCE', name: 'Bajaj Finance Limited' },
+      { symbol: 'ADANIPORTS', name: 'Adani Ports and SEZ Limited' },
+      { symbol: 'NIFTY50', name: 'NIFTY 50 Index' },
+      { symbol: 'SENSEX', name: 'BSE SENSEX Index' },
+      { symbol: 'BANKNIFTY', name: 'NIFTY BANK Index' }
     ]
-    
-    const filtered = companies.filter(
-      comp => 
-        comp.ticker.toLowerCase().includes(query.toLowerCase()) ||
-        comp.company.toLowerCase().includes(query.toLowerCase())
-    )
-    
-    return filtered.slice(0, 3).map(comp => ({
-      ticker: comp.ticker,
-      company: comp.company,
-      sentiment: {
-        score: (Math.random() - 0.5) * 2,
-        label: Math.random() > 0.5 ? 'positive' : Math.random() > 0.3 ? 'neutral' : 'negative' as any
-      },
-      news: Array.from({ length: 3 }, (_, i) => ({
-        headline: `${comp.company} ${['announces breakthrough technology', 'reports strong quarterly earnings', 'faces regulatory challenges'][i]}`,
-        sentiment: ['positive', 'neutral', 'negative'][i] as any,
-        source: ['Reuters', 'Bloomberg', 'CNBC'][i],
-        time: `${i + 1}h ago`
-      }))
-    }))
   }
 
   const getSentimentBadge = (sentiment: 'positive' | 'negative' | 'neutral') => {

@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { TrendingUp, TrendingDown, Minus, ArrowUpDown, Clock, Bell, BellOff, ChevronDown, ChevronRight } from 'lucide-react'
 import { useFinancialNews, type FinancialNewsItem } from '@/hooks/useFinancialNews'
+import { supabase } from '@/integrations/supabase/client'
 
 interface TickerData {
   ticker: string
@@ -40,93 +41,116 @@ export function SentimentTable({ tickers, onToggleAlert }: SentimentTableProps) 
 
   // Process real financial news data for each ticker
   useEffect(() => {
-    const processedData: TickerData[] = tickers.map(ticker => {
-      // Get news for this ticker
-      const tickerNews = news.filter(item => 
-        item.ticker?.toUpperCase() === ticker.toUpperCase() ||
-        item.headline?.toUpperCase().includes(ticker.toUpperCase()) ||
-        item.content?.toUpperCase().includes(ticker.toUpperCase())
-      ).slice(0, 5) // Limit to 5 most recent
+    const processTickerData = async () => {
+      const processedData: TickerData[] = await Promise.all(
+        tickers.map(async (ticker) => {
+          // Get news for this ticker
+          const tickerNews = news.filter(item => 
+            item.ticker?.toUpperCase() === ticker.toUpperCase() ||
+            item.headline?.toUpperCase().includes(ticker.toUpperCase()) ||
+            item.content?.toUpperCase().includes(ticker.toUpperCase())
+          ).slice(0, 5) // Limit to 5 most recent
 
-      // Calculate average sentiment
-      const sentimentScores = tickerNews
-        .filter(item => item.sentiment)
-        .map(item => {
-          switch(item.sentiment) {
-            case 'positive': return 0.7
-            case 'negative': return -0.7
-            case 'neutral': return 0
-            default: return 0
+          // Calculate average sentiment
+          const sentimentScores = tickerNews
+            .filter(item => item.sentiment)
+            .map(item => {
+              switch(item.sentiment) {
+                case 'positive': return 0.7
+                case 'negative': return -0.7
+                case 'neutral': return 0
+                default: return 0
+              }
+            })
+          
+          const avgSentiment = sentimentScores.length > 0 
+            ? sentimentScores.reduce((sum, score) => sum + score, 0) / sentimentScores.length
+            : 0
+
+          const sentimentLabel = avgSentiment > 0.2 ? 'positive' : avgSentiment < -0.2 ? 'negative' : 'neutral'
+          
+          // Get company name mapping (simplified)
+          const companies: { [key: string]: string } = {
+            'RELIANCE': 'Reliance Industries Ltd.',
+            'TCS': 'Tata Consultancy Services',
+            'INFY': 'Infosys Limited',
+            'HDFCBANK': 'HDFC Bank Limited',
+            'ITC': 'ITC Limited',
+            'HINDUNILVR': 'Hindustan Unilever Ltd.',
+            'SBIN': 'State Bank of India',
+            'BHARTIARTL': 'Bharti Airtel Limited',
+            'AAPL': 'Apple Inc.',
+            'TSLA': 'Tesla Inc.',
+            'GOOGL': 'Alphabet Inc.',
+            'AMZN': 'Amazon.com Inc.',
+            'MSFT': 'Microsoft Corporation',
+            'META': 'Meta Platforms Inc.',
+            'NVDA': 'NVIDIA Corporation',
+          }
+
+          // Format news for display
+          const formattedNews = tickerNews.map(item => ({
+            headline: item.headline,
+            source: item.source,
+            time: new Date(item.published_at).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }),
+            sentiment: item.sentiment || 'neutral' as 'positive' | 'negative' | 'neutral'
+          }))
+
+          // Get latest news time for "last updated"
+          const lastUpdated = tickerNews.length > 0 
+            ? new Date(tickerNews[0].published_at).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })
+            : 'No recent news'
+
+          // Fetch real stock price from Yahoo Finance
+          let price = 0
+          let change = 0
+          try {
+            const yahooSymbol = ticker.endsWith('.NS') ? ticker : `${ticker}.NS`
+            const { data: response } = await supabase.functions.invoke('fetch-yahoo-finance', {
+              body: { symbol: yahooSymbol }
+            })
+            
+            if (response?.success && response?.data) {
+              price = response.data.currentPrice || 0
+              change = response.data.changePercent || 0
+            }
+          } catch (error) {
+            console.log(`Could not fetch price for ${ticker}:`, error)
+          }
+
+          return {
+            ticker,
+            company: companies[ticker.toUpperCase()] || `${ticker} Corporation`,
+            sentiment: avgSentiment,
+            sentimentLabel,
+            lastUpdated,
+            alerts: false, // Default to false, could be managed in state
+            price,
+            change,
+            news: formattedNews.length > 0 ? formattedNews : [{
+              headline: `No recent news available for ${ticker}`,
+              source: 'N/A',
+              time: 'N/A',
+              sentiment: 'neutral' as const
+            }]
           }
         })
+      )
       
-      const avgSentiment = sentimentScores.length > 0 
-        ? sentimentScores.reduce((sum, score) => sum + score, 0) / sentimentScores.length
-        : 0
+      setTickerData(processedData)
+    }
 
-      const sentimentLabel = avgSentiment > 0.2 ? 'positive' : avgSentiment < -0.2 ? 'negative' : 'neutral'
-      
-      // Get company name mapping (simplified)
-      const companies: { [key: string]: string } = {
-        'RELIANCE': 'Reliance Industries Ltd.',
-        'TCS': 'Tata Consultancy Services',
-        'INFY': 'Infosys Limited',
-        'HDFCBANK': 'HDFC Bank Limited',
-        'ITC': 'ITC Limited',
-        'HINDUNILVR': 'Hindustan Unilever Ltd.',
-        'SBIN': 'State Bank of India',
-        'BHARTIARTL': 'Bharti Airtel Limited',
-        'AAPL': 'Apple Inc.',
-        'TSLA': 'Tesla Inc.',
-        'GOOGL': 'Alphabet Inc.',
-        'AMZN': 'Amazon.com Inc.',
-        'MSFT': 'Microsoft Corporation',
-        'META': 'Meta Platforms Inc.',
-        'NVDA': 'NVIDIA Corporation',
-      }
-
-      // Format news for display
-      const formattedNews = tickerNews.map(item => ({
-        headline: item.headline,
-        source: item.source,
-        time: new Date(item.published_at).toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        sentiment: item.sentiment || 'neutral' as 'positive' | 'negative' | 'neutral'
-      }))
-
-      // Get latest news time for "last updated"
-      const lastUpdated = tickerNews.length > 0 
-        ? new Date(tickerNews[0].published_at).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
-        : 'No recent news'
-
-      return {
-        ticker,
-        company: companies[ticker.toUpperCase()] || `${ticker} Corporation`,
-        sentiment: avgSentiment,
-        sentimentLabel,
-        lastUpdated,
-        alerts: false, // Default to false, could be managed in state
-        price: Math.random() * 500 + 50, // Mock price data
-        change: (Math.random() - 0.5) * 10, // Mock change data
-        news: formattedNews.length > 0 ? formattedNews : [{
-          headline: `No recent news available for ${ticker}`,
-          source: 'N/A',
-          time: 'N/A',
-          sentiment: 'neutral' as const
-        }]
-      }
-    })
-    
-    setTickerData(processedData)
+    processTickerData()
   }, [tickers, news])
 
   const data = tickerData
@@ -259,13 +283,17 @@ export function SentimentTable({ tickers, onToggleAlert }: SentimentTableProps) 
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      <div className="font-semibold">${item.price.toFixed(2)}</div>
-                      <div className={`text-sm flex items-center ${
-                        item.change >= 0 ? 'text-[#00C49F]' : 'text-[#FF4C4C]'
-                      }`}>
-                        {item.change >= 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
-                        {item.change >= 0 ? '+' : ''}{item.change.toFixed(2)}%
+                      <div className="font-semibold">
+                        {item.price > 0 ? `₹${item.price.toFixed(2)}` : 'Loading...'}
                       </div>
+                      {item.price > 0 && (
+                        <div className={`text-sm flex items-center ${
+                          item.change >= 0 ? 'text-[#00C49F]' : 'text-[#FF4C4C]'
+                        }`}>
+                          {item.change >= 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
+                          {item.change >= 0 ? '+' : ''}{item.change.toFixed(2)}%
+                        </div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>

@@ -63,10 +63,10 @@ export function useTickerData(): UseTickerDataReturn {
 
       const yahooData = response.data
       
-      const mockData: TickerData = {
+      const tickerData: TickerData = {
         ticker: ticker.replace('.NS', ''),
         company: getIndianCompanyName(ticker),
-        current_sentiment: Math.random() * 100, // Mock sentiment
+        current_sentiment: 50, // Neutral sentiment as default
         price: yahooData.currentPrice,
         change: yahooData.change,
         changePercent: yahooData.changePercent,
@@ -74,7 +74,7 @@ export function useTickerData(): UseTickerDataReturn {
         news: generateIndianNewsData(ticker)
       }
 
-      setData(mockData)
+      setData(tickerData)
     } catch (err) {
       console.error('Error fetching ticker data:', err)
       setError(err instanceof Error ? err.message : 'Failed to fetch ticker data')
