@@ -8,46 +8,11 @@ import { LiveMarketIndicator } from '@/components/LiveMarketIndicator'
 import { EssentialIndianStocks } from '@/components/EssentialIndianStocks'
 import { ComprehensiveIndianStocks } from '@/components/ComprehensiveIndianStocks'
 import { EnhancedNewsPanel } from '@/components/EnhancedNewsPanel'
+import { MarketIndicesPanel } from '@/components/MarketIndicesPanel'
 import { useIndianFinancialNews } from '@/hooks/useIndianFinancialNews'
 
 export default function Dashboard() {
   const { news, loading: newsLoading, fetchIndianFinancialNews } = useIndianFinancialNews()
-
-  // NSE Market indices data (mock)
-  const marketData = [
-    {
-      name: 'NIFTY 50',
-      value: '24,823.65',
-      change: '-177.50',
-      changePercent: '-0.71%',
-      trend: 'down' as const,
-      icon: BarChart3
-    },
-    {
-      name: 'SENSEX',
-      value: '81,467.10',
-      change: '+245.32',
-      changePercent: '+0.30%',
-      trend: 'up' as const,
-      icon: TrendingUp
-    },
-    {
-      name: 'NIFTY BANK',
-      value: '52,314.85',
-      change: '+412.75',
-      changePercent: '+0.80%',
-      trend: 'up' as const,
-      icon: PieChart
-    },
-    {
-      name: 'INDIA VIX',
-      value: '14.25',
-      change: '-0.85',
-      changePercent: '-5.63%',
-      trend: 'down' as const,
-      icon: Activity
-    }
-  ]
 
   const liveStats = [
     { label: 'Live News Updates', value: `${news.length}`, icon: Globe, trend: '+23%', isNews: true },
@@ -80,47 +45,7 @@ export default function Dashboard() {
         </div>
 
         {/* Market Indices */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {marketData.map((market, index) => (
-            <Card key={index} className="border border-border hover:shadow-sm transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    {market.name}
-                  </CardTitle>
-                  <market.icon className="w-4 h-4 text-muted-foreground" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="text-2xl font-semibold text-foreground">
-                    {market.value}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className={`flex items-center space-x-1 ${market.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-                      {market.trend === 'up' ? (
-                        <TrendingUp className="w-4 h-4" />
-                      ) : (
-                        <TrendingDown className="w-4 h-4" />
-                      )}
-                      <span className="text-sm font-medium">{market.change}</span>
-                    </div>
-                    <Badge 
-                      variant="secondary" 
-                      className={`${
-                        market.trend === 'up' 
-                          ? 'bg-green-50 text-green-700 border-green-200' 
-                          : 'bg-red-50 text-red-700 border-red-200'
-                      }`}
-                    >
-                      {market.changePercent}
-                    </Badge>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <MarketIndicesPanel />
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
