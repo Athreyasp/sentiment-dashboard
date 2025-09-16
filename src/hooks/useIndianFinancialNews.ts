@@ -84,11 +84,17 @@ export function useIndianFinancialNews() {
       setLoading(true)
       setError(null)
 
+      // Filter to only show news from current day or previous day
+      const currentTime = new Date()
+      const twoDaysAgo = new Date(currentTime)
+      twoDaysAgo.setDate(currentTime.getDate() - 2)
+
       let query = supabase
         .from('financial_news')
         .select('*')
+        .gte('published_at', twoDaysAgo.toISOString())
         .order('published_at', { ascending: false })
-        .limit(100)
+        .limit(50)
 
       // Filter for Indian financial news
       if (searchQuery && searchQuery.trim()) {
@@ -160,14 +166,14 @@ export function useIndianFinancialNews() {
   useEffect(() => {
     loadIndianFinancialNews()
 
-    // Auto-refresh news every 5 minutes
+    // Auto-refresh news every 10 minutes (reduced frequency)
     const refreshInterval = setInterval(() => {
       console.log('Auto-refreshing Indian financial news...')
       fetchIndianFinancialNews().then(() => {
         // Reload the news after processing
-        setTimeout(() => loadIndianFinancialNews(), 2000)
+        setTimeout(() => loadIndianFinancialNews(), 3000)
       })
-    }, 5 * 60 * 1000) // 5 minutes
+    }, 10 * 60 * 1000) // 10 minutes
 
     const channel = supabase
       .channel('indian_financial_news_changes')
@@ -193,12 +199,19 @@ export function useIndianFinancialNews() {
             const isIndianNews = indianKeywords.some(keyword => content.includes(keyword))
             
             if (isIndianNews) {
-              setNews(prev => dedupeNews([newItem, ...prev]))
-              toast({
-                title: "📈 Indian Market News",
-                description: newItem.headline.substring(0, 60) + "...",
-                duration: 5000
-              })
+              // Check if news is recent (within 2 days)
+              const newsDate = new Date(newItem.published_at)
+              const twoDaysAgo = new Date()
+              twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+              
+              if (newsDate >= twoDaysAgo) {
+                setNews(prev => dedupeNews([newItem, ...prev]))
+                toast({
+                  title: "📈 Indian Market News",
+                  description: newItem.headline.substring(0, 60) + "...",
+                  duration: 3000
+                })
+              }
             }
           }
         }

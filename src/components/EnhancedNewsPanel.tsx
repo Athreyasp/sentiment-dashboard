@@ -76,7 +76,17 @@ export function EnhancedNewsPanel() {
       })
       
       if (data?.success) {
-        setNews(data.data.news || [])
+        // Filter news to only show current day or previous day
+        const currentTime = new Date()
+        const twoDaysAgo = new Date(currentTime)
+        twoDaysAgo.setDate(currentTime.getDate() - 2)
+        
+        const recentNews = (data.data.news || []).filter((item: NewsItem) => {
+          const publishedDate = new Date(item.published_at)
+          return publishedDate >= twoDaysAgo
+        })
+        
+        setNews(recentNews)
         setMarketSummary(data.data.market_summary)
         setLastUpdated(data.data.generated_at || new Date().toISOString())
       }
@@ -199,7 +209,7 @@ export function EnhancedNewsPanel() {
           disabled={loading}
           variant="outline"
         >
-          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className="w-4 h-4 mr-2" />
           {loading ? 'Updating...' : 'Refresh'}
         </Button>
       </div>
@@ -209,7 +219,7 @@ export function EnhancedNewsPanel() {
         {news.map((item) => (
           <Card 
             key={item.id} 
-            className="border border-border hover:shadow-md transition-shadow cursor-pointer"
+            className="border border-border hover:shadow-sm cursor-pointer"
             onClick={() => setSelectedNews(item)}
           >
             <CardHeader className="pb-3">

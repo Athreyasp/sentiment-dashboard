@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
@@ -58,11 +57,17 @@ export function useFinancialNews() {
       setLoading(true)
       setError(null)
 
+      // Filter to only show news from current day or previous day
+      const currentTime = new Date()
+      const twoDaysAgo = new Date(currentTime)
+      twoDaysAgo.setDate(currentTime.getDate() - 2)
+
       let query = supabase
         .from('financial_news')
         .select('*')
+        .gte('published_at', twoDaysAgo.toISOString())
         .order('published_at', { ascending: false })
-        .limit(50)
+        .limit(30)
 
       // Add search functionality
       if (searchQuery && searchQuery.trim()) {
@@ -82,7 +87,7 @@ export function useFinancialNews() {
       }))
 
       setNews(typedData)
-      console.log(`Loaded ${typedData.length} news articles`)
+      console.log(`Loaded ${typedData.length} recent news articles`)
     } catch (err) {
       console.error('Error loading news:', err)
       setError(err instanceof Error ? err.message : 'Failed to load news')
@@ -114,11 +119,20 @@ export function useFinancialNews() {
               ...payload.new as any,
               sentiment: (payload.new as any).sentiment as 'positive' | 'neutral' | 'negative' | null
             }
-            setNews(prev => [newItem, ...prev])
-            toast({
-              title: "📰 Breaking News",
-              description: newItem.headline.substring(0, 60) + "...",
-            })
+            
+            // Check if news is recent (within 2 days)
+            const newsDate = new Date(newItem.published_at)
+            const twoDaysAgo = new Date()
+            twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
+            
+            if (newsDate >= twoDaysAgo) {
+              setNews(prev => [newItem, ...prev])
+              toast({
+                title: "📰 Breaking News",
+                description: newItem.headline.substring(0, 60) + "...",
+                duration: 3000
+              })
+            }
           } else if (payload.eventType === 'UPDATE') {
             const updatedItem: FinancialNewsItem = {
               ...payload.new as any,
