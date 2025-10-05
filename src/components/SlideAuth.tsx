@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/integrations/supabase/client'
-import { Facebook, Mail, Linkedin, Eye, EyeOff } from 'lucide-react'
+import { Mail, Eye, EyeOff, Sparkles, TrendingUp, Shield, Zap, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
+import { OfficialSentinelLogo } from './OfficialSentinelLogo'
 
 interface SlideAuthProps {
   defaultView?: 'login' | 'signup'
@@ -126,237 +127,268 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl min-h-[600px] grid lg:grid-cols-2 overflow-hidden relative">
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         
-        {/* Sign Up Form Panel */}
-        <div className={`relative transition-all duration-700 ease-in-out ${
-          isSignUp ? 'translate-x-0 opacity-100' : 'lg:translate-x-full opacity-0 lg:opacity-100'
-        } ${!isSignUp ? 'hidden lg:block' : ''}`}>
-          <div className="p-8 lg:p-12 h-full flex flex-col justify-center">
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">Create Account</h1>
-            <div className="flex justify-center space-x-4 mb-8">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-50"
-                onClick={() => handleSocialLogin('Facebook')}
-              >
-                <Facebook className="w-5 h-5 text-blue-600" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-50"
-                onClick={() => handleSocialLogin('Google')}
-              >
-                <Mail className="w-5 h-5 text-red-500" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-50"
-                onClick={() => handleSocialLogin('LinkedIn')}
-              >
-                <Linkedin className="w-5 h-5 text-blue-700" />
-              </Button>
-            </div>
-            
-            <p className="text-gray-600 text-center text-sm mb-6">or use your email for registration</p>
-            
-            <div className="space-y-4">
-              <Input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500"
-              />
-              <Input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500"
-              />
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </Button>
+        {/* Floating particles */}
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-cyan-400/30 rounded-full animate-pulse"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 3}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Mobile Toggle */}
+      <div className="lg:hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-800/80 backdrop-blur-xl rounded-full p-1 shadow-2xl border border-cyan-500/20">
+        <div className="flex gap-1">
+          <Button
+            onClick={() => setIsSignUp(false)}
+            className={`px-6 py-2 rounded-full transition-all duration-300 ${
+              !isSignUp 
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/50' 
+                : 'bg-transparent text-slate-400 hover:text-white'
+            }`}
+          >
+            Sign In
+          </Button>
+          <Button
+            onClick={() => setIsSignUp(true)}
+            className={`px-6 py-2 rounded-full transition-all duration-300 ${
+              isSignUp 
+                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/50' 
+                : 'bg-transparent text-slate-400 hover:text-white'
+            }`}
+          >
+            Sign Up
+          </Button>
+        </div>
+      </div>
+
+      <div className="w-full max-w-6xl relative z-10 mt-16 lg:mt-0">
+        <div className="grid lg:grid-cols-2 gap-8 items-center">
+          
+          {/* Left Panel - Branding & Info */}
+          <div className={`transition-all duration-700 ${
+            isSignUp ? 'lg:order-2' : 'lg:order-1'
+          } ${isSignUp ? 'hidden lg:block' : 'hidden lg:block'}`}>
+            <div className="bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-2xl rounded-3xl p-12 border border-cyan-500/20 shadow-2xl relative overflow-hidden">
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5"></div>
+              
+              <div className="relative z-10">
+                <OfficialSentinelLogo size="lg" variant="default" showText={true} className="mb-8" />
+                
+                <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  {!isSignUp ? 'Welcome Back to Sentinel' : 'Join Sentinel Today'}
+                </h2>
+                
+                <p className="text-slate-300 text-lg mb-10 leading-relaxed">
+                  {!isSignUp 
+                    ? 'Access powerful AI-driven market insights, real-time analytics, and advanced trading intelligence.' 
+                    : 'Start your journey with cutting-edge market analysis and AI-powered predictions.'}
+                </p>
+
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4 group">
+                    <div className="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
+                      <TrendingUp className="w-6 h-6 text-cyan-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white mb-1">Real-Time Market Data</h3>
+                      <p className="text-slate-400 text-sm">Live NSE & BSE stock prices with accurate tracking</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 group">
+                    <div className="p-3 bg-purple-500/10 rounded-xl border border-purple-500/20 group-hover:bg-purple-500/20 transition-colors">
+                      <Sparkles className="w-6 h-6 text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white mb-1">AI-Powered Predictions</h3>
+                      <p className="text-slate-400 text-sm">Advanced sentiment analysis and market forecasts</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 group">
+                    <div className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20 group-hover:bg-blue-500/20 transition-colors">
+                      <Shield className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white mb-1">Secure & Reliable</h3>
+                      <p className="text-slate-400 text-sm">Bank-grade security for your data</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-10 pt-8 border-t border-cyan-500/20">
+                  <div className="flex items-center justify-center gap-2 text-emerald-400">
+                    <Zap className="w-5 h-5 animate-pulse" />
+                    <span className="text-sm font-medium">Powered by Advanced AI</span>
+                  </div>
+                </div>
               </div>
             </div>
-            
-            <Button
-              onClick={handleSignUp}
-              disabled={loading}
-              className="mt-6 w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              {loading ? 'Creating Account...' : 'SIGN UP'}
-            </Button>
           </div>
-        </div>
 
-        {/* Sign In Form Panel */}
-        <div className={`relative transition-all duration-700 ease-in-out ${
-          !isSignUp ? 'translate-x-0 opacity-100' : 'lg:-translate-x-full opacity-0 lg:opacity-100'
-        } ${isSignUp ? 'hidden lg:block' : ''}`}>
-          <div className="p-8 lg:p-12 h-full flex flex-col justify-center">
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">Sign in</h1>
-            <div className="flex justify-center space-x-4 mb-8">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-50"
-                onClick={() => handleSocialLogin('Facebook')}
-              >
-                <Facebook className="w-5 h-5 text-blue-600" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-50"
-                onClick={() => handleSocialLogin('Google')}
-              >
-                <Mail className="w-5 h-5 text-red-500" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-50"
-                onClick={() => handleSocialLogin('LinkedIn')}
-              >
-                <Linkedin className="w-5 h-5 text-blue-700" />
-              </Button>
-            </div>
-            
-            <p className="text-gray-600 text-center text-sm mb-6">or use your account</p>
-            
-            <div className="space-y-4">
-              <Input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500"
-              />
-              <div className="relative">
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500"
-                />
+          {/* Right Panel - Auth Form */}
+          <div className={`transition-all duration-700 ${
+            isSignUp ? 'lg:order-1' : 'lg:order-2'
+          }`}>
+            <div className="bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-8 lg:p-12 border border-cyan-500/20 shadow-2xl relative overflow-hidden">
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5"></div>
+              
+              <div className="relative z-10">
+                {/* Logo for mobile */}
+                <div className="lg:hidden mb-8 text-center">
+                  <OfficialSentinelLogo size="md" variant="default" showText={true} />
+                </div>
+
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl lg:text-4xl font-bold mb-2 bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+                    {isSignUp ? 'Create Account' : 'Sign In'}
+                  </h1>
+                  <p className="text-slate-400">
+                    {isSignUp ? 'Start your trading journey' : 'Welcome back, trader'}
+                  </p>
+                </div>
+
+                {/* Social Login */}
+                <div className="mb-8">
+                  <Button
+                    onClick={() => handleSocialLogin('Google')}
+                    variant="outline"
+                    className="w-full py-6 bg-slate-800/50 border-cyan-500/30 hover:bg-slate-800 hover:border-cyan-500/50 text-white rounded-xl transition-all duration-300 group"
+                  >
+                    <Mail className="w-5 h-5 mr-3 text-cyan-400 group-hover:scale-110 transition-transform" />
+                    Continue with Google
+                  </Button>
+                </div>
+
+                <div className="relative mb-8">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-700"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-4 bg-slate-900/60 text-slate-400">or continue with email</span>
+                  </div>
+                </div>
+
+                {/* Form */}
+                <div className="space-y-5">
+                  {isSignUp && (
+                    <div>
+                      <label className="text-sm font-medium text-slate-300 mb-2 block">Full Name</label>
+                      <Input
+                        type="text"
+                        name="name"
+                        placeholder="John Doe"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-6 bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-slate-500 rounded-xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="text-sm font-medium text-slate-300 mb-2 block">Email Address</label>
+                    <Input
+                      type="email"
+                      name="email"
+                      placeholder="trader@example.com"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-6 bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-slate-500 rounded-xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-slate-300 mb-2 block">Password</label>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-6 pr-12 bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-slate-500 rounded-xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {!isSignUp && (
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer">
+                        <input type="checkbox" className="rounded border-slate-600 bg-slate-800" />
+                        Remember me
+                      </label>
+                      <a href="#" className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors">
+                        Forgot password?
+                      </a>
+                    </div>
+                  )}
+                </div>
+
                 <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={isSignUp ? handleSignUp : handleSignIn}
+                  disabled={loading}
+                  className="mt-8 w-full py-6 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/25 group"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {loading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2">
+                      {isSignUp ? 'Create Account' : 'Sign In'}
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  )}
                 </Button>
+
+                <div className="mt-8 text-center">
+                  <p className="text-slate-400 text-sm">
+                    {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+                    <button
+                      onClick={() => setIsSignUp(!isSignUp)}
+                      className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
+                    >
+                      {isSignUp ? 'Sign In' : 'Sign Up'}
+                    </button>
+                  </p>
+                </div>
+
+                {isSignUp && (
+                  <p className="mt-6 text-center text-xs text-slate-500">
+                    By signing up, you agree to our{' '}
+                    <a href="#" className="text-cyan-400 hover:text-cyan-300">Terms</a>
+                    {' '}and{' '}
+                    <a href="#" className="text-cyan-400 hover:text-cyan-300">Privacy Policy</a>
+                  </p>
+                )}
               </div>
             </div>
-            
-            <div className="text-center mt-4">
-              <a href="#" className="text-sm text-gray-600 hover:text-pink-500">
-                Forgot your password?
-              </a>
-            </div>
-            
-            <Button
-              onClick={handleSignIn}
-              disabled={loading}
-              className="mt-6 w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
-            >
-              {loading ? 'Signing In...' : 'SIGN IN'}
-            </Button>
-          </div>
-        </div>
-
-        {/* Overlay Panel */}
-        <div className={`absolute inset-y-0 right-0 w-full lg:w-1/2 bg-gradient-to-br from-pink-500 to-red-500 transition-transform duration-700 ease-in-out transform ${
-          isSignUp ? 'lg:-translate-x-full' : 'lg:translate-x-0'
-        } ${isSignUp ? 'hidden lg:block' : 'hidden lg:block'}`}>
-          <div className="flex items-center justify-center h-full p-8 lg:p-12 text-white">
-            <div className="text-center">
-              {!isSignUp ? (
-                <div>
-                  <h2 className="text-4xl font-bold mb-4">Hello, Friend!</h2>
-                  <p className="text-lg mb-8 opacity-90">
-                    Enter your personal details and start journey with us
-                  </p>
-                  <Button
-                    onClick={() => setIsSignUp(true)}
-                    variant="ghost"
-                    className="border-2 border-white text-white hover:bg-white hover:text-pink-500 font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
-                  >
-                    SIGN UP
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <h2 className="text-4xl font-bold mb-4">Welcome Back!</h2>
-                  <p className="text-lg mb-8 opacity-90">
-                    To keep connected with us please login with your personal info
-                  </p>
-                  <Button
-                    onClick={() => setIsSignUp(false)}
-                    variant="ghost"
-                    className="border-2 border-white text-white hover:bg-white hover:text-pink-500 font-semibold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105"
-                  >
-                    SIGN IN
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Toggle Buttons */}
-        <div className="lg:hidden absolute top-4 left-4 right-4 z-10">
-          <div className="flex bg-white rounded-full p-1 shadow-lg">
-            <Button
-              onClick={() => setIsSignUp(false)}
-              variant={!isSignUp ? "default" : "ghost"}
-              className={`flex-1 rounded-full ${
-                !isSignUp 
-                  ? 'bg-gradient-to-r from-pink-500 to-red-500 text-white' 
-                  : 'text-gray-600'
-              }`}
-            >
-              Sign In
-            </Button>
-            <Button
-              onClick={() => setIsSignUp(true)}
-              variant={isSignUp ? "default" : "ghost"}
-              className={`flex-1 rounded-full ${
-                isSignUp 
-                  ? 'bg-gradient-to-r from-pink-500 to-red-500 text-white' 
-                  : 'text-gray-600'
-              }`}
-            >
-              Sign Up
-            </Button>
           </div>
         </div>
       </div>
