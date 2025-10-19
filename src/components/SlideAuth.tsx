@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/integrations/supabase/client'
-import { Mail, Eye, EyeOff, Sparkles, TrendingUp, Shield, Zap, ArrowRight } from 'lucide-react'
+import { Mail, Eye, EyeOff, Sparkles, TrendingUp, Shield, Zap, ArrowRight, Github, Twitter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
@@ -130,24 +130,39 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center p-4">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        {/* Large animated gradient orbs */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-gradient-to-tl from-teal-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         
-        {/* Floating particles */}
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-cyan-400/30 rounded-full animate-pulse"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`
-            }}
-          />
-        ))}
+        {/* Floating particles with varied sizes and colors */}
+        {[...Array(40)].map((_, i) => {
+          const size = Math.random() * 3 + 1;
+          const colors = ['bg-cyan-400/40', 'bg-teal-400/40', 'bg-blue-400/40', 'bg-purple-400/30'];
+          return (
+            <div
+              key={i}
+              className={`absolute rounded-full ${colors[i % colors.length]}`}
+              style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
+                animationDelay: `${Math.random() * 3}s`,
+              }}
+            />
+          );
+        })}
       </div>
+      
+      {/* Floating animation keyframes */}
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
+          50% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
+        }
+      `}</style>
 
       {/* Mobile Toggle */}
       <div className="lg:hidden fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-slate-800/80 backdrop-blur-xl rounded-full p-1 shadow-2xl border border-cyan-500/20">
@@ -182,9 +197,11 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
           <div className={`transition-all duration-700 ${
             isSignUp ? 'lg:order-2' : 'lg:order-1'
           } ${isSignUp ? 'hidden lg:block' : 'hidden lg:block'}`}>
-            <div className="bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-2xl rounded-3xl p-12 border border-cyan-500/20 shadow-2xl relative overflow-hidden">
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5"></div>
+            <div className="bg-gradient-to-br from-slate-900/40 to-slate-800/40 backdrop-blur-3xl rounded-3xl p-12 border border-cyan-500/30 shadow-2xl relative overflow-hidden">
+              {/* Enhanced glassmorphism glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-teal-500/5 to-purple-500/10"></div>
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-400/20 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-teal-400/20 rounded-full blur-3xl"></div>
               
               <div className="relative z-10">
                 <OfficialSentinelLogo size="lg" variant="default" showText={true} className="mb-8" />
@@ -245,9 +262,11 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
           <div className={`transition-all duration-700 ${
             isSignUp ? 'lg:order-1' : 'lg:order-2'
           }`}>
-            <div className="bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-8 lg:p-12 border border-cyan-500/20 shadow-2xl relative overflow-hidden">
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-purple-500/5"></div>
+            <div className="bg-slate-900/50 backdrop-blur-3xl rounded-3xl p-8 lg:p-12 border border-cyan-500/30 shadow-2xl shadow-cyan-500/10 relative overflow-hidden">
+              {/* Enhanced glassmorphism glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-blue-500/5 to-teal-500/10"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-400/20 to-transparent rounded-full blur-2xl"></div>
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-teal-400/20 to-transparent rounded-full blur-2xl"></div>
               
               <div className="relative z-10">
                 {/* Logo for mobile */}
@@ -265,15 +284,35 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
                 </div>
 
                 {/* Social Login */}
-                <div className="mb-8">
+                <div className="mb-8 space-y-3">
                   <Button
                     onClick={() => handleSocialLogin('Google')}
                     variant="outline"
-                    className="w-full py-6 bg-slate-800/50 border-cyan-500/30 hover:bg-slate-800 hover:border-cyan-500/50 text-white rounded-xl transition-all duration-300 group"
+                    className="w-full py-6 bg-slate-800/60 backdrop-blur-xl border-cyan-500/40 hover:bg-cyan-500/10 hover:border-cyan-400/60 hover:shadow-lg hover:shadow-cyan-500/20 text-white rounded-xl transition-all duration-300 group"
                   >
                     <Mail className="w-5 h-5 mr-3 text-cyan-400 group-hover:scale-110 transition-transform" />
                     Continue with Google
                   </Button>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      onClick={() => handleSocialLogin('GitHub')}
+                      variant="outline"
+                      className="py-6 bg-slate-800/60 backdrop-blur-xl border-slate-600/40 hover:bg-slate-700/50 hover:border-slate-500/60 hover:shadow-lg hover:shadow-slate-500/10 text-white rounded-xl transition-all duration-300 group"
+                    >
+                      <Github className="w-5 h-5 mr-2 text-slate-300 group-hover:scale-110 transition-transform" />
+                      GitHub
+                    </Button>
+                    
+                    <Button
+                      onClick={() => handleSocialLogin('Twitter')}
+                      variant="outline"
+                      className="py-6 bg-slate-800/60 backdrop-blur-xl border-blue-500/40 hover:bg-blue-500/10 hover:border-blue-400/60 hover:shadow-lg hover:shadow-blue-500/10 text-white rounded-xl transition-all duration-300 group"
+                    >
+                      <Twitter className="w-5 h-5 mr-2 text-blue-400 group-hover:scale-110 transition-transform" />
+                      Twitter
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="relative mb-8">
@@ -289,32 +328,32 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
                 <div className="space-y-5">
                   {isSignUp && (
                     <div>
-                      <label className="text-sm font-medium text-slate-300 mb-2 block">Full Name</label>
+                      <label className="text-sm font-semibold text-slate-200 mb-2 block">Full Name</label>
                       <Input
                         type="text"
                         name="name"
                         placeholder="John Doe"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-6 bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-slate-500 rounded-xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+                        className="w-full px-5 py-6 bg-slate-800/60 backdrop-blur-xl border-2 border-cyan-500/40 text-white placeholder:text-slate-400 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/30 transition-all font-medium shadow-lg shadow-cyan-500/5"
                       />
                     </div>
                   )}
 
                   <div>
-                    <label className="text-sm font-medium text-slate-300 mb-2 block">Email Address</label>
+                    <label className="text-sm font-semibold text-slate-200 mb-2 block">Email Address</label>
                     <Input
                       type="email"
                       name="email"
                       placeholder="trader@example.com"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-6 bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-slate-500 rounded-xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+                      className="w-full px-5 py-6 bg-slate-800/60 backdrop-blur-xl border-2 border-cyan-500/40 text-white placeholder:text-slate-400 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/30 transition-all font-medium shadow-lg shadow-cyan-500/5"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-slate-300 mb-2 block">Password</label>
+                    <label className="text-sm font-semibold text-slate-200 mb-2 block">Password</label>
                     <div className="relative">
                       <Input
                         type={showPassword ? "text" : "password"}
@@ -322,13 +361,13 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
                         placeholder="••••••••"
                         value={formData.password}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-6 pr-12 bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-slate-500 rounded-xl focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all"
+                        className="w-full px-5 py-6 pr-12 bg-slate-800/60 backdrop-blur-xl border-2 border-cyan-500/40 text-white placeholder:text-slate-400 rounded-xl focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/30 transition-all font-medium shadow-lg shadow-cyan-500/5"
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -352,7 +391,7 @@ export default function SlideAuth({ defaultView = 'login' }: SlideAuthProps) {
                 <Button
                   onClick={isSignUp ? handleSignUp : handleSignIn}
                   disabled={loading}
-                  className="mt-8 w-full py-6 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl hover:shadow-cyan-500/25 group"
+                  className="mt-8 w-full py-7 text-lg bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 hover:from-cyan-600 hover:via-blue-600 hover:to-teal-600 text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl hover:shadow-cyan-500/40 group relative overflow-hidden"
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">
