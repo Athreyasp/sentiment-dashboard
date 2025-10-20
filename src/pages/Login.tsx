@@ -1,6 +1,5 @@
-
-import SlideAuth from '@/components/SlideAuth'
+import ModernAuth from '@/components/ModernAuth'
 
 export default function Login() {
-  return <SlideAuth defaultView="login" />
+  return <ModernAuth defaultView="login" />
 }
