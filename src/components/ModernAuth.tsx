@@ -125,7 +125,7 @@ export default function ModernAuth({ defaultView = 'login', onClose }: ModernAut
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center p-4">
+    <div className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex items-center justify-center p-4 min-h-[600px]">
       {/* Floating Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Animated gradient orbs */}
@@ -199,7 +199,7 @@ export default function ModernAuth({ defaultView = 'login', onClose }: ModernAut
       `}</style>
 
       {/* Auth Card */}
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full relative z-10">
         <div className="auth-card bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl rounded-3xl p-8 border border-slate-200/50 dark:border-cyan-500/20 shadow-2xl shadow-slate-900/10 dark:shadow-cyan-500/10">
           {/* Logo */}
           <div className="flex justify-center mb-8">
